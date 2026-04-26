@@ -100,16 +100,24 @@ npm run build
 
 ## Topic-Generator (`scripts/discover.mjs`)
 
-Der Generator hat drei Aufgaben:
+Der Generator hat vier Aufgaben:
 
 1. **Submodule-Topics rendern**: Pro `pages/claude-learnings/{topic}/README.md` wird ein top-level `pages/<topic>/index.html` geschrieben. Inhalt:
    - Header mit Titel (erste `# H1` aus README) + Level-Nav (Anker-Links zu beginner/intermediate/advanced)
    - `<article class="markdown-body topic-readme">` mit gerendetem README (erste H1 abgeschnitten, da schon im Header)
    - Pro vorhandenem Level: `<section class="level" id="<level>">` mit `resources.md`-Inhalt + `<details class="examples">` mit Datei-Liste
 
-2. **Inventar bauen**: `pages.json` als Array von `{ slug, kind: 'topic'|'page'|'comingsoon', title, description, levels? }`. Sortiert nach `kind` (topic > page > comingsoon), dann alphabetisch.
+2. **Inventar bauen aus drei Quellen**:
+   - `pages/<slug>/index.html` (nicht generiert) → kind: `page`
+   - `pages/claude-learnings/<slug>/README.md` → kind: `topic`
+   - `topics/<slug>/` (leerer Marker-Ordner) → kind: `comingsoon`
 
-3. **Idempotent + multipass-fähig**: Wird sowohl als CLI (prebuild/predev) als auch als ES-Module-Import von `vite.config.ts` aufgerufen. Im Dev-Modus außerdem als File-Watcher: bei `.md`-Änderung im Submodule re-discover + Browser-Reload.
+3. **Optionale Config mergen**: `topics.config.json` (Repo-Root) liefert pro Slug Overrides für `title`, `description`, `category`, `status`, `tags`, `order`. Defaults: `category=misc`, `status=finished` für topic/page, `status=todo` für comingsoon. Schema: `docs/topics-config-schema.md`.
+
+4. **`pages.json` schreiben** — sortiert nach Kategorie → order → kind → slug.
+
+### Idempotent + multipass-fähig
+Wird sowohl als CLI (prebuild/predev) als auch als ES-Module-Import von `vite.config.ts` aufgerufen. Im Dev-Modus außerdem als File-Watcher: bei `.md`-Änderung im Submodule re-discover + Browser-Reload.
 
 `art-advanced` ist explizit ausgenommen (parallele Variante im Submodule, eigener Task — siehe `docs/todos/art-advanced-unification.md`).
 

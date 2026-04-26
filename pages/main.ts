@@ -1,53 +1,82 @@
 import pages from './pages.json';
 
+type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
+type Kind = 'topic' | 'page' | 'comingsoon';
+
 interface TopicMeta {
   slug: string;
-  kind: 'topic' | 'page' | 'comingsoon';
+  kind: Kind;
   title: string;
   description: string;
   levels?: string[];
+  status: Status;
+  category: string;
+  tags?: string[];
+  order?: number;
 }
 
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+function renderCard(p: TopicMeta, index: number): string {
+  const num = String(index + 1).padStart(2, '0');
+  const cyr = escape(p.slug.toUpperCase());
+  const title = escape(p.title);
+  const desc = p.description ? `<span class="card-desc">${escape(p.description)}</span>` : '';
+  const levels = p.levels?.length
+    ? `<span class="card-levels" aria-label="Levels">${p.levels.map(l =>
+        `<span class="lvl lvl-${l}" title="${escape(l)}">${l[0]}</span>`
+      ).join('')}</span>`
+    : '';
+  const statusBadge = `<span class="card-status status-${p.status}">${escape(p.status)}</span>`;
+
+  if (p.kind === 'comingsoon') {
+    return `<div class="card card-locked" aria-disabled="true">
+      <div class="card-preview"><span class="card-num">${num}</span></div>
+      <div class="card-body">
+        <span class="card-name">${escape(p.slug)}</span>
+        <span class="card-cyr">${cyr}</span>
+        ${statusBadge}
+      </div>
+    </div>`;
+  }
+  return `<a href="/${p.slug}/" class="card card-${p.kind}">
+    <div class="card-preview">
+      <img src="/${p.slug}/preview.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+      <span class="card-num">${num}</span>
+    </div>
+    <div class="card-body">
+      <span class="card-name">${title}</span>
+      <span class="card-cyr">${cyr}</span>
+      ${desc}
+      <span class="card-meta">
+        ${statusBadge}
+        ${levels}
+      </span>
+      <span class="card-arr" aria-hidden="true">→</span>
+    </div>
+  </a>`;
+}
+
 const stack = document.querySelector<HTMLDivElement>('#links-stack');
 if (stack) {
-  stack.innerHTML = (pages as unknown as TopicMeta[])
-    .map((p, i) => {
-      const num = String(i + 1).padStart(2, '0');
-      const cyr = escape(p.slug.toUpperCase());
-      const title = escape(p.title);
-      const desc = p.description ? `<span class="card-desc">${escape(p.description)}</span>` : '';
-      const levels = p.levels?.length
-        ? `<span class="card-levels">${p.levels.map(l => `<span class="lvl lvl-${l}">${l[0]}</span>`).join('')}</span>`
-        : '';
+  const all = pages as unknown as TopicMeta[];
+  const categories = [...new Set(all.map(p => p.category))].sort();
+  const single = categories.length === 1;
 
-      if (p.kind === 'comingsoon') {
-        return `<div class="card card-locked" aria-disabled="true">
-          <div class="card-preview"><span class="card-num">${num}</span></div>
-          <div class="card-body">
-            <span class="card-name">${escape(p.slug)}</span>
-            <span class="card-cyr">${cyr}</span>
-            <span class="card-tag">coming soon</span>
-          </div>
-        </div>`;
-      }
-      return `<a href="/${p.slug}/" class="card card-${p.kind}">
-        <div class="card-preview">
-          <img src="/${p.slug}/preview.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="card-num">${num}</span>
+  if (single) {
+    stack.innerHTML = all.map(renderCard).join('');
+  } else {
+    stack.innerHTML = categories.map(cat => {
+      const items = all.filter(p => p.category === cat);
+      return `<section class="cat-section" aria-labelledby="cat-${cat}">
+        <h2 class="cat-heading" id="cat-${cat}">${escape(cat)}</h2>
+        <div class="cat-grid">
+          ${items.map((p, i) => renderCard(p, i)).join('')}
         </div>
-        <div class="card-body">
-          <span class="card-name">${title}</span>
-          <span class="card-cyr">${cyr}</span>
-          ${desc}
-          ${levels}
-          <span class="card-arr" aria-hidden="true">→</span>
-        </div>
-      </a>`;
-    })
-    .join('');
+      </section>`;
+    }).join('');
+  }
 }
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;

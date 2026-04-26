@@ -593,6 +593,51 @@ body:not(.home) #app p {
   margin-top: .4rem;
 }
 
+/* ── Status-Badges ───────────────────────────────────────────── */
+
+.card-status {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: .55rem; letter-spacing: .25em;
+  text-transform: uppercase;
+  padding: .2rem .55rem;
+  border: 1px solid currentColor;
+  border-radius: .2rem;
+}
+.status-todo        { color: rgba(200,192,216,0.55); }
+.status-in-progress { color: var(--gold-b); }
+.status-finished    { color: #6ac48a; }
+.status-archived    { color: rgba(200,192,216,0.35); text-decoration: line-through; }
+
+.card-meta {
+  display: flex; align-items: center; gap: .6rem;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+}
+
+/* ── Kategorie-Sektionen ─────────────────────────────────────── */
+
+.cat-section + .cat-section { margin-top: 3rem; }
+.cat-heading {
+  font-family: 'Courier New', monospace;
+  font-size: .7rem;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  opacity: .7;
+  margin-bottom: 1.4rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid rgba(0,212,200,0.2);
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.6rem;
+}
+@media (max-width: 900px) {
+  .cat-grid { grid-template-columns: 1fr; }
+}
+
 .card-desc {
   font-size: .82rem; line-height: 1.5;
   color: rgba(200,192,216,0.55);
