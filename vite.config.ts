@@ -19,9 +19,11 @@ writeFileSync(
   JSON.stringify(pageNames, null, 2),
 );
 
+const OUTPUT_DIR = "../public_html"
+
 export default defineConfig({
   root: 'pages',
-  publicDir: resolve(__dirname, 'public'),
+  publicDir: resolve(__dirname, 'public', OUTPUT_DIR),
   server: {
     allowedHosts: [
       "test.jeremias-groehl.de"
@@ -35,7 +37,7 @@ export default defineConfig({
         index: resolve(__dirname, 'pages/index.html'),
         ...pageEntries,
       }, output: {
-        dir: "../public_html"
+        dir: OUTPUT_DIR,
       }
     },
   },
