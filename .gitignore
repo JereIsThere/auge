@@ -5,3 +5,9 @@ pages/pages.json
 *.log
 .env
 .vite
+
+# Auto-generierte Topic-Pages (vom Vite-Plugin aus dem Submodule erzeugt)
+pages/regex/index.html
+pages/latex/index.html
+pages/data-structures-algorithms/index.html
+pages/tensorflow-keras/index.html

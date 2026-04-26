@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "discover": "node scripts/discover.mjs",
+    "predev": "node scripts/discover.mjs",
+    "prebuild": "node scripts/discover.mjs",
     "dev": "vite --port 3001 --strictPort --host",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
@@ -13,5 +16,8 @@
     "@types/node": "^25.6.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "marked": "^18.0.2"
   }
 }

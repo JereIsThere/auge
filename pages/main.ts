@@ -1,20 +1,52 @@
 import pages from './pages.json';
 
+interface TopicMeta {
+  slug: string;
+  kind: 'topic' | 'page' | 'comingsoon';
+  title: string;
+  description: string;
+  levels?: string[];
+}
+
+const escape = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 const stack = document.querySelector<HTMLDivElement>('#links-stack');
 if (stack) {
-  stack.innerHTML = pages
-    .map((name, i) => `
-      <a href="/${name}/" class="card">
+  stack.innerHTML = (pages as unknown as TopicMeta[])
+    .map((p, i) => {
+      const num = String(i + 1).padStart(2, '0');
+      const cyr = escape(p.slug.toUpperCase());
+      const title = escape(p.title);
+      const desc = p.description ? `<span class="card-desc">${escape(p.description)}</span>` : '';
+      const levels = p.levels?.length
+        ? `<span class="card-levels">${p.levels.map(l => `<span class="lvl lvl-${l}">${l[0]}</span>`).join('')}</span>`
+        : '';
+
+      if (p.kind === 'comingsoon') {
+        return `<div class="card card-locked" aria-disabled="true">
+          <div class="card-preview"><span class="card-num">${num}</span></div>
+          <div class="card-body">
+            <span class="card-name">${escape(p.slug)}</span>
+            <span class="card-cyr">${cyr}</span>
+            <span class="card-tag">coming soon</span>
+          </div>
+        </div>`;
+      }
+      return `<a href="/${p.slug}/" class="card card-${p.kind}">
         <div class="card-preview">
-          <img src="/${name}/preview.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="card-num">${String(i + 1).padStart(2, '0')}</span>
+          <img src="/${p.slug}/preview.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="card-num">${num}</span>
         </div>
         <div class="card-body">
-          <span class="card-name">${name}</span>
-          <span class="card-cyr">${name.toUpperCase()}</span>
+          <span class="card-name">${title}</span>
+          <span class="card-cyr">${cyr}</span>
+          ${desc}
+          ${levels}
           <span class="card-arr" aria-hidden="true">→</span>
         </div>
-      </a>`)
+      </a>`;
+    })
     .join('');
 }
 

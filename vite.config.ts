@@ -1,40 +1,25 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync, statSync, existsSync, writeFileSync, rmSync } from 'fs';
+// @ts-expect-error — JS-Modul ohne Typdeklaration
+import { discoverAndGenerate, wipeOutBuildDir } from './scripts/discover.mjs';
 
 const pagesDir = resolve(__dirname, 'pages');
+const topics = discoverAndGenerate() as Array<{ slug: string; kind: 'topic' | 'page' | 'comingsoon' }>;
 
-const pageNames = readdirSync(pagesDir).filter((name) => {
-  const dir = resolve(pagesDir, name);
-  return statSync(dir).isDirectory() && existsSync(resolve(dir, 'index.html'));
-});
+const pageEntries = topics
+  .filter(t => t.kind === 'topic' || t.kind === 'page')
+  .reduce<Record<string, string>>((acc, t) => {
+    acc[t.slug] = resolve(pagesDir, t.slug, 'index.html');
+    return acc;
+  }, {});
 
-const pageEntries = pageNames.reduce<Record<string, string>>((acc, name) => {
-  acc[name] = resolve(pagesDir, name, 'index.html');
-  return acc;
-}, {});
-
-writeFileSync(
-  resolve(pagesDir, 'pages.json'),
-  JSON.stringify(pageNames, null, 2),
-);
-
-const OUTPUT_DIR = "../public_html"
-
-function wipeOutBuildDir() {
-  const distPath = resolve(__dirname, 'dist');
-  if (existsSync(distPath)) {
-    rmSync(distPath, { recursive: true, force: true });
-  }
-}
+const OUTPUT_DIR = '../public_html';
 
 export default defineConfig({
   root: 'pages',
   publicDir: resolve(__dirname, 'public', OUTPUT_DIR),
   server: {
-    allowedHosts: [
-      "test.jeremias-groehl.de"
-    ]
+    allowedHosts: ['test.jeremias-groehl.de'],
   },
   build: {
     outDir: resolve(__dirname, 'dist'),
@@ -43,9 +28,10 @@ export default defineConfig({
       input: {
         index: resolve(__dirname, 'pages/index.html'),
         ...pageEntries,
-      }, output: {
+      },
+      output: {
         dir: OUTPUT_DIR,
-      }
+      },
     },
   },
   plugins: [
@@ -55,6 +41,21 @@ export default defineConfig({
       enforce: 'pre',
       buildStart() {
         wipeOutBuildDir();
+      },
+    },
+    {
+      name: 'regenerate-on-md-change',
+      apply: 'serve',
+      configureServer(server) {
+        const handler = (file: string) => {
+          if (file.includes('claude-learnings') && file.endsWith('.md')) {
+            discoverAndGenerate();
+            server.ws.send({ type: 'full-reload' });
+          }
+        };
+        server.watcher.on('change', handler);
+        server.watcher.on('add', handler);
+        server.watcher.on('unlink', handler);
       },
     },
   ],

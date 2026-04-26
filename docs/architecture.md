@@ -84,17 +84,37 @@ Konkretere Patterns als CLAUDE.md — wo welcher Trick wohnt und warum.
 
 ```
 npm run build
-└─ tsc --noEmit                   Type-Check (kein Output)
+├─ prebuild: node scripts/discover.mjs
+│   ├─ scant pages/claude-learnings/ → generiert pages/<topic>/index.html (4 Stück, gitignored)
+│   ├─ kategorisiert alle pages/<slug>/ in topic | page | comingsoon
+│   └─ schreibt pages/pages.json (TopicMeta[])
+├─ tsc --noEmit                   Type-Check
 └─ vite build
-   ├─ vite.config.ts wird geladen
-   │  ├─ scant pages/ nach Ordnern mit index.html
-   │  ├─ schreibt pages/pages.json (gitignored)
-   │  └─ wipeOutBuildDir() löscht altes dist/
-   ├─ Rollup baut alle Pages parallel
+   ├─ vite.config.ts ruft discoverAndGenerate() nochmal auf (Idempotent, sichert konsistenten State)
+   ├─ Plugin wipe-build-dir → löscht altes dist/
+   ├─ Rollup baut alle Pages parallel (input = topic + page entries)
    └─ Output → ../public_html/    (NICHT dist/, siehe vite.config rollupOptions.output.dir)
 ```
 
 `publicDir: 'public'` ist konfiguriert, derzeit aber leer — `style.css` liegt in `pages/` und wird via `root: 'pages'` als `/style.css` ausgeliefert.
+
+## Topic-Generator (`scripts/discover.mjs`)
+
+Der Generator hat drei Aufgaben:
+
+1. **Submodule-Topics rendern**: Pro `pages/claude-learnings/{topic}/README.md` wird ein top-level `pages/<topic>/index.html` geschrieben. Inhalt:
+   - Header mit Titel (erste `# H1` aus README) + Level-Nav (Anker-Links zu beginner/intermediate/advanced)
+   - `<article class="markdown-body topic-readme">` mit gerendetem README (erste H1 abgeschnitten, da schon im Header)
+   - Pro vorhandenem Level: `<section class="level" id="<level>">` mit `resources.md`-Inhalt + `<details class="examples">` mit Datei-Liste
+
+2. **Inventar bauen**: `pages.json` als Array von `{ slug, kind: 'topic'|'page'|'comingsoon', title, description, levels? }`. Sortiert nach `kind` (topic > page > comingsoon), dann alphabetisch.
+
+3. **Idempotent + multipass-fähig**: Wird sowohl als CLI (prebuild/predev) als auch als ES-Module-Import von `vite.config.ts` aufgerufen. Im Dev-Modus außerdem als File-Watcher: bei `.md`-Änderung im Submodule re-discover + Browser-Reload.
+
+`art-advanced` ist explizit ausgenommen (parallele Variante im Submodule, eigener Task — siehe `docs/todos/art-advanced-unification.md`).
+
+### CRLF-Hinweis
+Submodule-MD-Dateien können CRLF-Lineendings haben. Der `stripFirstH1()`-Helper benutzt `\r?\n` — bei eigenen Regex-Operationen darauf achten.
 
 ## Geteilte CSS-Variablen
 

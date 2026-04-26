@@ -42,11 +42,23 @@ scripts/                 generate.py — Daten-Generator für seite-eins (Beispi
 vite.config.ts           Auto-Discovery + pages.json-Generator
 ```
 
-## Auto-Discovery
+## Auto-Discovery & Topic-Generator
 
-`vite.config.ts` scannt `pages/` und nimmt JEDEN Ordner mit eigener `index.html` als Vite-Entry auf. Die Liste landet in `pages/pages.json` (gitignored), die `pages/main.ts` als Card-Quelle für die Home importiert.
+`scripts/discover.mjs` ist die Single Source of Truth fürs Page-Inventar. Läuft als `prebuild`/`predev` Hook, von vite.config.ts beim Config-Load, und im Dev-Server bei jedem Submodule-`.md`-Change.
 
-→ Eine neue Sub-Page anlegen heißt: `pages/foo/index.html` + optional `main.ts` schreiben. Build greift sie automatisch ab.
+Was es tut:
+1. Scant `pages/claude-learnings/{topic}/README.md` → für jedes Topic mit Inhalt: rendert README + `{beginner,intermediate,advanced}/resources.md` per `marked` zu `pages/<topic>/index.html` (gitignored, siehe `.gitignore`).
+2. Scant `pages/<slug>/` Ordner und kategorisiert:
+   - `topic` — generierte Page aus dem Submodule
+   - `page` — Standalone-Page mit eigener `index.html` (z.B. `art-advanced`, `seite-eins`, `seite-zwei`)
+   - `comingsoon` — leerer Scaffold-Ordner
+3. Schreibt `pages/pages.json` mit voller Metadata (slug, kind, title, description, levels) — Single Source für Home-Cards.
+
+vite.config.ts ruft `discoverAndGenerate()` beim Load und filtert auf `kind ∈ {topic, page}` für die Build-Entries.
+
+→ Neuen Topic-Inhalt im Submodule anlegen → `npm run discover` → Topic erscheint sofort. Eine neue Standalone-Page: `pages/foo/index.html` schreiben → Build greift sie automatisch ab.
+
+→ `art-advanced` ist im Generator explizit ausgenommen (zwei parallele Varianten, siehe [docs/todos/art-advanced-unification.md](docs/todos/art-advanced-unification.md)).
 
 ## Konventionen
 
@@ -94,9 +106,11 @@ git submodule update --init --recursive
 
 ## Status quo (Stand 2026-04)
 
-- **3 Sub-Pages haben echte index.html**: `art-advanced`, `seite-eins`, `seite-zwei`.
-- **4 Topics haben Submodule-Content**: `regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`. Diese rendern aktuell **NICHT** als Pages (kein index.html top-level).
-- **17 leere Scaffold-Ordner** (`api-rest`, `nlp`, `pandas-data-wrangling`, …) — nur leere `beginner/intermediate/advanced/` Unterordner, kein Inhalt.
-- **Stale Top-Level-Duplikate**: `pages/regex/`, `pages/latex/`, `pages/data-structures-algorithms/`, `pages/tensorflow-keras/` enthalten EIGENE README+Resources-Dateien, die vom Submodule abweichen (vermutlich Pre-Submodule-Reste). Nicht löschen ohne Rückfrage.
+`npm run discover` ergibt aktuell: **26 Pages — 4 topic, 3 page, 19 coming-soon**.
+
+- **4 Submodule-Topics** rendern automatisch: `regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`.
+- **3 Standalone-Pages**: `art-advanced` (eigene Optik), `seite-eins`, `seite-zwei` (Boilerplate-Demos).
+- **19 Coming-Soon-Scaffolds** (`api-rest`, `nlp`, `pandas-data-wrangling`, …) — gelockte Cards auf der Home, kein Link.
+- **Stale Top-Level-Duplikate**: `pages/regex/`, `pages/latex/`, `pages/data-structures-algorithms/`, `pages/tensorflow-keras/` enthalten EIGENE README+Resources-Dateien (Pre-Submodule-Reste). Werden vom Generator IGNORIERT — Source of Truth ist das Submodule. Nicht löschen ohne Rückfrage.
 
 Siehe [docs/pending.md](docs/pending.md) für offene Arbeiten und [docs/architecture.md](docs/architecture.md) für Detail-Patterns.

@@ -1,37 +1,23 @@
 # Pending Work
 
-Stand: 2026-04-26. Was offen ist und worauf der Nutzer noch antworten muss, bevor weitergebaut wird.
+Stand: 2026-04-27.
 
-## Großes offenes Thema: Submodule-Topics rendern
+## Erledigt
 
-Aktuell: Vom Submodule `pages/claude-learnings/` werden NULL Pages gerendert. Es gibt 4 echte Topics mit Inhalt (`regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`) plus eine fertige `art-advanced/index.html`-Variante. Auf der Home tauchen sie nicht auf.
+✅ **Submodule-Renderer gebaut** — `scripts/discover.mjs` rendert die 4 Topics (`regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`) automatisch zu top-level `pages/<topic>/index.html` (gitignored). Läuft als prebuild/predev Hook und im Dev-Server bei MD-Änderungen.
 
-**Geplante Architektur** (vom Nutzer genehmigt im Konzept, wartet auf Detail-Antworten):
+✅ **Home-Cards** zeigen jetzt alle 26 Pages mit Topic-Metadata (title, description, level-badges) — gelockte Coming-Soon-Karten für die 19 leeren Scaffolds.
 
-1. **Vite-Plugin** als Pre-Build-Schritt:
-   - Scant `pages/claude-learnings/{topic}/README.md`
-   - Generiert pro Topic `pages/<topic>/index.html` ins Top-Level (gitignored)
-   - Inhalt: gerendetes README + die drei Level-Sektionen (`beginner/intermediate/advanced`) mit ihren `resources.md` und Liste der `examples/` (mit Syntax-Highlighting für die Code-Snippets)
+✅ **Sub-Page-Typografie** — `.markdown-body` mit Styles für h1-h4, Code-Blocks, Tabellen, Blockquotes, Listen, Inline-Code, Links.
 
-2. **Markdown-Renderer**: `marked` (~30 KB, kein DOM-Cost)
+✅ **Antworten auf (a)/(b)/(c)** vom 2026-04-27 umgesetzt:
+- (a) Coming-Soon-Karten gelockt sichtbar
+- (b) Stale Top-Level-Duplikate liegen gelassen (Generator ignoriert sie)
+- (c) Eigener Task → [docs/todos/art-advanced-unification.md](todos/art-advanced-unification.md), Generator nimmt `art-advanced` explizit aus
 
-3. **Home polishen**: Cards bekommen Topic-Name, Kurzbeschreibung (erste Zeile aus README), Level-Badges. Leere Scaffolds tauchen NICHT auf.
+## Noch offen — `art-advanced` Konsolidierung
 
-4. **Sub-Page-Template polishen**: Typografie für h2/h3, Listen, Tabellen, Code-Blocks, Blockquotes, Sidebar-Nav für Level-Sprünge.
-
-5. **`art-advanced` bleibt eigenständig** (eigene Optik, eigenes CSS, nicht generiert).
-
-6. **`seite-eins` / `seite-zwei`** sind Boilerplate-Demos — separater Job.
-
-## Drei offene Fragen an den Nutzer
-
-Vor dem Bau des Renderers warten wir auf Antworten:
-
-- **(a) Leere Scaffolds** (`pages/api-rest/`, `pages/nlp/`, `pages/pandas-data-wrangling/`, …, ~17 Stück, alle ohne README): Als „🔒 coming soon"-Karten anzeigen oder komplett ausblenden, bis Inhalt da ist?
-
-- **(b) Top-Level Stale-Duplikate** (`pages/regex/`, `pages/latex/`, `pages/data-structures-algorithms/`, `pages/tensorflow-keras/`): Diese enthalten EIGENE Inhaltsdateien, die vom Submodule abweichen (vermutlich Pre-Submodule-Reste). Nach erfolgreicher Migration zur Submodule-Source löschen, oder erstmal liegen lassen?
-
-- **(c) `art-advanced` aus Submodule**: Im Submodule liegt unter `pages/claude-learnings/art-advanced/index.html` eine eigene fertige Variante dieser Page. Soll sie zusätzlich/stattdessen in die Topic-Liste, oder bleibt das top-level `pages/art-advanced/` (mit eigener polierter Optik) die einzige Variante?
+Siehe [docs/todos/art-advanced-unification.md](todos/art-advanced-unification.md). Wartet auf Submodule-Maintainer.
 
 ## Kleinkram, das beim nächsten Touch erledigt werden sollte
 
