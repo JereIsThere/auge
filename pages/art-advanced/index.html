@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Advanced Art Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0e0e10;
+  --surface: #18181c;
+  --surface2: #222228;
+  --border: #2e2e36;
+  --text: #e8e6e0;
+  --muted: #7a7880;
+  --color: #e07c5a;
+  --manga: #5a8fe0;
+  --speed: #6ac48a;
+  --accent: #c45ae0;
+  --r: 14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
+}
+
+/* ─── NAV ─── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(14,14,16,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;gap:0;
+  overflow-x:auto;
+}
+nav a{
+  display:flex;align-items:center;gap:8px;
+  padding:16px 22px;
+  color:var(--muted);
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:600;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+}
+nav a:hover{color:var(--text);}
+nav a.color-link:hover,nav a.color-link.act{color:var(--color);border-color:var(--color);}
+nav a.manga-link:hover,nav a.manga-link.act{color:var(--manga);border-color:var(--manga);}
+nav a.speed-link:hover,nav a.speed-link.act{color:var(--speed);border-color:var(--speed);}
+
+/* ─── HERO ─── */
+header{
+  padding:80px 40px 60px;
+  max-width:900px;margin:0 auto;
+}
+header h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.4rem,6vw,4.2rem);
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  margin-bottom:20px;
+}
+header h1 em{font-style:normal;}
+header h1 .c{color:var(--color);}
+header h1 .m{color:var(--manga);}
+header h1 .s{color:var(--speed);}
+header p{
+  font-size:1.05rem;
+  color:var(--muted);
+  max-width:580px;
+  line-height:1.7;
+}
+
+/* ─── SECTION WRAPPER ─── */
+.section{
+  max-width:1100px;
+  margin:0 auto;
+  padding:60px 32px;
+}
+
+.section-header{
+  display:flex;align-items:baseline;gap:16px;
+  margin-bottom:40px;
+  border-bottom:1px solid var(--border);
+  padding-bottom:20px;
+}
+.section-header h2{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;
+  font-weight:800;
+}
+.section-header span{
+  font-size:0.78rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ─── TOPIC GRID ─── */
+.topic-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+}
+
+/* ─── ACCORDION CARD ─── */
+details{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:border-color .2s;
+}
+details[open]{border-color:var(--accent-local);}
+
+details summary{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 20px;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+details summary::-webkit-details-marker{display:none;}
+
+.sum-num{
+  font-family:'Syne',sans-serif;
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--muted);
+  min-width:24px;
+}
+.sum-title{
+  flex:1;
+  font-size:0.93rem;
+  font-weight:600;
+}
+.sum-tag{
+  font-size:0.68rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:20px;
+  background:var(--surface2);
+  color:var(--muted);
+}
+.sum-arrow{
+  color:var(--muted);
+  transition:transform .2s;
+  font-size:0.9rem;
+}
+details[open] .sum-arrow{transform:rotate(90deg);}
+
+.card-body{
+  padding:0 20px 22px;
+  border-top:1px solid var(--border);
+}
+
+.card-body p,.card-body li{
+  font-size:0.87rem;
+  color:#b0adb8;
+  line-height:1.7;
+}
+.card-body ul,.card-body ol{
+  padding-left:18px;
+  margin:10px 0;
+}
+.card-body li{margin:4px 0;}
+
+.card-body strong{color:var(--text);font-weight:600;}
+.card-body em{color:var(--accent-local);font-style:normal;font-weight:500;}
+
+.card-body h4{
+  font-family:'Syne',sans-serif;
+  font-size:0.82rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted);
+  margin:16px 0 6px;
+}
+
+/* color pill */
+.pill{
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:20px;
+  font-size:0.72rem;
+  font-weight:600;
+  margin:2px;
+}
+
+/* color swatches inline */
+.swatches{
+  display:flex;gap:6px;flex-wrap:wrap;
+  margin:10px 0;
+}
+.sw{
+  width:32px;height:32px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.07);
+  position:relative;
+}
+.sw[title]::after{
+  content:attr(title);
+  position:absolute;
+  bottom:-22px;left:50%;
+  transform:translateX(-50%);
+  font-size:0.6rem;
+  color:var(--muted);
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+/* resource links */
+.res-list{
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.res-item{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:0.82rem;
+}
+.res-item::before{
+  content:'→';
+  color:var(--accent-local);
+  flex-shrink:0;
+  margin-top:1px;
+}
+
+/* callout */
+.callout{
+  background:var(--surface2);
+  border-left:3px solid var(--accent-local);
+  border-radius:0 8px 8px 0;
+  padding:12px 16px;
+  margin:14px 0;
+  font-size:0.84rem;
+  font-style:italic;
+  color:#c0bdc8;
+}
+
+/* ─── Color section colors ─── */
+.color-section{--accent-local:var(--color);}
+.color-section details summary .sum-tag{background:#3a1e14;color:var(--color);}
+
+/* ─── Manga section colors ─── */
+.manga-section{--accent-local:var(--manga);}
+.manga-section details summary .sum-tag{background:#142038;color:var(--manga);}
+
+/* ─── Speed section colors ─── */
+.speed-section{--accent-local:var(--speed);}
+.speed-section details summary .sum-tag{background:#162a1e;color:var(--speed);}
+
+/* ─── separator ─── */
+.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:0 32px;
+}
+
+footer{
+  text-align:center;
+  padding:48px;
+  color:var(--muted);
+  font-size:0.8rem;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#farbe" class="color-link">🎨 Farbe</a>
+  <a href="#manga" class="manga-link">✏️ Manga</a>
+  <a href="#speed" class="speed-link">⚡ Schneller & Fertiger</a>
+</nav>
+
+<header>
+  <h1>
+    <span class="c">Farbe.</span><br>
+    <span class="m">Manga.</span><br>
+    <span class="s">Fertig werden.</span>
+  </h1>
+  <p>Kein Anfänger-Bullshit. Dieser Guide ist für Leute die schon zeichnen können — aber die formellen Lücken schließen wollen.</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════ FARBE ═══ -->
+<div class="section color-section" id="farbe">
+  <div class="section-header">
+    <h2 style="color:var(--color)">Farbtheorie</h2>
+    <span>20 Topics · Advanced</span>
+  </div>
+
+  <div class="topic-grid">
+
+    <details>
+      <summary>
+        <span class="sum-num">01</span>
+        <span class="sum-title">Value ist King — nicht Farbe</span>
+        <span class="sum-tag">Fundament</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Alles was du glaubst Farbproblem zu sein, ist meistens ein <strong>Value-Problem</strong>. Konvertiere dein Bild in Graustufen: sieht es noch gut aus? Dann liegt das Problem woanders.</p>
+        <div class="callout">„Farbe beschreibt — Value überzeugt." Wenn Value nicht stimmt, hilft keine Farbe der Welt.</div>
+        <h4>Praktisch</h4>
+        <ul>
+          <li>Mache von jedem Bild einen Graustufen-Screenshot</li>
+          <li>5 Werte reichen: weiß, hell, mittel, dunkel, schwarz</li>
+          <li>Lightest light liegt immer neben darkest dark (Fokuspunkt)</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Marco Bucci – „10 Minutes to Better Painting: Value" (YouTube)</div>
+          <div class="res-item">James Gurney – Color and Light (Buch, Kapitel 1–3)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">02</span>
+        <span class="sum-title">Lokale Farbe vs. beobachtete Farbe</span>
+        <span class="sum-tag">Wahrnehmung</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p><strong>Lokale Farbe</strong> = die „echte" Farbe eines Objekts (z.B. ein roter Apfel). <strong>Beobachtete Farbe</strong> = was das Auge wirklich sieht nach Licht, Reflexion, Atmosphäre.</p>
+        <p>Anfänger malen lokale Farbe. Fortgeschrittene malen beobachtete Farbe. Als Advanced-Zeichner: <em>vertrau deinen Augen, nicht deinem Wissen über das Objekt.</em></p>
+        <div class="callout">Ein roter Apfel im blauen Schatten ist nicht rot-dunkel. Er ist violett-grau.</div>
+        <div class="res-list">
+          <div class="res-item">Proko – „Why Your Colors Look Wrong" (YouTube)</div>
+          <div class="res-item">Watts Atelier – Color Studies</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">03</span>
+        <span class="sum-title">Warm/Kalt-Kontrast: Licht & Schatten</span>
+        <span class="sum-tag">Licht</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Das mächtigste Einzelwerkzeug der Farbtheorie: <strong>warmes Licht = kühler Schatten</strong>, kühles Licht = warmer Schatten. Immer. Ausnahmslos.</p>
+        <div class="swatches">
+          <div class="sw" style="background:#e8b87a" title="Warmes Licht"></div>
+          <div class="sw" style="background:#7a9ec8" title="Kühler Schatten"></div>
+          <div class="sw" style="background:#a0c8e8" title="Kühles Licht"></div>
+          <div class="sw" style="background:#d4956a" title="Warmer Schatten"></div>
+        </div>
+        <h4>Warum?</h4>
+        <p>Schatten werden von der Umgebung (Himmel/Boden) gefärbt, Lichter direkt von der Lichtquelle. Sonne = warm, Himmel = kalt. Kunstlicht = wähle bewusst.</p>
+        <div class="callout">Wenn beides gleichtemperiert ist, wirkt das Bild flach und digital-clean auf schlechte Art.</div>
+        <div class="res-list">
+          <div class="res-item">James Gurney – Color and Light, Kap. „Warm & Cool"</div>
+          <div class="res-item">Marco Bucci – „The Color of Light" (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">04</span>
+        <span class="sum-title">Simultankontrast (Itten)</span>
+        <span class="sum-tag">Optik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Dieselbe Farbe sieht völlig anders aus je nachdem was sie umgibt. <strong>Grau auf Rot wirkt grünlich. Grau auf Blau wirkt orangelich.</strong> Dein Gehirn kompensiert automatisch.</p>
+        <p>Als Advanced-Artist: nutze das bewusst. Putte denselben Hauttonpixel auf verschiedene Hintergründe — er wird eine andere Farbe zu sein scheinen.</p>
+        <div class="callout">Der Kontext einer Farbe ist genauso wichtig wie die Farbe selbst.</div>
+        <div class="res-list">
+          <div class="res-item">Josef Albers – „Interaction of Color" (Buch / App)</div>
+          <div class="res-item">Tyler Edlin – Simultaneous Contrast Demo</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">05</span>
+        <span class="sum-title">Gamut Mapping — welche Farben passen zusammen?</span>
+        <span class="sum-tag">Palette</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Nicht alle Farben können zusammen in einem Bild existieren — nicht wegen Regel, sondern weil das Auge nur <strong>eine begrenzte Bandbreite gleichzeitig verarbeitet</strong>.</p>
+        <p><strong>Gamut</strong> = der erlaubte Farbbereich eines Bildes. Wähle ihn bewusst: entsättigte Palette mit einem gesättigten Fokuspunkt schlägt ein buntes Chaos immer.</p>
+        <h4>Methode</h4>
+        <ul>
+          <li>Bestimme Dominant-Color (70%), Support (20%), Accent (10%)</li>
+          <li>Accent ist oft die Komplementärfarbe zur Dominant</li>
+          <li>Alles außerhalb des Gamuts: entsättigen oder entfernen</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Nathan Fowkes – Color Gamut (Schoolism)</div>
+          <div class="res-item">Gurney Journey Blog – Gamut Masking</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">06</span>
+        <span class="sum-title">Atmospheric Perspective & Luftperspektive</span>
+        <span class="sum-tag">Tiefe</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Je weiter etwas entfernt ist: <strong>heller, blauer/kälter, weniger gesättigt, weniger Kontrast, weniger Detail, weichere Kanten.</strong> Alle fünf gleichzeitig.</p>
+        <p>Fehler: nur Value oder nur Sättigung ändern. Alle Faktoren müssen sich gemeinsam verschieben.</p>
+        <div class="swatches">
+          <div class="sw" style="background:#2a1a0a" title="Nah (dunkel, satt)"></div>
+          <div class="sw" style="background:#7a6a5a" title="Mittel"></div>
+          <div class="sw" style="background:#b8b8d0" title="Fern (hell, blau, entsättigt)"></div>
+        </div>
+        <div class="res-list">
+          <div class="res-item">James Gurney – Atmospheric Perspective (YouTube)</div>
+          <div class="res-item">Concept Art Association – Environment Painting</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">07</span>
+        <span class="sum-title">Subsurface Scattering (SSS) — Haut & transluzente Materialien</span>
+        <span class="sum-tag">Materialien</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Licht dringt in Haut, Wachs, Marmor, Blütenblätter ein und kommt <strong>von innen heraus in einer anderen Farbe</strong>. Deswegen leuchten Ohren im Gegenlicht rot. Deswegen wirkt Haut lebendig.</p>
+        <h4>Hautfarbe mit SSS</h4>
+        <ul>
+          <li>Gegenlicht-Kante: rötlich-orange (Blut unter Haut)</li>
+          <li>Dünnste Stellen (Ohren, Nasenspitze, Fingerkuppen): stärkstes SSS</li>
+          <li>Im Schatten: Haut kühler + leicht purpurn (Venen)</li>
+        </ul>
+        <div class="callout">SSS ist der Unterschied zwischen „sieht aus wie Haut" und „sieht aus wie Plastik".</div>
+        <div class="res-list">
+          <div class="res-item">Sinix Design – How to Paint Skin (YouTube)</div>
+          <div class="res-item">CGMA – Rendering Skin (Kurs)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">08</span>
+        <span class="sum-title">Reflektierte Farbe / Color Bounce</span>
+        <span class="sum-tag">Licht</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Objekte färben sich gegenseitig. Ein rotes Tuch neben einem Gesicht wirft rotes Licht auf die Haut. Boden reflektiert nach oben in Schatten. Himmel reflektiert auf horizontale Flächen.</p>
+        <h4>Regeln</h4>
+        <ul>
+          <li>Bounced light ist immer schwächer und diffuser als direktes Licht</li>
+          <li>Bounced light liegt im <strong>Schatten</strong>, nie in der Lichtstelle</li>
+          <li>Stärke abhängig von: Entfernung, Albedo der Oberfläche, Winkel</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Marco Bucci – Color Bounce Demo (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">09</span>
+        <span class="sum-title">Hauttöne — Undertones & Ethnische Vielfalt</span>
+        <span class="sum-tag">Figur</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Haut hat immer einen Undertone: <strong>gelblich (olive), rötlich, bläulich</strong>. Der Value variiert stark, der Undertone weniger als du denkst.</p>
+        <h4>Dunklere Hauttöne</h4>
+        <p>Fehler: Grundhautton einfach verdunkeln (= schmutziges Braun). Richtig: Sättigung hochhalten, Undertones verstärken, SSS ist noch wichtiger sichtbar.</p>
+        <h4>Helle Hauttöne</h4>
+        <p>Fehler: rosa+weiß. Richtig: gelb-orange Basis, Rötungen sind lokal (Wangen, Nase), Schatten ins Kühle.</p>
+        <div class="swatches">
+          <div class="sw" style="background:#f4c9a0" title="Hell warm"></div>
+          <div class="sw" style="background:#d4956a" title="Mittel warm"></div>
+          <div class="sw" style="background:#a06030" title="Dunkel warm"></div>
+          <div class="sw" style="background:#5a2a10" title="Sehr dunkel"></div>
+        </div>
+        <div class="res-list">
+          <div class="res-item">Sinix – Painting Diverse Skin Tones (YouTube)</div>
+          <div class="res-item">Paintable.cc – Skin Tone Guide</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">10</span>
+        <span class="sum-title">Limitierte Palette — mehr Harmonie, weniger Chaos</span>
+        <span class="sum-tag">Palette</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Profis arbeiten oft mit 3–5 Farben und einem Neutral. Warum? Weil <strong>Harmonie durch Beschränkung entsteht</strong> — nicht durch mehr Auswahl.</p>
+        <h4>Klassische limitierte Paletten</h4>
+        <ul>
+          <li><strong>Zorn-Palette:</strong> Titanweiß, Kadmiumrot, Kadmiumgelb, Elfenbeinschwarz → mischt nahezu alles</li>
+          <li><strong>Primäre Triade:</strong> Warmes Rot, Kühles Gelb, Kühles Blau + Weiß</li>
+          <li><strong>Gamut-Palette:</strong> 2 Anker-Farben + Neutral + ein Accent</li>
+        </ul>
+        <div class="callout">Wenn du eine neue Farbe aus der Tube drückst, frag zuerst: kann ich das mischen?</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">11</span>
+        <span class="sum-title">Color Script — Farbe als Erzählung</span>
+        <span class="sum-tag">Komposition</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Pixar und Ghibli planen Farbwechsel wie Musik — <strong>jede Szene hat eine emotionale Farbtemperatur</strong>. Warm = Sicherheit/Freude/Energie, Kalt = Trauer/Gefahr/Distanz.</p>
+        <p>Für Illustration: Plane schon im Thumbnail welche Emotion die Farbpalette trägt. Das Bild fühlt sich kohärenter an.</p>
+        <h4>Übung</h4>
+        <p>Nimm ein bestehendes Bild und shift die gesamte Palette in Gegenrichtung. Was ändert sich emotional?</p>
+        <div class="res-list">
+          <div class="res-item">Art of — Inside Out Color Script (Google)</div>
+          <div class="res-item">Dice Tsutsumi & Robert Kondo – Schoolism Color/Light</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">12</span>
+        <span class="sum-title">Sättigungskurven — wann satt, wann grau?</span>
+        <span class="sum-tag">Kontrolle</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Sättigung ist nicht linear. <strong>Extremes Licht (highlight) und tiefer Schatten verlieren Sättigung</strong> — der Peak liegt im mittleren Halblicht.</p>
+        <p>Digital: Wenn du Highlights brightest, nie nur Value hochziehen. Auch Sättigung erhöhen → sonst wird Haut grau-weiß statt leuchtend.</p>
+        <h4>Goldene Kurve</h4>
+        <ul>
+          <li>Tiefschatten → wenig Sättigung, kühler</li>
+          <li>Halbschatten → maximale Sättigung</li>
+          <li>Volllicht / Highlight → wieder weniger Sättigung, wärmer</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">13</span>
+        <span class="sum-title">Kantenqualität & Farbe zusammendenken</span>
+        <span class="sum-tag">Rendering</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Scharfe Kanten ziehen Aufmerksamkeit. Weiche Kanten treten zurück. Aber: <strong>Kante + Farbkontrast zusammen</strong> = doppelte Kraft.</p>
+        <p>Fokuspunkt = schärfste Kante + höchster Farbkontrast + stärkster Value-Kontrast. Nicht alle drei überall — nur am wichtigsten Punkt.</p>
+        <div class="callout">Alles scharf = nichts scharf. Alles bunt = nichts auffällig.</div>
+        <div class="res-list">
+          <div class="res-item">Marco Bucci – „Edges" (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">14</span>
+        <span class="sum-title">Notan — Schwarz-Weiß Komposition zuerst</span>
+        <span class="sum-tag">Komposition</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Notan (日本語) = Gleichgewicht zwischen Licht- und Dunkelflächen. <strong>Bevor du eine Farbe wählst, muss das Notan funktionieren.</strong></p>
+        <p>Reduziere alles auf nur 2 Werte: schwarz oder weiß. Ist das Bild lesbar? Hat es einen klaren Fokus? Interessante Silhouetten?</p>
+        <h4>Übung</h4>
+        <p>5-Minuten-Skizzen mit nur 2 Markern (schwarz, weiß) — keine Grautöne, keine Details. Über Komposition nachdenken.</p>
+        <div class="res-list">
+          <div class="res-item">Gurney Journey – Notan Studies</div>
+          <div class="res-item">Graphic Novels als Notan-Referenz (Moebius, Otomo)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">15</span>
+        <span class="sum-title">Digitale Farbprobleme: Muddiness & Grey Ramp</span>
+        <span class="sum-tag">Digital</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>In Photoshop/Clip Studio mixen Brush-Strokes im sRGB-Raum → matschige Zwischentöne, graue Mitten. Das ist kein Skill-Problem, das ist Mathematik.</p>
+        <h4>Lösung</h4>
+        <ul>
+          <li>Photoshop: Edit → Color Settings → 16-bit, Linear Light</li>
+          <li>Procreate: Canvas → Color Profile → Display P3</li>
+          <li>Oder: weniger mischen, mehr separate Strokes setzen (Impressionisten-Technik)</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Ctrl+Paint – Digital Color (Free Course)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">16</span>
+        <span class="sum-title">Overlay & Color-Dodge: Licht digital malen</span>
+        <span class="sum-tag">Digital</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Layer-Modi sind Farbmathe. Die wichtigsten für Licht:</p>
+        <ul>
+          <li><strong>Overlay</strong>: Erhöht Kontrast + Sättigung gleichzeitig — ideal für Farbwash</li>
+          <li><strong>Color Dodge</strong>: Intensives, leuchtendes Licht. Vorsicht: übertreiben wirkt schnell billig</li>
+          <li><strong>Multiply</strong>: Schatten ohne Value-Verlust</li>
+          <li><strong>Color</strong>: Ändert nur Farbton, lässt Value intact — für Farbkorrekturen</li>
+        </ul>
+        <div class="callout">Color Dodge ist wie MSG: ein bisschen macht alles besser, zu viel ruiniert alles.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">17</span>
+        <span class="sum-title">Eyedropper-Falle & Color Pickup</span>
+        <span class="sum-tag">Workflow</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Digital-Künstler, die ständig sampeln (Eyedropper) um die nächste Farbe zu „finden", <strong>lernen keine Farbe</strong> — sie lernen zu navigieren.</p>
+        <p>Besser: <strong>Mische die nächste Farbe aktiv</strong>, dann überprüfe ob du richtig lagst. Mit der Zeit entwickelst du echtes Farbgefühl.</p>
+        <div class="callout">Der Eyedropper ist ein Korrekturtool, kein Mal-Tool.</div>
+        <h4>Ausnahme</h4>
+        <p>Photo-Bashing und Concept-Art-Production: Sampling ist legitim. Für Skill-Development: weglassen.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">18</span>
+        <span class="sum-title">Farbtemperatur im Portrait — das Gesicht aufteilen</span>
+        <span class="sum-tag">Figur</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Gesicht ist keine flache Monochrom-Fläche. Verschiedene Zonen haben verschiedene Farbtemperatur:</p>
+        <ul>
+          <li><strong>Stirn:</strong> gelblicher (mehr Öl, mehr Knochen)</li>
+          <li><strong>Wangen:</strong> rötlicher (Kapillarreiche Zone)</li>
+          <li><strong>Kinn/Schläfen:</strong> bläulicher (Bartschatten, Venen)</li>
+          <li><strong>Nasenspitze:</strong> rötlich + SSS</li>
+        </ul>
+        <p>Das macht Portraits interessant. Wer alles gleich rendert, bekommt Puppen-Effekt.</p>
+        <div class="res-list">
+          <div class="res-item">Andrew Loomis – Drawing the Head & Hands (Farbzone-Prinzip)</div>
+          <div class="res-item">Sinix Design – Portrait Colors (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">19</span>
+        <span class="sum-title">Komplementärfarben — nicht nur Kontrast, sondern Vibration</span>
+        <span class="sum-tag">Theorie</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Komplementärfarben nebeneinander <strong>vibrieren optisch</strong> — beide wirken gesättigter als alleine. Das ist ein physiologischer Effekt (Netzhaut-Ermüdung der Gegenfarbe).</p>
+        <p>Nutze das: Wenn du einen roten Charakter willst, der knallt — gib ihm einen grünen/teal Hintergrund. Nicht weil's hübsch ist, weil's <em>physikalisch lauter</em> ist.</p>
+        <div class="swatches">
+          <div class="sw" style="background:#d94f3d" title="Rot"></div>
+          <div class="sw" style="background:#3da56b" title="Komplementär Grün"></div>
+          <div class="sw" style="background:#e07c5a" title="Orange"></div>
+          <div class="sw" style="background:#5a8fe0" title="Komplementär Blau"></div>
+        </div>
+        <div class="res-list">
+          <div class="res-item">Josef Albers – Interaction of Color (App/Buch)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">20</span>
+        <span class="sum-title">Von S/W zu Farbe — der sicherste Workflow</span>
+        <span class="sum-tag">Workflow</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Der zuverlässigste Weg zu guten Farb-Illustrationen wenn man Value-solid ist:</p>
+        <ol>
+          <li><strong>Vollständiges Graustufenbild</strong> rendern (alle Values, alle Edges)</li>
+          <li>Layer Modus auf <strong>Multiply</strong> — male Schatten-Farbe (kühler Ton)</li>
+          <li>Layer Modus auf <strong>Overlay/Soft Light</strong> — male Licht-Farbe</li>
+          <li>Color-Layer für Lokalfarbe der Objekte</li>
+          <li>Korrekturen mit Hue/Saturation oder Gradient Maps</li>
+        </ol>
+        <div class="callout">Dieser Workflow trennt Value-Entscheidungen von Farb-Entscheidungen — deutlich weniger overwhelm.</div>
+        <div class="res-list">
+          <div class="res-item">Ctrl+Paint – Greyscale to Color (Free)</div>
+          <div class="res-item">Sinix – Painting Workflow Breakdown (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+  </div><!-- /topic-grid -->
+</div><!-- /color-section -->
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════ MANGA ═══ -->
+<div class="section manga-section" id="manga">
+  <div class="section-header">
+    <h2 style="color:var(--manga)">Manga zeichnen</h2>
+    <span>Stilistik · Technik · Workflow</span>
+  </div>
+
+  <div class="topic-grid">
+
+    <details>
+      <summary>
+        <span class="sum-num">M1</span>
+        <span class="sum-title">Manga-Proportionen vs. westliche Zeichnung</span>
+        <span class="sum-tag">Grundlage</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Du hast Anatomie-Training — der Unterschied: Manga <strong>vereinfacht und übertreibt bewusst</strong>. Kleinerer Mund, kleinere Nase, größere Augen, längere Beine (8–9 Köpfe statt 7,5).</p>
+        <p>Das ist keine Unwissenheit, das ist <strong>stilisierte Grammatik</strong>. Verstehe erst echte Anatomie (hast du), dann brich sie bewusst.</p>
+        <div class="callout">Otomo (Akira) zeichnet fast realistisch. Toriyama (DBZ) extrem vereinfacht. Beide sind Meister — aus dem gleichen Verständnis.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M2</span>
+        <span class="sum-title">Manga-Augen — Konstruktion, nicht Kopieren</span>
+        <span class="sum-tag">Gesicht</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Manga-Augen sind keine Augen — sie sind <strong>Icons für emotionalen Zustand</strong>. Trotzdem haben sie eine Konstruktionslogik:</p>
+        <ul>
+          <li>Oberes Lid dominiert: dick, expressiv</li>
+          <li>Unteres Lid: meistens eine einfache Kurve</li>
+          <li>Highlight-Platzierung entscheidet Charakter-Feeling</li>
+          <li>Iris-Größe = Unschuld-Skala (größer = jünger/niedlicher)</li>
+        </ul>
+        <h4>Highlight-Typen</h4>
+        <ul>
+          <li>Oben rechts groß + unten links klein = klassisch shojo</li>
+          <li>Nur ein scharfer Spot = cool, shounen</li>
+          <li>Kein Highlight = tot, bedrohlich, leer</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Mark Crilley – Manga Eye Anatomy (YouTube)</div>
+          <div class="res-item">Analytisches Studium: Inoue (Vagabond) vs. Araki (JoJo)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M3</span>
+        <span class="sum-title">Inking für Manga — Linienhierarchie</span>
+        <span class="sum-tag">Technik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Professionelle Manga-Inker verwenden <strong>3 Linienstärken als System</strong>:</p>
+        <ul>
+          <li><strong>Kontur (außen):</strong> dickste Linie → trennt Figur vom Hintergrund</li>
+          <li><strong>Innere Struktur:</strong> mittlere Linie → Faltenwürfe, Haare, Details</li>
+          <li><strong>Textur/Schatten:</strong> dünnste Linie → Crosshatching, feine Details</li>
+        </ul>
+        <p>Linienstärke nimmt zu: <strong>je näher zum Betrachter, desto dicker.</strong></p>
+        <div class="callout">Ein einheitlich dicker Strich lässt Manga flach aussehen. Liniendynamik = Tiefe.</div>
+        <div class="res-list">
+          <div class="res-item">Manga in Theory and Practice – Hirohiko Araki (Buch)</div>
+          <div class="res-item">Clip Studio – Manga Tools Tutorial</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M4</span>
+        <span class="sum-title">Panel-Layout & Lesefluss</span>
+        <span class="sum-tag">Storytelling</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Manga liest sich rechts nach links. Panels sind kein Raster — sie sind <strong>Rhythmus</strong>. Große Panels = langsam, gewichtig. Kleine Panels = schnell, hektisch.</p>
+        <h4>Panel-Prinzipien</h4>
+        <ul>
+          <li>Auge folgt dem Lesefluss + der <strong>Bewegungsrichtung der Figuren</strong></li>
+          <li>Bleeding (Panel-Grenzen überschreiten) = emotionale Intensität</li>
+          <li>Schwarze Panels = Zeitsprung, Pause, Stille</li>
+          <li>Splash-Page = emotionaler Höhepunkt — sparsam einsetzen</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Scott McCloud – Understanding Comics (Kein Manga, aber essenziell)</div>
+          <div class="res-item">Tezuka Productions – Tezuka Panel Analysis</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M5</span>
+        <span class="sum-title">Screentones — digital richtig anwenden</span>
+        <span class="sum-tag">Digital</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Screentones sind Rasterfolien, die Grautöne in Print simulieren (Offset-Druck kann kein echtes Grau). Digital: Clip Studio Paint hat die beste native Screentone-Library.</p>
+        <h4>Grundregeln</h4>
+        <ul>
+          <li>LPI (Lines Per Inch) = 60 für normalen Manga, 40 für grober Textur</li>
+          <li>Nie zwei Tones direkt überlagern → Moiré-Effekt</li>
+          <li>Gradient-Tones für Schatten (nicht flat tone auf Gesichter)</li>
+          <li>Flashy tones (Sparkle, Floral) sparsam für Shojo/Josei</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Clip Studio Tips – Screentone Guide</div>
+          <div class="res-item">Manga Material Store (Ressource)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M6</span>
+        <span class="sum-title">Speedlines & Effektlinien</span>
+        <span class="sum-tag">Technik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Speedlines kommunizieren <strong>Bewegung, Fokus und Emotion</strong> — nicht nur Geschwindigkeit.</p>
+        <ul>
+          <li><strong>Radial (zum Zentrum):</strong> Fokus auf Objekt/Charakter</li>
+          <li><strong>Horizontal parallel:</strong> Horizontale Bewegung</li>
+          <li><strong>Gebogen:</strong> Rotation, Wirbel</li>
+          <li><strong>Background-blur:</strong> Subjektive Kamera (Charakter bewegt sich, Hintergrund verwischt)</li>
+        </ul>
+        <p>Digital: Clip Studio Paint hat einen Speedline-Tool. Manuell für mehr Kontrolle und lebendige Qualität.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M7</span>
+        <span class="sum-title">Expressionen — übertreiben als Grammatik</span>
+        <span class="sum-tag">Ausdruck</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Manga-Expressionen sind oft <strong>physiologisch unmöglich</strong> — und das ist der Punkt. Sie kommunizieren Emotion direkt, ohne Realismus als Einschränkung.</p>
+        <ul>
+          <li>Chibi-Transformation (Körper schrumpft auf 2 Köpfe) = Komik/Niedlichkeit</li>
+          <li>Schweißtropfen außen am Kopf = Awkwardness</li>
+          <li>Kreuz-Ader an Schläfe = Wut</li>
+          <li>Nosebleed = Aufregung (Japan-spezifisch)</li>
+          <li>Azalea-Augen (Spiralen) = benommen/geschockt</li>
+        </ul>
+        <div class="callout">Diese Symbole sind eine erlernbare Sprache — kein Zufall.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M8</span>
+        <span class="sum-title">Hintergründe in Manga — und wann man sie weglässt</span>
+        <span class="sum-tag">Komposition</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Hintergründe sind in Manga <strong>selektiv</strong>. Nicht jedes Panel braucht einen. Fehlender Hintergrund = Fokus auf Emotion/Charakter.</p>
+        <h4>Wann Background?</h4>
+        <ul>
+          <li>Establishing Shot: immer (zeigt Ort)</li>
+          <li>Action: Speedlines oft effizienter als echte BGs</li>
+          <li>Dialog: oft abstrahiert oder weggelassen</li>
+          <li>Wichtige emotionale Momente: BG-Detail verstärkt</li>
+        </ul>
+        <h4>Perspektiv-Shortcuts</h4>
+        <p>1-Punkt-Perspektive für 80% aller Innenräume. 2-Punkt für dramatische Außenansichten. Clip Studio hat Perspektiv-Ruler.</p>
+        <div class="res-list">
+          <div class="res-item">Framed Ink – Marcos Mateu-Mestre (Buch)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M9</span>
+        <span class="sum-title">Referenz-Manga analysieren — wie Profis lernen</span>
+        <span class="sum-tag">Methodik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Nicht kopieren — <strong>analysieren</strong>. Nimm eine Seite von Berserk (Miura), Vagabond (Inoue) oder JoJo (Araki) und beantworte:</p>
+        <ul>
+          <li>Wie viele Linienstärken werden verwendet?</li>
+          <li>Wo ist das schwerste Schwarz? Warum dort?</li>
+          <li>Wie groß sind die Panels im Verhältnis?</li>
+          <li>Wo geht das Auge zuerst hin?</li>
+          <li>Wie wird Tiefe ohne Farbe erzeugt?</li>
+        </ul>
+        <div class="callout">Eine analysierte Seite bringt dir mehr als 10 kopierte.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">M10</span>
+        <span class="sum-title">Digitaler Manga-Workflow (Clip Studio)</span>
+        <span class="sum-tag">Workflow</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Professioneller Workflow für digitales Manga:</p>
+        <ol>
+          <li><strong>Rough/Storyboard:</strong> Grobe Panels, Story-Beats, Lesefluss</li>
+          <li><strong>Pencils:</strong> Saubere Konstruktion auf eigenem Layer</li>
+          <li><strong>Inks:</strong> G-Pen (variabel) für Konturen, Maru-Pen für Details</li>
+          <li><strong>Flats:</strong> Schwarzflächen, Haare, Kleidung</li>
+          <li><strong>Screentones:</strong> Schatten, Skin, Hintergründe</li>
+          <li><strong>Effects:</strong> Speedlines, Effekt-Tones</li>
+          <li><strong>Text/SFX:</strong> Sprechblasen, Soundeffekte</li>
+        </ol>
+        <div class="res-list">
+          <div class="res-item">Clip Studio Official – Manga Tutorial Series</div>
+          <div class="res-item">Let's Make a Manga (YouTube)</div>
+        </div>
+      </div>
+    </details>
+
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════ SPEED ═══ -->
+<div class="section speed-section" id="speed">
+  <div class="section-header">
+    <h2 style="color:var(--speed)">Schneller & Fertiger werden</h2>
+    <span>Deliberate Practice · Workflow · Finishing</span>
+  </div>
+
+  <div class="topic-grid">
+
+    <details>
+      <summary>
+        <span class="sum-num">S1</span>
+        <span class="sum-title">Deliberate Practice — warum „einfach mehr zeichnen" nicht reicht</span>
+        <span class="sum-tag">Methodik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>10.000 Stunden funktioniert nur mit <strong>deliberate practice</strong>: spezifisches Ziel, sofortiges Feedback, außerhalb der Komfortzone. Wer 10.000h Dinge zeichnet, die er schon kann, wird nicht besser.</p>
+        <h4>Richtige Übungs-Schleife</h4>
+        <ol>
+          <li>Identifiziere <em>genau</em> was schwach ist (nicht „Gesichter", sondern „Dreiviertelperspektive, linke Seite")</li>
+          <li>Übe nur das, 20–30 Minuten, mit voller Konzentration</li>
+          <li>Vergleiche mit Referenz, identifiziere Fehler</li>
+          <li>Repeat</li>
+        </ol>
+        <div class="callout">Eine Stunde bewusstes Üben schlägt 5 Stunden Sketching ohne Fokus.</div>
+        <div class="res-list">
+          <div class="res-item">Peak – Anders Ericsson (Buch, Quelle von „10.000h")</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S2</span>
+        <span class="sum-title">Thumbnail-First — niemals direkt ins Final</span>
+        <span class="sum-tag">Workflow</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Kompositions-Entscheidungen im 10×7cm Thumbnail zu treffen ist <strong>10× schneller</strong> als sie auf A3 zu korrigieren. Profis machen 5–10 Thumbnails bevor sie eine Linie final setzen.</p>
+        <h4>Was Thumbnails klären:</h4>
+        <ul>
+          <li>Notan (Licht/Dunkel-Verteilung)</li>
+          <li>Focal Point Placement</li>
+          <li>Lesefluss</li>
+          <li>Silhouette-Lesbarkeit</li>
+        </ul>
+        <div class="callout">Wenn das Thumbnail nicht funktioniert, funktioniert das fertige Bild auch nicht.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S3</span>
+        <span class="sum-title">Die 3-Pass-Methode — ohne Overworking fertig werden</span>
+        <span class="sum-tag">Finishing</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Bilder scheitern oft weil man zu früh zu viel Detail an der falschen Stelle macht. Lösung:</p>
+        <ol>
+          <li><strong>Pass 1 (Big Shapes):</strong> Nur große Formen, Values, Komposition. Kein Detail. 40% der Gesamtzeit.</li>
+          <li><strong>Pass 2 (Medium Detail):</strong> Wichtige Strukturen, Gesicht, Focal Area. 40% der Zeit.</li>
+          <li><strong>Pass 3 (Micro-Details):</strong> Nur auf dem Fokuspunkt. Alles andere bleibt roh. 20% der Zeit.</li>
+        </ol>
+        <div class="callout">Das Geheimnis von Concept Art: 80% des Bildes ist grob. Das Auge bemerkt es nicht.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S4</span>
+        <span class="sum-title">Gesture Drawing — richtig und regelmäßig</span>
+        <span class="sum-tag">Übung</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Nicht alle Gesture-Übungen sind gleich. <strong>30-Sekunden-Poses</strong> trainieren Line of Action und Gewicht. <strong>2-Minuten-Poses</strong> trainieren Konstruktion. Beides hat seinen Platz.</p>
+        <h4>Tools</h4>
+        <ul>
+          <li>Line of Action (line-of-action.com) — kostenlos, riesige Bibliothek</li>
+          <li>SenshiStock (DeviantArt) — Pose-Referenz-Packs</li>
+          <li>Quickposes.com — mit Timer</li>
+        </ul>
+        <h4>Was tatsächlich hilft</h4>
+        <p>Gesture nicht als „Aufwärmen" sehen, sondern als <strong>separates Skill</strong> das man aktiv trainiert. 15min täglich vor dem Zeichnen reichen.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S5</span>
+        <span class="sum-title">Reference — ohne Krücke, mit Absicht</span>
+        <span class="sum-tag">Methodik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Profis nutzen immer Reference. Der Unterschied: sie wissen <em>warum</em> und nutzen sie <em>anders</em>.</p>
+        <ul>
+          <li><strong>Für Konstruktion:</strong> Referenz voll verwenden — kein Schummeln</li>
+          <li><strong>Für Timing-Training:</strong> Referenz zuerst studieren, dann weglegen, aus Gedächtnis zeichnen, vergleichen</li>
+          <li><strong>Für Design:</strong> Referenz als Ausgangspunkt, nicht Endpunkt</li>
+        </ul>
+        <div class="callout">„Aus dem Kopf zeichnen" ist kein Zeichen von Talent — es ist ein Zeichen von gespeicherter Referenz.</div>
+        <div class="res-list">
+          <div class="res-item">Pinterest Boards (eigene Referenz-Sammlung aufbauen)</div>
+          <div class="res-item">PureRef (Desktop Reference Viewer — kostenlos, genial)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S6</span>
+        <span class="sum-title">Der Perfectionism-Loop — und wie man ihn bricht</span>
+        <span class="sum-tag">Psychologie</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Das Bild wird nie fertig weil es „noch nicht gut genug" ist. Das ist nicht Qualitäts-Bewusstsein — das ist <strong>Fear of Completion</strong>.</p>
+        <h4>Konkrete Hacks</h4>
+        <ul>
+          <li><strong>Time-box:</strong> 2-Stunden-Limit, dann muss das Bild raus. Kein Verhandeln.</li>
+          <li><strong>Öffentlich committen:</strong> „Dieses Bild ist am Freitag fertig" (Discord, Instagram) — externen Druck nutzen</li>
+          <li><strong>Funnel-Prinzip:</strong> 10 Roughs statt 1 Perfect. Quantität erzwingt Fertigstellung.</li>
+          <li><strong>Done-is-better-than-perfect:</strong> Archiviere und mach das nächste. Wachstum passiert durch Iteration.</li>
+        </ul>
+        <div class="callout">Dein bestes Bild ist dein nächstes — nicht das, das du gerade overworkst.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S7</span>
+        <span class="sum-title">Feedback-Loops — warum Isolation dich langsamer macht</span>
+        <span class="sum-tag">Wachstum</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Alleine zu üben ohne Feedback ist wie im Dunkeln schießen. Du weißt nicht was du triffst.</p>
+        <h4>Gute Feedback-Quellen</h4>
+        <ul>
+          <li><strong>Critique-Communities:</strong> r/ArtFundamentals, Concept Art.org</li>
+          <li><strong>Flip horizontally:</strong> Sofort sieht man Fehler die man blind geworden war</li>
+          <li><strong>Screenshot + zurückschauen:</strong> Next day mit frischen Augen</li>
+          <li><strong>Overlay mit Referenz:</strong> Digital: Referenz transparent überlagern und Unterschiede messen</li>
+        </ul>
+        <div class="callout">Das schärfste Feedback-Tool: dein eigenes Bild ausdrucken und an die Wand hängen. Distanz enthüllt Probleme.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S8</span>
+        <span class="sum-title">Mileage vs. Studie — beides, richtig balanciert</span>
+        <span class="sum-tag">Methodik</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Zwei Arten von Zeichenzeit haben unterschiedliche Rollen:</p>
+        <ul>
+          <li><strong>Studien (Deliberate Practice):</strong> Spezifische Schwäche verbessern, Referenz, Analyse. Anstrengend, wenig Spaß, maximales Wachstum.</li>
+          <li><strong>Mileage (Freies Zeichnen):</strong> Spaß, Ideen ausprobieren, Konfidenz aufbauen. Wenig Wachstum alleine, aber nötig für Motivation.</li>
+        </ul>
+        <p>Optimale Aufteilung laut Forschung: <strong>70% Studien, 30% freies Zeichnen.</strong></p>
+        <div class="callout">Die meisten hobbyzeichner machen 90% Mileage und wundern sich warum sie sich nicht verbessern.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S9</span>
+        <span class="sum-title">Sketchbook-Habit — täglich vs. selten gut</span>
+        <span class="sum-tag">Habit</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Tägliches Zeichnen, auch 10 Minuten, schlägt wöchentliche 3-Stunden-Sessions. Warum? <strong>Neurologische Verbindungen stärken sich durch Frequenz, nicht Dauer.</strong></p>
+        <h4>Habit-Stack</h4>
+        <ul>
+          <li>Direkt nach Kaffee/nach Aufwachen → Sketchbook öffnen</li>
+          <li>Sketchbook, kein digitales Gerät (weniger Friction)</li>
+          <li>Nie eine Session überspringen — lieber 3 Minuten als null</li>
+          <li>Schlechte Seiten erlaubt und gewollt — Volume ist das Ziel</li>
+        </ul>
+        <div class="res-list">
+          <div class="res-item">Atomic Habits – James Clear (Habit-Building Buch)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-num">S10</span>
+        <span class="sum-title">Brush Economy — weniger Varianten, schneller malen</span>
+        <span class="sum-tag">Workflow</span>
+        <span class="sum-arrow">›</span>
+      </summary>
+      <div class="card-body">
+        <p>Digitale Künstler verlieren Zeit durch Brush-Suche und Tool-Switching. Profis malen mit <strong>1–3 Brushes, Stunden lang.</strong></p>
+        <h4>Minimalstack</h4>
+        <ul>
+          <li><strong>1 Runder Grundpinsel</strong> (Hard oder leicht soft, pressure-sensitive) → für alles</li>
+          <li><strong>1 Textured Brush</strong> → für Surfaces, Atmosphäre</li>
+          <li><strong>Eyedropper als virtueller Brush</strong> (Alt+Click) → Mischen</li>
+        </ul>
+        <p>Jeder neue Brush ist eine neue Entscheidung. Entscheidungen kosten Zeit und mentale Energie.</p>
+        <div class="callout">Kim Jung Gi hat mit Kugelschreiber gezeichnet. Der Pinsel ist nicht das Problem.</div>
+      </div>
+    </details>
+
+  </div>
+</div>
+
+<footer>
+  <p>Advanced Art Guide · Teil von claude-learnings · Kuratiert von Aria ✦</p>
+</footer>
+
+<script>
+// Nav active-state on scroll
+const sections = document.querySelectorAll('.section');
+const links = document.querySelectorAll('nav a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(l => l.classList.remove('act'));
+    const id = e.target.id;
+    const link = document.querySelector(`nav a[href="#${id}"]`);
+    if (link) link.classList.add('act');
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => obs.observe(s));
+
+// Smooth close of other open details when one opens
+document.querySelectorAll('details').forEach(d => {
+  d.addEventListener('toggle', () => {
+    if (d.open) {
+      const grid = d.closest('.topic-grid');
+      if (!grid) return;
+      grid.querySelectorAll('details[open]').forEach(other => {
+        if (other !== d) other.removeAttribute('open');
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
