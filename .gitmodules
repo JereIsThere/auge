@@ -1,0 +1,3 @@
+[submodule "pages/claude-learnings"]
+	path = pages/claude-learnings
+	url = https://github.com/JereIsThere/claude-learnings
