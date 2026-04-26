@@ -19,6 +19,11 @@ const pageEntries = readdirSync(pagesDir)
 export default defineConfig({
   root: 'pages',
   publicDir: resolve(__dirname, 'public'),
+  server: {
+    allowedHosts: [
+      "test.jeremias-groehl.de"
+    ]
+  },
   build: {
     outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
@@ -26,7 +31,9 @@ export default defineConfig({
       input: {
         index: resolve(__dirname, 'pages/index.html'),
         ...pageEntries,
-      },
+      }, output: {
+        dir: "../public_html"
+      }
     },
   },
 });

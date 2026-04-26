@@ -6,13 +6,170 @@
     <title>auge</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
-  <body>
-    <main>
-      <h1>auge</h1>
-      <ul>
-        <li><a href="/seite-eins/">seite-eins</a></li>
-        <li><a href="/seite-zwei/">seite-zwei</a></li>
-      </ul>
+  <body class="home">
+    <div id="cur"></div>
+    <div id="cur-dot"></div>
+
+    <canvas id="cyr-canvas"></canvas>
+    <canvas id="ember-canvas"></canvas>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <!-- Corner ornaments -->
+    <svg class="oc tl" viewBox="0 0 56 56" fill="none">
+      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+    </svg>
+    <svg class="oc tr" viewBox="0 0 56 56" fill="none" style="transform:scaleX(-1)">
+      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+    </svg>
+    <svg class="oc bl" viewBox="0 0 56 56" fill="none" style="transform:scaleY(-1)">
+      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+    </svg>
+    <svg class="oc br" viewBox="0 0 56 56" fill="none" style="transform:scale(-1)">
+      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+    </svg>
+
+    <main class="stage">
+      <div class="orn">
+        <div class="orn-line"></div>
+        <span class="orn-sym">◈ &nbsp; ✦ &nbsp; ◈</span>
+        <div class="orn-line"></div>
+      </div>
+
+      <div class="title-wrap">
+        <h1 class="main-title" data-text="AUGE">AUGE</h1>
+      </div>
+      <span class="sub-cyr">ОКО ВИДИТ ВСЁ</span>
+      <span class="sub-de">das auge sieht alles</span>
+
+      <div class="links-stack">
+        <a href="/seite-eins/" class="art-link">
+          <span class="l-num">01</span>
+          <div class="l-div"></div>
+          <span class="l-name">seite-eins</span>
+          <span class="l-cyr">ЗАЙТЕ АЙНС</span>
+          <span class="l-arr">→</span>
+        </a>
+        <a href="/seite-zwei/" class="art-link">
+          <span class="l-num">02</span>
+          <div class="l-div"></div>
+          <span class="l-name">seite-zwei</span>
+          <span class="l-cyr">ЗАЙТЕ ЦВАЙ</span>
+          <span class="l-arr">→</span>
+        </a>
+      </div>
+
+      <div class="orn-b">
+        <div class="orn-line"></div>
+        <span style="color:#d4a200;font-size:.8rem">✦</span>
+        <div class="orn-line"></div>
+      </div>
     </main>
+
+    <script type="module">
+      // ── CURSOR ──────────────────────────────────────────────
+      const cur = document.getElementById('cur');
+      const dot = document.getElementById('cur-dot');
+      let cx = innerWidth/2, cy = innerHeight/2, tx = cx, ty = cy;
+      document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+      (function animCur() {
+        cx += (tx-cx)*0.14; cy += (ty-cy)*0.14;
+        cur.style.left = cx+'px'; cur.style.top = cy+'px';
+        dot.style.left = tx+'px'; dot.style.top  = ty+'px';
+        requestAnimationFrame(animCur);
+      })();
+      document.querySelectorAll('a').forEach(a => {
+        a.addEventListener('mouseenter', () => cur.style.transform = 'translate(-50%,-50%) scale(2.2)');
+        a.addEventListener('mouseleave', () => cur.style.transform = 'translate(-50%,-50%) scale(1)');
+      });
+
+      // ── CYRILLIC DRIFT ──────────────────────────────────────
+      const CYR = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+      const cC  = document.getElementById('cyr-canvas');
+      const cX  = cC.getContext('2d');
+      let glyphs;
+      function initCyr() {
+        cC.width = innerWidth; cC.height = innerHeight;
+        glyphs = Array.from({ length: Math.floor(innerWidth/30) }, () => ({
+          x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+          speed: Math.random()*0.35+0.08, a: Math.random()*0.1+0.02,
+          sz: Math.floor(Math.random()*10+9),
+          ch: CYR[Math.random()*CYR.length|0], tick: Math.random()*180,
+        }));
+      }
+      initCyr();
+      setInterval(() => {
+        cX.clearRect(0,0,cC.width,cC.height);
+        glyphs.forEach(g => {
+          g.tick++;
+          if (g.tick > 80+Math.random()*140) { g.ch=CYR[Math.random()*CYR.length|0]; g.tick=0; }
+          g.y += g.speed;
+          if (g.y > cC.height+20) { g.y=-20; g.x=Math.random()*cC.width; }
+          cX.font=`${g.sz}px Georgia,serif`;
+          cX.fillStyle=`rgba(107,0,204,${g.a})`;
+          cX.fillText(g.ch,g.x,g.y);
+        });
+      }, 40);
+
+      // ── EMBERS ──────────────────────────────────────────────
+      const eC  = document.getElementById('ember-canvas');
+      const eX  = eC.getContext('2d');
+      const ms  = { x: innerWidth/2, y: innerHeight/2 };
+      function initE() { eC.width=innerWidth; eC.height=innerHeight; }
+      initE();
+      document.addEventListener('mousemove', e => { ms.x=e.clientX; ms.y=e.clientY; });
+
+      const COLS = [[180,100,65],[270,90,58],[45,100,52]];
+      class Ember {
+        constructor() { this.born(); }
+        born() {
+          this.x=Math.random()*eC.width; this.y=Math.random()*eC.height;
+          this.vx=(Math.random()-.5)*.5; this.vy=-(Math.random()*.6+.15);
+          this.r=Math.random()*2.2+.4; this.life=1;
+          this.decay=Math.random()*.004+.0008;
+          const c=COLS[Math.random()*COLS.length|0];
+          this.h=c[0]; this.s=c[1]; this.l=c[2];
+        }
+        step() {
+          const dx=ms.x-this.x, dy=ms.y-this.y, d=Math.hypot(dx,dy);
+          if (d<220) { const f=(220-d)/220*.07; this.vx+=(dx/d)*f*.25; this.vy+=(dy/d)*f*.25; }
+          this.vx*=.988; this.vy*=.988; this.x+=this.vx; this.y+=this.vy;
+          this.life-=this.decay;
+          if (this.life<=0||this.x<0||this.x>eC.width||this.y<-10||this.y>eC.height) this.born();
+        }
+        draw() {
+          const a=this.life*.75;
+          eX.beginPath(); eX.arc(this.x,this.y,this.r,0,Math.PI*2);
+          eX.fillStyle=`hsla(${this.h},${this.s}%,${this.l}%,${a})`; eX.fill();
+          if (this.r>1.1) {
+            const g=eX.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r*5);
+            g.addColorStop(0,`hsla(${this.h},${this.s}%,${this.l}%,${a*.25})`);
+            g.addColorStop(1,'transparent');
+            eX.beginPath(); eX.arc(this.x,this.y,this.r*5,0,Math.PI*2);
+            eX.fillStyle=g; eX.fill();
+          }
+        }
+      }
+      const embers = Array.from({length:170}, ()=>new Ember());
+      (function frameE() {
+        eX.clearRect(0,0,eC.width,eC.height);
+        embers.forEach(e=>{e.step();e.draw();});
+        requestAnimationFrame(frameE);
+      })();
+
+      window.addEventListener('resize', ()=>{ initCyr(); initE(); });
+    </script>
   </body>
 </html>
