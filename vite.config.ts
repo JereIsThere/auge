@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync, statSync, existsSync, writeFileSync } from 'fs';
+import { readdirSync, statSync, existsSync, writeFileSync, rmSync } from 'fs';
 
 const pagesDir = resolve(__dirname, 'pages');
 
@@ -20,6 +20,13 @@ writeFileSync(
 );
 
 const OUTPUT_DIR = "../public_html"
+
+function wipeOutBuildDir() {
+  const distPath = resolve(__dirname, 'dist');
+  if (existsSync(distPath)) {
+    rmSync(distPath, { recursive: true, force: true });
+  }
+}
 
 export default defineConfig({
   root: 'pages',
@@ -41,4 +48,14 @@ export default defineConfig({
       }
     },
   },
+  plugins: [
+    {
+      name: 'wipe-build-dir',
+      apply: 'build',
+      enforce: 'pre',
+      buildStart() {
+        wipeOutBuildDir();
+      },
+    },
+  ],
 });
