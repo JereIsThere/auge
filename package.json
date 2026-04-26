@@ -10,6 +10,7 @@
     "deploy": "npm run build && rsync -avz --delete dist/ claude-user:/home/claude-user/public_html/"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"
   }
