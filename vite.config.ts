@@ -1,20 +1,23 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync, statSync } from 'fs';
+import { readdirSync, statSync, existsSync, writeFileSync } from 'fs';
 
 const pagesDir = resolve(__dirname, 'pages');
 
-import { existsSync } from 'fs';
+const pageNames = readdirSync(pagesDir).filter((name) => {
+  const dir = resolve(pagesDir, name);
+  return statSync(dir).isDirectory() && existsSync(resolve(dir, 'index.html'));
+});
 
-const pageEntries = readdirSync(pagesDir)
-  .filter((name) => {
-    const dir = resolve(pagesDir, name);
-    return statSync(dir).isDirectory() && existsSync(resolve(dir, 'index.html'));
-  })
-  .reduce<Record<string, string>>((acc, name) => {
-    acc[name] = resolve(pagesDir, name, 'index.html');
-    return acc;
-  }, {});
+const pageEntries = pageNames.reduce<Record<string, string>>((acc, name) => {
+  acc[name] = resolve(pagesDir, name, 'index.html');
+  return acc;
+}, {});
+
+writeFileSync(
+  resolve(pagesDir, 'pages.json'),
+  JSON.stringify(pageNames, null, 2),
+);
 
 export default defineConfig({
   root: 'pages',
