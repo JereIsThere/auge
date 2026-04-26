@@ -4,8 +4,13 @@ import { readdirSync, statSync } from 'fs';
 
 const pagesDir = resolve(__dirname, 'pages');
 
+import { existsSync } from 'fs';
+
 const pageEntries = readdirSync(pagesDir)
-  .filter((name) => statSync(resolve(pagesDir, name)).isDirectory())
+  .filter((name) => {
+    const dir = resolve(pagesDir, name);
+    return statSync(dir).isDirectory() && existsSync(resolve(dir, 'index.html'));
+  })
   .reduce<Record<string, string>>((acc, name) => {
     acc[name] = resolve(pagesDir, name, 'index.html');
     return acc;
