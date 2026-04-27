@@ -11,3 +11,6 @@ pages/regex/index.html
 pages/latex/index.html
 pages/data-structures-algorithms/index.html
 pages/tensorflow-keras/index.html
+
+# QA-Artefakte (PDF wird vom build-pptx-Workflow erzeugt, pptx ist Source-of-Truth)
+docs/auge-status.pdf
