@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Prompt Builder — n8n-Style Nodes, Wildcard-Variablen und direkte Gemini-Anbindung. — auge." />
+    <title>Prompt Builder · auge</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Zum Inhalt springen</a>
+    <main id="main">
+      <a href="/" aria-label="Zurück zur Übersicht">← zurück</a>
+      <h1>Prompt Builder</h1>
+
+      <div id="pb-root">
+
+        <!-- Toolbar -->
+        <div id="pb-toolbar" role="toolbar" aria-label="Nodes hinzufügen">
+          <span class="tb-lbl">+ Node</span>
+          <button class="tb-btn tb-system"    data-type="system">System</button>
+          <button class="tb-btn tb-user"      data-type="user">User</button>
+          <button class="tb-btn tb-assistant" data-type="assistant">Assistant</button>
+          <button class="tb-btn tb-variable"  data-type="variable">✱ Variable</button>
+          <div class="tb-gap"></div>
+          <button class="tb-btn tb-sec" id="btn-export-n8n" title="Als n8n Workflow exportieren">↓ n8n</button>
+          <button class="tb-btn tb-sec" id="btn-clear">Alles löschen</button>
+        </div>
+
+        <!-- Two-column layout: canvas + sidebar -->
+        <div id="pb-layout">
+
+          <!-- Node canvas -->
+          <div id="pb-canvas">
+            <div id="pb-nodes" role="list" aria-label="Prompt Nodes"></div>
+            <div id="pb-empty">
+              <p>Keine Nodes — füge welche über die Toolbar hinzu.</p>
+              <p class="pb-empty-hint">System → User → ✱ Variable → Gemini</p>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <aside id="pb-sidebar">
+            <section class="pb-panel">
+              <h2 class="pb-panel-h">Assembled Prompt</h2>
+              <pre id="pb-preview" aria-live="polite"></pre>
+              <button id="btn-copy" class="tb-btn tb-sec">Kopieren</button>
+            </section>
+
+            <section class="pb-panel">
+              <h2 class="pb-panel-h">Gemini</h2>
+              <div class="pb-row">
+                <label for="pb-apikey" class="pb-lbl">API Key</label>
+                <input
+                  type="password"
+                  id="pb-apikey"
+                  class="pb-inp"
+                  placeholder="AIza..."
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+              <div class="pb-row">
+                <label for="pb-model" class="pb-lbl">Modell</label>
+                <select id="pb-model" class="pb-inp">
+                  <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                  <option value="gemini-2.0-flash-thinking-exp">gemini-2.0-flash-thinking</option>
+                  <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                </select>
+              </div>
+              <button id="btn-send" class="tb-btn tb-gemini">▶ Senden</button>
+              <div id="pb-err" class="pb-err" hidden></div>
+              <div id="pb-resp-wrap" hidden>
+                <p class="pb-lbl" style="margin-top:0.8rem;">Antwort</p>
+                <pre id="pb-resp"></pre>
+              </div>
+            </section>
+          </aside>
+
+        </div><!-- /pb-layout -->
+      </div><!-- /pb-root -->
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
