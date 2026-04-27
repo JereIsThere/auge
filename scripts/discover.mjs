@@ -67,7 +67,7 @@ function stripFirstH1(md) {
 }
 
 function renderTopicPage(title, readmeMd, levels) {
-  const readmeHtml = marked.parse(stripFirstH1(readmeMd));
+  const readmeHtml = readmeMd ? marked.parse(stripFirstH1(readmeMd)) : '';
   const availableLevels = levels.filter(l => l.content !== null);
 
   const levelsHtml = availableLevels.map(l => {
@@ -150,12 +150,12 @@ export function discoverAndGenerate() {
     for (const slug of readdirSync(submoduleDir).sort()) {
       const subPath = resolve(submoduleDir, slug);
       const readmePath = resolve(subPath, 'README.md');
-      if (!isDir(subPath) || !existsSync(readmePath)) continue;
+      if (!isDir(subPath)) continue;
       if (slug === ART_ADVANCED_EXEMPT) continue;
 
-      const readmeMd = readFileSync(readmePath, 'utf8');
-      const title = titleFromMarkdown(readmeMd, slug);
-      const description = descriptionFromMarkdown(readmeMd);
+      const readmeMd = existsSync(readmePath) ? readFileSync(readmePath, 'utf8') : null;
+      const title = readmeMd ? titleFromMarkdown(readmeMd, slug) : slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const description = readmeMd ? descriptionFromMarkdown(readmeMd) : '';
 
       const levelData = LEVELS.map(level => ({
         name: level,
