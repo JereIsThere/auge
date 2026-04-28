@@ -8,6 +8,7 @@
     "render-learnings": "node scripts/render-learnings.mjs",
     "build": "npm run render-learnings && tsc --noEmit && vite build",
     "preview": "vite preview",
+    "auto-update": "bash scripts/auto-update.sh",
     "deploy": "npm run build && rsync -avz --delete dist/ claude-user:/home/claude-user/public_html/"
   },
   "devDependencies": {
