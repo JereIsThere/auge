@@ -494,6 +494,106 @@ body:not(.home) #app p {
   transform: translateX(0);
 }
 
+/* ── Lernpfade-Sektion (Home) ───────────────────────────────── */
+
+.learnings-section {
+  margin-top: 5rem;
+  padding-top: 1rem;
+}
+
+.learnings-cyr {
+  margin-bottom: 2rem;
+  color: var(--purple);
+  opacity: 0.45;
+}
+
+.learnings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.learning-card {
+  --accent: #6b00cc;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.95rem 1.1rem 0.95rem 1.05rem;
+  text-decoration: none;
+  border: 1px solid rgba(107,0,204,0.2);
+  border-left: 2px solid var(--accent);
+  border-radius: 0.4rem;
+  background: linear-gradient(135deg, rgba(6,0,14,0.55), rgba(107,0,204,0.025));
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+}
+
+.learning-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.learning-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.learning-card:hover::before { opacity: 1; }
+
+.learning-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.learning-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.learning-slug {
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  opacity: 0.75;
+  text-transform: lowercase;
+}
+
+.learning-desc {
+  font-family: Georgia, serif;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgba(200,192,216,0.55);
+  margin-top: 0.15rem;
+}
+
+.learning-arr {
+  color: var(--accent);
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s, transform 0.2s;
+  align-self: center;
+}
+.learning-card:hover .learning-arr {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* ── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
@@ -514,7 +614,8 @@ body:not(.home) #app p {
     padding: 1.4rem 1.2rem;
   }
 
-  .guides-grid {
+  .guides-grid,
+  .learnings-grid {
     grid-template-columns: 1fr;
   }
 

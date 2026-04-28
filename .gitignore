@@ -1,7 +1,19 @@
 node_modules
 dist
 pages/pages.json
+pages/learnings.json
 .DS_Store
 *.log
 .env
 .vite
+
+# Auto-generated topic pages from claude-learnings (re-created by
+# scripts/render-learnings.mjs on every build). The 5 hand-crafted
+# guide directories are kept; everything else under public/ is treated
+# as build output.
+public/*/
+!public/1password-guide/
+!public/rustdesk-guide/
+!public/key-rotation-guide/
+!public/regex-guide/
+!public/llm-guide/

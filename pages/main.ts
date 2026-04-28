@@ -1,5 +1,6 @@
 import pages from './pages.json';
 import guides from './guides.json';
+import learnings from './learnings.json';
 
 type Guide = {
   slug: string;
@@ -7,6 +8,12 @@ type Guide = {
   icon: string;
   accent: string;
   section: string;
+  desc: string;
+};
+
+type Learning = {
+  slug: string;
+  title: string;
   desc: string;
 };
 
@@ -53,5 +60,24 @@ if (guidesStack) {
             </a>`).join('')}
         </div>
       </div>`)
+    .join('');
+}
+
+const learningsStack = document.querySelector<HTMLDivElement>('#learnings-stack');
+if (learningsStack) {
+  // Cycle a small palette so cards aren't all the same colour but stay
+  // within the AUGE theme.
+  const palette = ['#a855f7', '#06b6d4', '#84cc16', '#f59e0b', '#ef4444', '#4f8cff', '#d4a200'];
+
+  learningsStack.innerHTML = (learnings as Learning[])
+    .map((l, i) => `
+      <a href="/${l.slug}/" class="learning-card" style="--accent:${palette[i % palette.length]}">
+        <div class="learning-body">
+          <span class="learning-title">${l.title}</span>
+          <span class="learning-slug">${l.slug}</span>
+          ${l.desc ? `<span class="learning-desc">${l.desc}</span>` : ''}
+        </div>
+        <span class="learning-arr">→</span>
+      </a>`)
     .join('');
 }
