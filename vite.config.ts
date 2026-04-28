@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
+import { existsSync, readdirSync, statSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { readdirSync, statSync, existsSync, writeFileSync, rmSync } from 'fs';
+import { defineConfig } from 'vite';
 
 const pagesDir = resolve(__dirname, 'pages');
 
@@ -19,43 +19,24 @@ writeFileSync(
   JSON.stringify(pageNames, null, 2),
 );
 
-const OUTPUT_DIR = "../public_html"
-
-function wipeOutBuildDir() {
-  const distPath = resolve(__dirname, 'dist');
-  if (existsSync(distPath)) {
-    rmSync(distPath, { recursive: true, force: true });
-  }
-}
+const OUTPUT_DIR = resolve(__dirname, '..', 'public_html');
 
 export default defineConfig({
   root: 'pages',
-  publicDir: resolve(__dirname, 'public', OUTPUT_DIR),
+  publicDir: resolve(__dirname, 'public'),
   server: {
     allowedHosts: [
       "test.jeremias-groehl.de"
     ]
   },
   build: {
-    outDir: resolve(__dirname, 'dist'),
+    outDir: OUTPUT_DIR,
     emptyOutDir: true,
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'pages/index.html'),
         ...pageEntries,
-      }, output: {
-        dir: OUTPUT_DIR,
-      }
-    },
-  },
-  plugins: [
-    {
-      name: 'wipe-build-dir',
-      apply: 'build',
-      enforce: 'pre',
-      buildStart() {
-        wipeOutBuildDir();
       },
     },
-  ],
+  },
 });

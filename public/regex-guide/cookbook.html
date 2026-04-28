@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cookbook</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Koch</span>
+  <div class="voice">„Bonjour. Heute kochen wir. Du bringst die Strings, ich bringe die Rezepte. Nicht alles schmeckt gut, aber alles ist auf dem Teller."</div>
+
+  <h1>Cookbook</h1>
+  <p class="lead">Klassische Patterns, von leicht bis übel. Jeder Eintrag mit Hauptzutat, kurzer Beschreibung und Service-Hinweisen — denn oft ist Regex nicht das richtige Werkzeug für die Sauce.</p>
+
+  <h2>Vorspeise: Whitespace trimmen</h2>
+<pre><code>^\s+|\s+$
+# In Replace-Operation durch "" ersetzen → Leading + Trailing Whitespace weg.</code></pre>
+  <p>Geht in jeder Engine. Aber: <code>str.trim()</code> in deiner Programmiersprache ist schneller und klarer. Regex hier nur, wenn du in <code>sed</code> hängst.</p>
+
+  <h2>Zwischengang: doppelte Leerzeichen reduzieren</h2>
+<pre><code>\s{2,}    →   " "
+# Mehrere Whitespaces (auch Tabs/Newlines) durch ein einzelnes Space ersetzen.</code></pre>
+
+  <h2>Hauptgang 1: IPv4-Adresse erkennen (grob)</h2>
+<pre><code>\b(?:\d{1,3}\.){3}\d{1,3}\b</code></pre>
+  <p>Findet alles, was nach IPv4 aussieht. Ist <em>nicht</em> validierend — <code>999.999.999.999</code> wird auch gematched. Für echte Validierung:</p>
+<pre><code>\b(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b</code></pre>
+  <p>Funktioniert. Lesbar? Nein. Nutze in Code lieber <code>inet_aton()</code> oder die IP-Library deiner Sprache.</p>
+
+  <h2>Hauptgang 2: URL extrahieren (pragmatisch)</h2>
+<pre><code>https?://[^\s&lt;&gt;"]+
+# Schnappt http(s)-URLs bis zum nächsten Whitespace, Klammer oder Quote.</code></pre>
+  <p>Die „korrekte" URL-Regex (RFC 3986) ist 600 Zeichen lang und fast nie das, was du willst. Obige Variante ist 90% der Use-Cases.</p>
+
+  <h2>Hauptgang 3: deutsche Postleitzahl</h2>
+<pre><code>\b\d{5}\b</code></pre>
+  <p>Nicht streng — matcht auch 99999 oder 00000, was es nicht gibt. Reicht aber zum Extrahieren aus Texten.</p>
+
+  <h2>Hauptgang 4: Datum ISO 8601</h2>
+<pre><code>\b\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b
+# YYYY-MM-DD, halbwegs validiert. 2026-13-01 wird abgelehnt.</code></pre>
+
+  <h2>Hauptgang 5: deutscher IBAN (grob)</h2>
+<pre><code>\bDE\d{2}\s?(?:\d{4}\s?){4}\d{2}\b
+# Akzeptiert mit oder ohne Leerzeichen-Gruppen.</code></pre>
+  <p>Mathematische Prüfsumme (mod 97) prüft die Regex nicht. Dafür brauchst du Code.</p>
+
+  <h2>Hauptgang 6: doppelte Wörter</h2>
+<pre><code>\b(\w+)\s+\1\b
+# Findet "the the" oder "und und" — typische Tippfehler.</code></pre>
+
+  <h2>Hauptgang 7: Markdown-Links extrahieren</h2>
+<pre><code>\[([^\]]+)\]\(([^)]+)\)
+# Gruppe 1 = Link-Text, Gruppe 2 = URL.</code></pre>
+  <p>Wackelig bei verschachtelten Klammern in URLs (z.B. Wikipedia-Links). Aber für 95% der Fälle gut.</p>
+
+  <h2>Hauptgang 8: erste Zeile / letzte Zeile eines Strings</h2>
+<pre><code>^[^\n]*       # erste Zeile (ohne Multiline-Flag matcht ^ nur am String-Anfang)
+[^\n]*$       # letzte Zeile</code></pre>
+
+  <h2>Beilage: Versionsnummer</h2>
+<pre><code>v?\d+\.\d+(?:\.\d+)?(?:[-+][\w.-]+)?
+# v1.2.3, 4.5, 1.0.0-beta.1, 2.0+build.42</code></pre>
+
+  <h2>Bittersaurer Hauptgang: E-Mail</h2>
+<pre><code>[\w.+-]+@[\w-]+(?:\.[\w-]+)+
+# Schnappt 99% der E-Mails. Lehnt korrekte aber komische ab (Plus-Tags okay, IDN nicht).</code></pre>
+  <div class="callout warn">
+    <strong>⚠️ Aus der Küche</strong>
+    Es gibt KEINE „korrekte" E-Mail-Regex, die dir die Mühe nimmt. RFC 5322 erlaubt absurd viel (Leerzeichen, geschachtelte Kommentare, Unicode). Validiere E-Mails am Ende durch <em>einen Bestätigungs-Link an die Adresse</em> — das ist die einzige Wahrheit. Regex ist nur ein Vorhof.
+  </div>
+
+  <h2>Dessert: HTML-Tags grob entfernen</h2>
+<pre><code>&lt;[^&gt;]+&gt;     →   ""</code></pre>
+  <p>Schnell. Tut für quick-and-dirty. Schlägt fehl bei Attributen mit <code>&gt;</code> drin (selten), Skript-Inhalten, CDATA. Wenn du HTML <em>ernst</em> verarbeitest, nimm einen Parser (BeautifulSoup, jsdom, html5ever). <strong>Regex ist kein HTML-Parser.</strong> Dieser Satz ist eine Felsenwand.</p>
+
+  <h2>Service: Substitution mit Backreferences</h2>
+<pre><code># Datum US → DE umstellen
+Suche:    (\d{2})/(\d{2})/(\d{4})
+Ersetze:  $3-$1-$2
+Ergebnis: 04/28/2026 → 2026-04-28</code></pre>
+
+<pre><code># Markdown-Header in HTML
+Suche:    ^# (.+)$
+Ersetze:  &lt;h1&gt;$1&lt;/h1&gt;</code></pre>
+
+  <h2>Aus der dunklen Küche: balancierte Klammern</h2>
+  <p>Du willst <code>(foo (bar) baz)</code> matchen, mit beliebiger Verschachtelung. <strong>Regex kann das in den meisten Engines nicht</strong>. Reguläre Sprachen sind nicht mächtig genug für balancierte Klammern.</p>
+
+  <p>Ausnahmen: PCRE und .NET haben Recursion (<code>(?R)</code>), die das ermöglichen. In allen anderen Engines: nimm einen Parser.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="backtracking.html">→ Weiter: Backtracking-Hölle</a>
+    <a class="btn ghost" href="flavors.html">Zurück: Dialekte</a>
+  </div>
+
+  <p class="signoff">— Bon appétit. Wenn etwas zu salzig ist, war Regex das falsche Gewürz.</p>
+  <footer>Kapitel 6 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

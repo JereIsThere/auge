@@ -30,11 +30,17 @@ body::before {
 /* ── Home (nur index) ───────────────────────────────────────── */
 
 body.home {
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
   width: 100vw;
   cursor: none;
 }
+
+body.home::-webkit-scrollbar { width: 6px; }
+body.home::-webkit-scrollbar-track { background: transparent; }
+body.home::-webkit-scrollbar-thumb { background: rgba(107,0,204,0.3); border-radius: 3px; }
+body.home::-webkit-scrollbar-thumb:hover { background: rgba(107,0,204,0.6); }
 
 #cur {
   position: fixed; z-index: 9999; pointer-events: none;
@@ -77,11 +83,12 @@ body.home {
 .oc.br { bottom: 1.4rem; right: 1.4rem; }
 
 .stage {
-  position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 10;
   text-align: center;
-  width: min(680px, 88vw);
+  width: min(880px, 90vw);
+  margin: 0 auto;
+  padding: 14vh 0 6rem;
 }
 
 .orn {
@@ -341,6 +348,152 @@ body:not(.home) #app p {
   letter-spacing: 0.05em;
 }
 
+/* ── Guides-Sektion (Home) ──────────────────────────────────── */
+
+.guides-section {
+  margin-top: 5rem;
+  padding-top: 1rem;
+}
+
+.orn-mid {
+  display: flex; align-items: center; gap: 1.2rem;
+  margin-bottom: 0.6rem; opacity: 0.55;
+}
+.orn-mid .orn-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan) 60%, transparent);
+}
+.orn-sym-mid {
+  color: var(--cyan); font-size: 0.7rem;
+  letter-spacing: 0.5em; opacity: 0.7;
+}
+
+.guides-cyr {
+  margin-bottom: 3rem;
+  color: var(--gold);
+  opacity: 0.45;
+}
+
+.guides-group {
+  margin-bottom: 3rem;
+}
+.guides-group:last-child { margin-bottom: 0; }
+
+.guides-group-head {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+.guides-group-title {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(212,162,0,0.7);
+  white-space: nowrap;
+}
+.guides-group-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(212,162,0,0.4), transparent);
+}
+
+.guides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.2rem;
+}
+
+.guide-card {
+  --accent: #6b00cc;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.3rem 1.3rem 1.3rem 1.4rem;
+  text-decoration: none;
+  border: 1px solid rgba(107,0,204,0.25);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, rgba(6,0,14,0.6), rgba(107,0,204,0.04));
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  text-align: left;
+}
+
+.guide-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.guide-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.5),
+    0 2px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.guide-card:hover::before { opacity: 1; }
+
+.guide-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 40%, transparent));
+}
+
+.guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: #fff;
+  font-weight: 600;
+}
+
+.guide-slug {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  opacity: 0.75;
+  text-transform: lowercase;
+}
+
+.guide-desc {
+  font-family: Georgia, serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(200,192,216,0.65);
+  margin-top: 0.2rem;
+}
+
+.guide-arr {
+  position: absolute;
+  right: 1rem; top: 1.2rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.guide-card:hover .guide-arr {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* ── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
@@ -351,13 +504,21 @@ body:not(.home) #app p {
 
 @media (max-width: 600px) {
   .oc, .l-cyr { display: none; }
-  
+
   .links-stack {
     grid-template-columns: 1fr;
     gap: 1.2rem;
   }
-  
+
   .art-link {
     padding: 1.4rem 1.2rem;
+  }
+
+  .guides-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stage {
+    padding-top: 8vh;
   }
 }

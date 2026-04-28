@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grundlagen — Install &amp; erste Verbindung</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Grundlagen — Install &amp; erste Verbindung</h1>
+  <p class="lead">Bevor du loslegst, lohnt es sich zu verstehen, wie RustDesk eigentlich tickt — IDs, Passwort-Modi, Verbindungsarten, Permissions. Sonst tappt man in jede Stolperfalle.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#wie-es-funktioniert">1. Wie RustDesk funktioniert (in 60 Sekunden)</a></li>
+      <li><a href="#install">2. Installation pro Plattform</a></li>
+      <li><a href="#id">3. Die 9-stellige ID — was sie ist und wie sie sich ändert</a></li>
+      <li><a href="#passwords">4. One-Time vs. Permanent Password</a></li>
+      <li><a href="#first-connect">5. Erste Verbindung Schritt-für-Schritt</a></li>
+      <li><a href="#permissions">6. Permissions — was die Gegenseite darf</a></li>
+      <li><a href="#unattended">7. Unattended Access einrichten</a></li>
+    </ul>
+  </div>
+
+  <h2 id="wie-es-funktioniert">1. Wie RustDesk funktioniert (in 60 Sekunden)</h2>
+  <p>Drei Komponenten arbeiten zusammen:</p>
+  <ul>
+    <li><strong>hbbs</strong> (ID/Rendezvous-Server) — Telefonbuch. Speichert „ID 123 456 789 ist gerade an dieser IP erreichbar". Kein Datenverkehr läuft hier durch.</li>
+    <li><strong>hbbr</strong> (Relay-Server) — Notausgang. Wenn beide Peers hinter strikten NATs sitzen und kein Direkt-Connect klappt, läuft der Traffic verschlüsselt durch hier durch.</li>
+    <li><strong>Client</strong> — die App, die du installierst. Sowohl der Steuernde als auch der Gesteuerte nutzen <em>dieselbe</em> App.</li>
+  </ul>
+
+  <p>Standard: RustDesk benutzt die öffentlichen Server von <code>rustdesk.com</code>. Du kannst stattdessen <a href="selfhost.html">eigene betreiben</a> — das ist der Hauptgrund, warum man RustDesk nutzt.</p>
+
+  <h2 id="install">2. Installation pro Plattform</h2>
+
+  <h3>Windows</h3>
+  <p>Download von <code>rustdesk.com</code>. Beim Start hast du drei Optionen:</p>
+  <ul>
+    <li><strong>Run</strong> — Portable. App läuft, aber nur solange du eingeloggt bist und sie offen ist. Gut zum Ausprobieren.</li>
+    <li><strong>Install</strong> — Volle Installation, läuft als Windows-Dienst. Pflicht für Unattended Access.</li>
+    <li><strong>Install via system service</strong> — wie oben, plus UAC-Bypass: du kannst remote auf Admin-Prompts klicken.</li>
+  </ul>
+
+  <div class="callout tip">
+    <strong>💡 Wichtig</strong>
+    Wenn du remote Software installieren oder UAC-Dialoge wegklicken willst, <em>muss</em> RustDesk als Service laufen. Sonst wird der UAC-Dialog dunkel angezeigt und Eingaben kommen nicht durch (Windows-Sicherheitsfeature).
+  </div>
+
+  <h3>macOS</h3>
+  <p>Download → in <code>/Applications</code> ziehen. Beim ersten Start <em>drei</em> Permissions setzen:</p>
+  <ol>
+    <li>Bildschirmaufnahme (Screen Recording)</li>
+    <li>Bedienungshilfen (Accessibility)</li>
+    <li>Eingabeüberwachung (Input Monitoring)</li>
+  </ol>
+  <p>Wer eine vergisst → schwarzes Bild oder Maus reagiert nicht. Nach dem Erteilen die App komplett beenden und neu starten (sonst greifen die Permissions nicht).</p>
+
+  <h3>Linux</h3>
+  <p><code>.deb</code>, <code>.rpm</code> oder AppImage. Wayland ist <em>noch immer</em> zickig — auf Wayland-Sessions geht oft nur View, kein Input. Workaround: zur X11-Session loggen.</p>
+
+<pre><code># Debian/Ubuntu
+sudo apt install ./rustdesk-1.x.x.deb
+
+# Service starten (für Unattended)
+sudo systemctl enable --now rustdesk</code></pre>
+
+  <h3>Android</h3>
+  <p>Aus dem Play Store oder als APK von <code>github.com/rustdesk/rustdesk</code> (offizielle Releases). Es gibt <em>zwei</em> Apps:</p>
+  <ul>
+    <li><strong>RustDesk</strong> — die normale App. Genug, um Android <em>zu steuern</em>.</li>
+    <li><strong>RustDesk Input</strong> — separate Sub-App. <em>Pflicht</em>, wenn jemand vom PC aus dein Android steuern soll. Liefert die Input-Methode, da Android das aus Sicherheitsgründen nicht in einer normalen App erlaubt.</li>
+  </ul>
+
+  <h3>iOS</h3>
+  <p>Im App Store. iOS lässt sich aus Apple-Restriktionen <em>nicht</em> fernsteuern — du kannst von iOS aus nur <em>steuernd</em> agieren, nicht gesteuert werden.</p>
+
+  <h2 id="id">3. Die 9-stellige ID</h2>
+  <p>Beim ersten Start würfelt RustDesk eine 9-stellige ID. Die ist an dein Gerät + die hbbs-Konfiguration gebunden. Wichtig:</p>
+
+  <ul>
+    <li>IDs werden in <code>~/.config/rustdesk/RustDesk.toml</code> (Linux/Mac) bzw. <code>%APPDATA%\RustDesk\config\RustDesk.toml</code> gespeichert.</li>
+    <li>Wenn du dieselbe Config kopierst, kriegst du dieselbe ID — nützlich zum Migrieren.</li>
+    <li>ID ändern: in der App auf das ✏️-Symbol neben der ID. Geht nur einmal alle paar Stunden (Anti-Spam).</li>
+    <li>IDs sind <em>pro Server</em>. Wechselst du den Rendezvous-Server, bekommst du eine neue ID.</li>
+  </ul>
+
+  <h2 id="passwords">4. One-Time vs. Permanent Password</h2>
+  <p>Unter dem ID-Feld siehst du ein Passwort-Feld mit einem 🔄-Symbol. Das ist der Kern der Sicherheit.</p>
+
+  <table>
+    <thead><tr><th>Modus</th><th>Wann</th></tr></thead>
+    <tbody>
+      <tr><td><strong>One-Time</strong> (Default)</td><td>6-stelliger Code, ändert sich bei jedem Verbinden. Optimal für „mein Vater ruft an, ich helfe einmal". Code per Telefon ansagen.</td></tr>
+      <tr><td><strong>Permanent</strong></td><td>Dauerhaftes Passwort. Pflicht für Unattended Access. Setz es in Settings → Security → Permanent Password.</td></tr>
+      <tr><td><strong>Beides aktiv</strong></td><td>Default-Verhalten: dein permanentes Passwort funktioniert, aber jemand kann sich auch mit One-Time-Code verbinden, wenn du den ansagst.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠️ Permanent Password ≠ schwaches Passwort</strong>
+    Wenn deine ID bekannt ist und das Permanent Password schwach, kann jeder Brute-Force versuchen. Mindestens 12 Zeichen, generiert aus deinem Passwort-Manager. RustDesk hat eingebaute Brute-Force-Sperre, aber auf das eigene Setup achten.
+  </div>
+
+  <h2 id="first-connect">5. Erste Verbindung Schritt-für-Schritt</h2>
+  <ol>
+    <li>Auf <strong>Gerät A</strong> (das gesteuert wird): RustDesk öffnen. ID + 6-stelliger Code stehen prominent oben.</li>
+    <li>Auf <strong>Gerät B</strong> (das steuert): RustDesk öffnen. Im großen Eingabefeld die ID von A eintippen → "Connect".</li>
+    <li>A bekommt einen Permission-Dialog: „User XYZ möchte sich verbinden, View / Control / File Transfer …"</li>
+    <li>Code von A in B eingeben → Verbindung steht.</li>
+  </ol>
+
+  <p>Beim ersten Connect wird ein Public-Key-Fingerprint ausgetauscht („Trust on first use"). Bei späteren Verbindungen zur selben ID wird der Fingerprint geprüft. Ändert er sich → dicke Warnung („Key Mismatch", siehe <a href="troubleshooting.html">Troubleshooting</a>).</p>
+
+  <h2 id="permissions">6. Permissions — was die Gegenseite darf</h2>
+  <p>Pro Verbindung kann die <em>gesteuerte</em> Seite einzeln freigeben:</p>
+
+  <table>
+    <tbody>
+      <tr><td><strong>Keyboard / Mouse</strong></td><td>Eingabe-Steuerung. Aus = nur View-Modus.</td></tr>
+      <tr><td><strong>Clipboard</strong></td><td>Copy-Paste zwischen Geräten. Praktisch, aber wer paranoid ist: aus.</td></tr>
+      <tr><td><strong>File transfer</strong></td><td>Drag-and-Drop von Dateien.</td></tr>
+      <tr><td><strong>Audio</strong></td><td>System-Sound vom gesteuerten zum steuernden Gerät.</td></tr>
+      <tr><td><strong>TCP tunneling</strong></td><td>Port-Forwarding über die Verbindung. Für Profis (siehe <a href="profi.html#tunneling">Profi-Tipps</a>).</td></tr>
+      <tr><td><strong>Recording</strong></td><td>Sitzung mitschneiden — wer das tut, sieht der andere.</td></tr>
+      <tr><td><strong>Restart</strong></td><td>Remote-Reboot des Geräts.</td></tr>
+      <tr><td><strong>Block user input</strong></td><td>Lokale Maus/Tastatur sperren während Session — Standard-Pranger-Feature.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Setz die Defaults global unter <strong>Settings → Security → Permissions</strong>. Pro Verbindung kannst du sie weiter eingrenzen.</p>
+
+  <h2 id="unattended">7. Unattended Access einrichten</h2>
+  <p>„Unattended" = du steuerst ein Gerät, an dem niemand sitzt, der den Code ansagen könnte. Klassisch: dein Heim-PC vom Office aus.</p>
+
+  <ol>
+    <li>Auf dem Zielgerät RustDesk <em>als Service</em> installieren (Windows: "Install via system service"; Linux: <code>systemctl enable --now rustdesk</code>).</li>
+    <li>Settings → Security → <strong>Permanent Password</strong> setzen.</li>
+    <li>Optional: <strong>Approve mode</strong> auf <code>password</code> stellen (statt <code>password and click</code>) → keine manuelle Bestätigung am Zielgerät nötig.</li>
+    <li>ID + Permanent Password im <strong>Address Book</strong> auf dem steuernden Gerät speichern (Sidebar → Address Book → "+").</li>
+    <li>Test-Connect, dann Reboot, dann nochmal Test-Connect — der zweite Test ist der entscheidende.</li>
+  </ol>
+
+  <div class="callout tip">
+    <strong>💡 Pro-Move für Unattended-Setups</strong>
+    Setz zusätzlich eine <strong>IP-Allowlist</strong> (Settings → Security → IP Allowlist) — nur Verbindungen von deinen bekannten IPs werden überhaupt akzeptiert. Brute-Force-resistent, weil ein Angreifer schon den Verbindungs-Versuch nicht aufbauen kann. Funktioniert auch, wenn du eine dynamische IP hast — ein CIDR-Bereich deines ISPs reicht.
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn" href="plattformen.html">→ Weiter: Windows ↔ Android</a>
+    <a class="btn ghost" href="index.html">Zurück zur Übersicht</a>
+  </div>
+
+  <footer>Kapitel 1 von 6 · RustDesk Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

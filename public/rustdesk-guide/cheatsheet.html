@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheatsheet</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Cheatsheet</h1>
+  <p class="lead">Alle Ports, Pfade, CLI-Flags und Toolbar-Settings auf einer Seite.</p>
+
+  <h2>Ports (Self-Hosted)</h2>
+  <table>
+    <thead><tr><th>Port</th><th>Proto</th><th>Wofür</th></tr></thead>
+    <tbody>
+      <tr><td>21115</td><td>TCP</td><td>NAT-Test</td></tr>
+      <tr><td>21116</td><td>TCP</td><td>hbbs ID-Lookup</td></tr>
+      <tr><td>21116</td><td>UDP</td><td>hbbs Heartbeat &amp; UDP-Hole-Punch <span class="tag warn">unbedingt!</span></td></tr>
+      <tr><td>21117</td><td>TCP</td><td>hbbr Relay</td></tr>
+      <tr><td>21118</td><td>TCP</td><td>hbbs Web-Client (Pro)</td></tr>
+      <tr><td>21119</td><td>TCP</td><td>hbbr Web-Client (Pro)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Config-Pfade</h2>
+  <table>
+    <tbody>
+      <tr><td>Windows</td><td><code>%APPDATA%\RustDesk\config\RustDesk.toml</code></td></tr>
+      <tr><td>macOS</td><td><code>~/Library/Preferences/com.carriez.RustDesk/RustDesk.toml</code></td></tr>
+      <tr><td>Linux</td><td><code>~/.config/rustdesk/RustDesk.toml</code></td></tr>
+      <tr><td>Service-Mode (Win)</td><td><code>C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\</code></td></tr>
+      <tr><td>Server-Daten</td><td>Verzeichnis, in dem hbbs läuft → <code>id_ed25519</code> + <code>id_ed25519.pub</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>CLI-Flags (Client)</h2>
+<pre><code>rustdesk --connect &lt;ID&gt;                # direkt verbinden
+rustdesk --connect &lt;ID&gt; --password X    # mit Passwort
+rustdesk --file-transfer &lt;ID&gt;          # nur Datei-Transfer
+rustdesk --port-forward &lt;ID&gt;           # nur TCP-Tunnel
+rustdesk --install-service             # Service installieren (Win)
+rustdesk --uninstall-service
+rustdesk --server                      # nur als Server starten (kein UI)
+rustdesk --import-config FILE          # Config aus Datei importieren</code></pre>
+
+  <h2>CLI-Flags (Server hbbs)</h2>
+<pre><code>hbbs -r relay.example.com:21117    # Relay-Hostname mitteilen
+hbbs -k _                          # nur Verbindungen mit registriertem Key
+hbbs -k YOURKEY                    # Custom Key
+hbbs --port 21116                  # Port ändern (nicht empfohlen)
+hbbs --rmem 0                      # UDP-Receive-Buffer (für sehr aktive Server)</code></pre>
+
+  <h2>Verbindungs-Toolbar im Überblick</h2>
+  <table>
+    <tbody>
+      <tr><td><strong>Display</strong></td><td>View Style (Original/Shrink/Stretch), Image Quality, Codec, Hardware-Acceleration, Multi-Monitor-Auswahl</td></tr>
+      <tr><td><strong>Tastatur</strong></td><td>Legacy / Map / Translate Modus</td></tr>
+      <tr><td><strong>Aktionen</strong></td><td>Restart Remote, Insert Ctrl+Alt+Del, Insert Lock, Block User Input, Refresh</td></tr>
+      <tr><td><strong>File</strong></td><td>Datei-Transfer-Browser öffnen</td></tr>
+      <tr><td><strong>TCP-Tunnel</strong></td><td>Local-Port → Remote-Host:Port forwarden</td></tr>
+      <tr><td><strong>Recording</strong></td><td>Sitzung mitschneiden — Empfänger sieht das</td></tr>
+      <tr><td><strong>Privacy</strong></td><td>🔒 Display-Blackout am Host (Win-only)</td></tr>
+      <tr><td><strong>Elevate</strong></td><td>Auf System-Privileges hochziehen für UAC-Dialoge</td></tr>
+      <tr><td><strong>Voice</strong></td><td>Voice-Call mit Gegenseite</td></tr>
+      <tr><td><strong>Chat</strong></td><td>Text-Chat-Fenster</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Wichtige Shortcuts</h2>
+  <table>
+    <tbody>
+      <tr><td><kbd>Ctrl</kbd> + Mausrad</td><td>Zoom in/out im Stream <span class="tag warn">Häufiger Bug-Auslöser</span></td></tr>
+      <tr><td><kbd>F11</kbd></td><td>Vollbild ein/aus (im Verbindungsfenster)</td></tr>
+      <tr><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd></td><td>An Remote senden via Toolbar (Direkt-Eingabe wird vom OS abgefangen)</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Vollbild verlassen</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Permissions-Matrix (Empfehlung)</h2>
+  <table>
+    <thead><tr><th></th><th>Privat</th><th>Familie-Support</th><th>Unattended Server</th></tr></thead>
+    <tbody>
+      <tr><td>Keyboard/Mouse</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Clipboard</td><td>✅</td><td>✅</td><td>⚠ optional</td></tr>
+      <tr><td>File Transfer</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Audio</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>TCP Tunnel</td><td>✅</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Recording</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Restart</td><td>✅</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Block User Input</td><td>—</td><td>—</td><td>✅</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Codec-Faustregel</h2>
+  <table>
+    <tbody>
+      <tr><td>Moderne CPU + GPU</td><td><code>AV1</code> oder <code>H264</code></td></tr>
+      <tr><td>Ältere/schwache Hardware</td><td><code>VP9</code> default belassen</td></tr>
+      <tr><td>Gaming / Video</td><td><code>H264</code> mit Hardware-Encoder, FPS 60</td></tr>
+      <tr><td>Office / Code</td><td><code>VP9</code>, FPS 30, Quality „Best"</td></tr>
+      <tr><td>Mobile / 4G</td><td><code>VP9</code>, FPS 20, Quality „Custom" 1 Mbit</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Reset-Routinen</h2>
+  <ul>
+    <li>Zoom hängt → <strong>Display → View Style → Shrink</strong> (oder Verbindung neu).</li>
+    <li>Tastatur-Layout falsch → <strong>Keyboard → Map</strong> probieren, dann Translate.</li>
+    <li>Ruckler → <strong>Codec wechseln</strong> + <strong>Image Quality auf Adaptive</strong>.</li>
+    <li>Service tot → <code>systemctl restart rustdesk</code> (Linux) / Service-Manager (Win).</li>
+    <li>Komplette Settings nuken → <code>~/.config/rustdesk/</code> löschen, neu starten.</li>
+  </ul>
+
+  <h2>Verbindungs-Info ablesen</h2>
+  <p>Im Verbindungsfenster oben links auf das ⓘ-Symbol → Box zeigt:</p>
+  <ul>
+    <li><strong>Connection Type</strong>: <code>P2P</code> (direkt) oder <code>Relay</code> (über Server)</li>
+    <li><strong>Codec</strong>: aktiver Codec + ob HW-encoded</li>
+    <li><strong>Latency</strong>: Roundtrip in ms</li>
+    <li><strong>Bandwidth</strong>: aktuelle Datenrate</li>
+    <li><strong>FPS</strong>: gerenderte Frames pro Sekunde</li>
+  </ul>
+
+  <p>Faustregeln:</p>
+  <ul>
+    <li>Latency &lt; 30 ms = lokales Netz, Direct.</li>
+    <li>Latency 50–150 ms = WAN-Direkt, gut bedienbar.</li>
+    <li>Latency &gt; 200 ms = wahrscheinlich Relay, Bedienung wird zäh.</li>
+  </ul>
+
+  <div class="hero-cta">
+    <a class="btn" href="index.html">↑ Zur Übersicht</a>
+    <a class="btn ghost" href="grundlagen.html">Nochmal die Grundlagen</a>
+  </div>
+
+  <footer>Kapitel 6 von 6 · RustDesk Guide · Drucke diese Seite und pin sie ans Whiteboard.</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

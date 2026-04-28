@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profi-Tipps</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Profi-Tipps</h1>
+  <p class="lead">Du benutzt 1Password seit Jahren? Hier sind die Sachen, die selbst Power-User oft übersehen.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#quick-access">Quick Access — der versteckte Launcher</a></li>
+      <li><a href="#watchtower">Watchtower richtig lesen</a></li>
+      <li><a href="#travel-mode">Travel Mode</a></li>
+      <li><a href="#recipes">Custom Password Recipes pro Item</a></li>
+      <li><a href="#sharing">Items mit Nicht-Nutzern teilen (psst-Links)</a></li>
+      <li><a href="#search">Smart-Search-Operatoren</a></li>
+      <li><a href="#autofill">Autofill-Power-Moves</a></li>
+      <li><a href="#yubi">YubiKey als zweiter Faktor für 1Password selbst</a></li>
+      <li><a href="#archive">Archiv statt Löschen</a></li>
+    </ul>
+  </div>
+
+  <h2 id="quick-access">Quick Access — der versteckte Launcher</h2>
+  <p>Drück <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> (Win/Linux) oder <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> (Mac), <em>egal wo du gerade bist</em>. Es öffnet eine Spotlight-artige Such-Leiste. Tippen → Enter → Inhalt landet im Clipboard / wird in das fokussierte Feld eingefügt.</p>
+
+  <p>Modifiers verändern die Aktion:</p>
+  <ul>
+    <li><kbd>Enter</kbd> → Default-Aktion (meistens „autofill" oder „in Clipboard").</li>
+    <li><kbd>⌘</kbd>+<kbd>Enter</kbd> → Item öffnen.</li>
+    <li><kbd>⌘</kbd>+<kbd>C</kbd> auf einem Treffer → Passwort kopieren.</li>
+    <li>Pfeil-rechts → alle Felder durchblättern und einzeln kopieren.</li>
+  </ul>
+
+  <div class="callout tip">
+    <strong>💡 Lifechanger</strong>
+    Wenn du Quick Access internalisierst, brauchst du die 1Password-App selber fast nie wieder zu öffnen. Lerne diesen einen Shortcut.
+  </div>
+
+  <h2 id="watchtower">Watchtower richtig lesen</h2>
+  <p>Watchtower ist die Sicherheits-Übersicht über deinen Vault. Findest du in der Sidebar unter „Watchtower". Was die Kategorien wirklich bedeuten:</p>
+
+  <table>
+    <thead><tr><th>Kategorie</th><th>Was es heißt</th><th>Aktion</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Compromised</strong></td><td>Passwort ist in einem öffentlichen Daten-Leak aufgetaucht (HaveIBeenPwned)</td><td><span class="tag warn">sofort rotieren</span></td></tr>
+      <tr><td><strong>Vulnerable</strong></td><td>Service hatte einen Breach <em>nach</em> deinem letzten Passwort-Wechsel</td><td>rotieren</td></tr>
+      <tr><td><strong>Reused</strong></td><td>Identisches Passwort auf mehreren Sites</td><td>einzeln rotieren</td></tr>
+      <tr><td><strong>Weak</strong></td><td>Geringe Entropie</td><td>aufstocken</td></tr>
+      <tr><td><strong>Inactive 2FA</strong></td><td>Site bietet 2FA an, du nutzt es nicht</td><td>2FA setzen, in Item integrieren</td></tr>
+      <tr><td><strong>Unsecured Websites</strong></td><td>URL ohne <code>https://</code></td><td>auf https umstellen oder Item löschen</td></tr>
+      <tr><td><strong>Expiring</strong></td><td>Karten/Pässe mit Ablaufdatum-Feld</td><td>rechtzeitig erneuern</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="travel-mode">Travel Mode</h2>
+  <p>Markier Vaults als <code>safe for travel</code>. An der Grenze schaltest du Travel Mode <strong>ein</strong> → alle nicht-safe Vaults werden <em>vom Gerät entfernt</em>. Nicht versteckt — komplett weg. Nicht mal forensisch wiederherstellbar.</p>
+
+  <p>Aktivieren auf <code>my.1password.com</code> → Profile → Travel Mode. Pro Vault setzt du dort, ob er „safe for travel" ist.</p>
+
+  <div class="callout">
+    <strong>Use-Case</strong>
+    Reisen in Länder, bei denen Grenzbeamte die Entsperrung von Geräten verlangen können. Sie sehen nur, was als safe markiert ist. Nach Ankunft am Ziel: Travel Mode aus → Vaults syncen zurück.
+  </div>
+
+  <h2 id="recipes">Custom Password Recipes pro Item</h2>
+  <p>Nicht alle Sites akzeptieren das Default-Recipe. Bank-Logins limitieren oft auf 16 Zeichen, manche verbieten Sonderzeichen, andere erlauben nur a-z+0-9.</p>
+  <p>Fix: beim Generieren auf das Recipe-Symbol klicken → Länge / Charset einstellen → "Save recipe with item". 1Password merkt sich pro Item, welches Recipe du beim nächsten Rotieren willst.</p>
+
+  <h3>PIN/numerisch</h3>
+  <p>Es gibt einen "PIN"-Modus für reine Zahlen — gut für Bank-PINs, Smart-Lock-Codes, Telefon-PINs. Setz das Item auf "Password" (nicht Login) → Recipe → Numbers only.</p>
+
+  <h2 id="sharing">Items mit Nicht-1Password-Nutzern teilen (Item-Sharing-Links / „psst")</h2>
+  <p>Du willst einer Person ein Passwort schicken, die kein 1Password hat? Niemals via Slack/E-Mail/SMS. Stattdessen:</p>
+  <ol>
+    <li>Item öffnen → "Share" → "Get a link to share".</li>
+    <li>Wähle: <strong>Verfallszeit</strong> (1h, 1d, 7d, 14d, 30d), <strong>maximale Aufrufe</strong> (1 / unlimited), <strong>nur an bestimmte E-Mail</strong>.</li>
+    <li>Du bekommst einen Link von <code>share.1password.com</code>. Den schickst du.</li>
+  </ol>
+  <p>Die Empfänger-Person sieht das Item einmal, kann es kopieren — danach ist es weg. End-to-End-verschlüsselt; 1Password selbst sieht den Inhalt nicht.</p>
+
+  <div class="callout warn">
+    <strong>⚠️ Trotzdem kein Allheilmittel</strong>
+    Der Link landet in irgendeinem Chat-Verlauf. Wer den Chat liest <em>bevor</em> der Empfänger den Link öffnet, klaut den Inhalt. Setz „nur 1 Aufruf" und schick den Link über einen anderen Kanal als das Passwort selber gehörte (z.B. Passwort-Link via Slack, Empfänger-E-Mail-Constraint via SMS).
+  </div>
+
+  <h2 id="search">Smart-Search-Operatoren</h2>
+  <p>In der Suchleiste kannst du Operatoren verwenden:</p>
+
+<pre><code>github                  # Volltext
+in:work                 # Nur Work-Vault
+tag:dev                 # Nur Items mit Tag „dev"
+type:login              # Nur Logins (auch: note, card, identity, ...)
+fave:true               # Favoriten
+trash:true              # Im Papierkorb
+url:atlassian.net       # In URLs suchen
+recent                  # Zuletzt benutzt
+weak                    # Watchtower-Filter inline
+reused
+expiring</code></pre>
+
+  <p>Operatoren kombinieren: <code>type:login tag:work weak</code> → schwache Work-Logins.</p>
+
+  <h2 id="autofill">Autofill-Power-Moves</h2>
+
+  <h3>Inline-Menü erzwingen</h3>
+  <p>Wenn 1Password im Browser keinen Vorschlag macht, klick ins Feld und drück <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> (Mac) / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> (Win) — die Browser-Extension öffnet die Item-Auswahl genau dort.</p>
+
+  <h3>Mehrere Identities, eine Form</h3>
+  <p>Beim Checkout brauchst du oft Identity (Adresse) + Credit Card + Login. 1Password fragt sequenziell ab — du kannst pro Feld-Gruppe eine eigene Quelle wählen.</p>
+
+  <h3>Universal Autofill (macOS, native Apps)</h3>
+  <p>Auch in nativen Apps (z.B. Adobe-Login, Steam, IDEs) Autofill nutzen: <kbd>⌘</kbd>+<kbd>\</kbd> auf einem Login-Feld → 1Password autofill, ohne Browser. Funktioniert für alle Apps mit Standard-Textfeldern.</p>
+
+  <h2 id="yubi">YubiKey als zweiter Faktor für 1Password selbst</h2>
+  <p>Du hast Master Password + Secret Key. Das ist schon stark. Wer einen Schritt weiter will, fügt einen Hardware-Key hinzu:</p>
+  <ol>
+    <li><code>my.1password.com</code> → Sign-In &amp; Recovery → 2-Step Verification → Add Security Key.</li>
+    <li>YubiKey einstecken, Touch.</li>
+    <li><strong>Mindestens zwei Keys</strong> registrieren — einer als Backup im Schließfach.</li>
+  </ol>
+  <p>Bei Login auf neuem Gerät: Master Password + Secret Key + YubiKey-Touch.</p>
+
+  <h2 id="archive">Archiv statt Löschen</h2>
+  <p>Items, die du nicht mehr brauchst, aber später vielleicht historisch nachschlagen willst (alter Provider, ehemaliger Job): nicht löschen, sondern <strong>archivieren</strong>. Item öffnen → "..." → "Archive".</p>
+  <p>Archivierte Items tauchen nicht mehr in normaler Suche auf, sind aber via <code>archived:true</code>-Filter wiederfindbar. Watchtower ignoriert sie. Items im Trash werden nach 30 Tagen gelöscht — Archivierte bleiben für immer.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="cool.html">→ Weiter: Neat Shit (CLI / SSH / Secrets)</a>
+    <a class="btn ghost" href="vaults.html">Zurück: Vaults</a>
+  </div>
+
+  <footer>Kapitel 3 von 6 · 1Password Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

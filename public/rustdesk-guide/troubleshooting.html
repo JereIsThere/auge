@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Troubleshooting</h1>
+  <p class="lead">Die Probleme, an denen jeder mal scheitert — inklusive denen, die sich nirgends gescheit dokumentiert finden.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#zoom">Verbindung „klemmt" auf falschem Zoom-Level</a></li>
+      <li><a href="#schwarz">Schwarzer Bildschirm / kein Bild</a></li>
+      <li><a href="#tastatur" id="tastatur-anchor">Tastatur-Layout ist falsch</a></li>
+      <li><a href="#key-mismatch">„Key Mismatch" / Public Key Warning</a></li>
+      <li><a href="#service-stoppt">Service stoppt nach Reboot (besonders Android)</a></li>
+      <li><a href="#input-fehlt">„Cannot control" auf Android trotz Input-App</a></li>
+      <li><a href="#ruckler">Ruckliges Bild / hohe Latenz</a></li>
+      <li><a href="#uac">UAC-Dialog wird schwarz / nimmt keine Eingaben</a></li>
+      <li><a href="#wayland">Linux/Wayland-Probleme</a></li>
+      <li><a href="#nicht-erreichbar">„Not reachable" / verbindet nicht</a></li>
+    </ul>
+  </div>
+
+  <h2 id="zoom">Verbindung „klemmt" auf falschem Zoom-Level</h2>
+  <p><em>Symptom: Du steuerst Android (oder einen anderen Host) vom Windows-PC und alles ist herangezoomt. Scrollen, Maus-Wackeln, Resize ändert nichts.</em></p>
+
+  <p>Das passiert in fast allen Fällen, weil <strong>View Style</strong> oder <strong>Image Ratio</strong> auf einem Wert hängen, den du nicht erwartest. Reset:</p>
+
+  <ol>
+    <li>In der oberen Toolbar der Verbindung auf <strong>Display</strong> (Bildschirm-Symbol) klicken.</li>
+    <li>Im Menü <strong>View Style</strong>:
+      <ul>
+        <li><strong>Original</strong> = 1:1 Pixel-Mapping. Wenn das Remote-Display kleiner als dein lokales Fenster ist, wird&apos;s aussehen wie zentriert. Wenn es größer ist, musst du scrollen.</li>
+        <li><strong>Shrink</strong> = Bild wird in dein Fenster eingepasst (proportional). <span class="tag good">der „normale" Modus</span></li>
+        <li><strong>Stretch</strong> = Bild wird gedehnt, ggf. verzerrt.</li>
+      </ul>
+    </li>
+    <li>Im selben Menü <strong>Image Quality</strong> → <strong>Original</strong> oder <strong>Adaptive</strong>.</li>
+    <li>Im selben Menü <strong>Scroll Style</strong> auf <em>Auto</em>.</li>
+    <li>Wenn du immer noch klebst: Verbindung trennen, Toolbar oben rechts → "..." → <strong>Reset Canvas</strong> (nicht in jedem Build da, aber in 1.3+).</li>
+  </ol>
+
+  <h3>Der häufigste Auslöser: versehentlicher Zoom per Ctrl+Scroll</h3>
+  <p>RustDesk hat einen <strong>versteckten Zoom-Modus</strong>: <kbd>Ctrl</kbd> + Mausrad scrollt den Stream rein/raus. Wenn du im View-Stil "Original" bist und gescrollt hast, bleibt der Zoom — Resize hilft nicht, weil "Original" eben kein Auto-Fit macht.</p>
+
+  <p><strong>Fix in einem Schritt:</strong> View Style auf <strong>Shrink</strong> setzen → Bild snappt zurück auf „in Fenster eingepasst". Dann optional zurück auf Original.</p>
+
+  <div class="callout tip">
+    <strong>💡 Konkret für Win → Android</strong>
+    Bei Verbindungen zum Telefon ist <em>Shrink</em> fast immer richtig — sonst hast du ein winziges Telefon-Display 1:1 in einem riesigen Fenster, oder ein hochskaliertes pixeliges Bild. Setz das zur Default-Einstellung in <strong>Settings → Display → Default View Style</strong>, dann hast du das Problem nie wieder.
+  </div>
+
+  <h2 id="schwarz">Schwarzer Bildschirm</h2>
+  <p>Verbindung steht (Toolbar reagiert), aber das Bild ist schwarz.</p>
+
+  <table>
+    <thead><tr><th>Plattform</th><th>Ursache &amp; Fix</th></tr></thead>
+    <tbody>
+      <tr><td><strong>macOS</strong></td><td>Screen-Recording-Permission nicht gesetzt oder nicht griffig (App neu starten nach Permission). Systemeinstellungen → Datenschutz &amp; Sicherheit → Bildschirmaufnahme.</td></tr>
+      <tr><td><strong>Windows</strong></td><td>Privacy Mode ist versehentlich an (Toolbar → 🔒 prüfen). Oder: Hardware-Codec inkompatibel, in Settings auf Software/VP9 zurück.</td></tr>
+      <tr><td><strong>Android</strong></td><td>MediaProjection nicht erteilt — RustDesk öffnen, „Start Service" tippen, Dialog erlauben. Oder: DRM-Inhalt im Vordergrund (Netflix etc).</td></tr>
+      <tr><td><strong>Linux/Wayland</strong></td><td>Wayland blockt Screen-Capture. Workaround: zur Xorg-Session loggen, oder PipeWire-portal-fähigen Build nutzen (RustDesk 1.3+ unterstützt das experimentell).</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="tastatur">Tastatur-Layout ist falsch</h2>
+  <p><em>Symptom: Du tippst „ä", Remote schreibt „;". Tippst „y", Remote bekommt „z".</em></p>
+
+  <p>RustDesk hat drei Keyboard-Modi (in der Verbindungs-Toolbar → Tastatur-Symbol):</p>
+
+  <ul>
+    <li><strong>Legacy</strong> — Roh-Keystrokes 1:1. Funktioniert, wenn beide Seiten <em>dasselbe</em> Layout haben. Bei Mismatch (US ↔ DE) kommt Müll raus.</li>
+    <li><strong>Map</strong> — RustDesk übersetzt von deinem lokalen Layout auf das Remote-Layout. <span class="tag good">90% der Fälle</span> Hier wird&apos;s richtig.</li>
+    <li><strong>Translate</strong> — schickt Unicode-Zeichen statt Keystrokes. Macht Spiele kaputt (Gaming braucht WASD-Keystrokes), aber für Sondertastenkombinationen / IME-Eingabe (Chinesisch, Japanisch) Pflicht.</li>
+  </ul>
+
+  <p>Default ist <strong>Map</strong>. Wenn das Layout falsch ist, wechsle die Modi durch — meistens fixt einer der anderen es.</p>
+
+  <h2 id="key-mismatch">„Key Mismatch" Warnung</h2>
+  <p>Beim Connect kommt ein roter Banner: „This server's key has changed".</p>
+
+  <ol>
+    <li><strong>Self-Hosted Server</strong> wurde neu deployed → <code>id_ed25519</code>-Datei wurde neu generiert. Public Key auf allen Clients aktualisieren oder Server-Datenverzeichnis aus Backup wiederherstellen.</li>
+    <li><strong>MITM-Angriff</strong> — extrem selten, aber bei kritischen Verbindungen ernst nehmen. Hörmal beim Server-Admin per anderem Kanal nach, ob der Key wirklich gewechselt hat.</li>
+    <li><strong>Du hast versehentlich auf einen anderen Server umgestellt</strong> → Settings → Network checken.</li>
+  </ol>
+
+  <h2 id="service-stoppt">Service stoppt nach Reboot (Android)</h2>
+  <p>Auf Xiaomi/Samsung/OnePlus killt das Akku-Optimierungs-Framework Background-Services. Drei Schritte:</p>
+  <ol>
+    <li>Android-Settings → Apps → RustDesk → Akku → "Nicht eingeschränkt" / "Keine Optimierung".</li>
+    <li>Dasselbe für RustDesk Input.</li>
+    <li>Auf Xiaomi: Sicherheits-App → "Berechtigungen" → "Autostart" → RustDesk + Input erlauben.</li>
+  </ol>
+
+  <p>Wenn das nicht reicht: ein Tasker-Macro „On Boot Completed → Open RustDesk → Tap Start Service". Hässlich, aber funktioniert.</p>
+
+  <h2 id="input-fehlt">„Cannot control" auf Android trotz Input-App</h2>
+  <p>RustDesk Input ist installiert, du siehst das Display, aber Maus-Bewegungen kommen nicht durch.</p>
+  <ol>
+    <li>Android-Settings → Bedienungshilfen (Accessibility) → <strong>RustDesk Input</strong> → eingeschaltet?</li>
+    <li>Beim Aktivieren wird Android dich warnen, dass die App „den Bildschirm beobachtet" — das ist normal und nötig.</li>
+    <li>Auf Android 14+ kommt noch die Permission „Display over other apps" für RustDesk Input dazu.</li>
+    <li>Nach dem Toggle: Verbindung beenden und neu aufbauen.</li>
+  </ol>
+
+  <h2 id="ruckler">Ruckliges Bild / hohe Latenz</h2>
+  <p>Checkliste, ungefähr in der Reihenfolge der Häufigkeit:</p>
+  <ol>
+    <li><strong>Connection-Type prüfen</strong>: Toolbar → Verbindung-Info. Steht da "P2P / Direct" → gut. Steht da "Relay" → Traffic läuft über Server, Latenz +. Lösung: <a href="selfhost.html">eigenen Server</a> oder Port-Forwarding daheim für UDP 21116.</li>
+    <li><strong>Codec wechseln</strong>: bei guter GPU auf H264 oder AV1, bei schwacher auf VP9.</li>
+    <li><strong>Bitrate runter</strong>: Image Quality → "Custom" → 2 Mbit, 30 FPS. Sieht weniger schick aus, ist aber stabil.</li>
+    <li><strong>FPS-Lock</strong>: 30 statt 60 reicht meistens, halbe Bandbreite.</li>
+    <li><strong>Hardware-Encoder</strong>: in Settings einschalten. Verlagert Encode-Last von CPU auf GPU.</li>
+  </ol>
+
+  <h2 id="uac">UAC-Dialog ist dunkel / nimmt keine Eingaben</h2>
+  <p>Klassisches Windows-Verhalten. Lösung:</p>
+  <ul>
+    <li>RustDesk muss <strong>als Service</strong> laufen (Settings → "Install via system service" oder per CMD <code>rustdesk --install-service</code>).</li>
+    <li>Während der Session in der Toolbar: <strong>Elevate</strong> klicken → RustDesk hebt sich selbst auf System-Level.</li>
+    <li>Erst dann werden UAC-Dialoge sichtbar und steuerbar.</li>
+  </ul>
+
+  <h2 id="wayland">Linux / Wayland</h2>
+  <p>Wayland ist immer noch das Sorgenkind. Status:</p>
+  <ul>
+    <li>RustDesk 1.3+ kann via PipeWire-Portal Screen-Capture machen — der Browser-artige „Welches Fenster soll geteilt werden"-Dialog.</li>
+    <li>Input-Capture (also Maus/Tastatur ans System schicken) geht auf Wayland nur, wenn der Compositor `libei` unterstützt — KDE 6 ja, GNOME 46+ teilweise.</li>
+    <li>Workaround: GDM/SDDM auf X11 zurückstellen (auf den meisten Distros: Login-Screen → Zahnrad → "Xorg" auswählen).</li>
+  </ul>
+
+  <h2 id="nicht-erreichbar">„Not reachable" / verbindet nicht</h2>
+  <ol>
+    <li>Beide Geräte online und im Internet?</li>
+    <li>Auf beiden derselbe ID-Server eingestellt? (Settings → Network)</li>
+    <li>Firewall lässt RustDesk raus?</li>
+    <li>Self-Hosted: <code>nc -vz rd.example.com 21116</code> vom Client erreichbar? UDP auch?</li>
+    <li>VPN am Client aktiv und blockiert UDP? Probier mal ohne VPN.</li>
+    <li>Ein Reboot beider Geräte ist tatsächlich oft die Lösung — der hbbs-Eintrag verfällt nach Idle und der Client meldet sich neu an.</li>
+  </ol>
+
+  <div class="hero-cta">
+    <a class="btn" href="cheatsheet.html">→ Weiter: Cheatsheet</a>
+    <a class="btn ghost" href="profi.html">Zurück: Profi-Tipps</a>
+  </div>
+
+  <footer>Kapitel 5 von 6 · RustDesk Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokenisierung</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Mathematikerin</span>
+  <div class="voice">„Definition. Beweis. Beispiel. Genau in dieser Reihenfolge. Bitte unterbrechen Sie mich nicht — wir kommen vor 19 Uhr fertig, wenn ich mich konzentrieren darf."</div>
+
+  <h1>Tokenisierung</h1>
+  <p class="lead">Modelle lesen keine Buchstaben. Sie lesen Zahlen. Tokenisierung ist der Mapping-Schritt: Text → Liste von Integern. Klingt trivial. Ist es nicht.</p>
+
+  <h2>Definition</h2>
+  <p>Sei <code>V</code> ein endliches Vokabular von Strings (typisch: 30k–200k Einträge). Ein <strong>Tokenizer</strong> ist eine Funktion <code>T: String → [Int]</code>, die einen Eingabestring in eine Sequenz von Indizes in <code>V</code> abbildet. Umkehrfunktion <code>T⁻¹</code> existiert (verlustfrei für die meisten modernen Tokenizer).</p>
+
+  <h2>Verfahren in freier Wildbahn</h2>
+  <table>
+    <thead><tr><th>Verfahren</th><th>Verwendung</th><th>Idee</th></tr></thead>
+    <tbody>
+      <tr><td><strong>BPE</strong> (Byte-Pair Encoding)</td><td>GPT-2/3/4, Claude, viele</td><td>Häufige Zeichen-Paare iterativ verschmelzen</td></tr>
+      <tr><td><strong>WordPiece</strong></td><td>BERT-Familie</td><td>Ähnlich BPE, anderes Auswahlkriterium</td></tr>
+      <tr><td><strong>SentencePiece</strong> + Unigram</td><td>T5, Llama, Gemma</td><td>Probabilistisches Modell, language-agnostic</td></tr>
+      <tr><td><strong>Tiktoken</strong> (BPE-Variante)</td><td>OpenAI-Modelle</td><td>Byte-Level, optimiert in Rust</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Beispiel — exakte Werte für GPT-4-Tokenizer (cl100k)</h2>
+<pre><code>"Hallo Welt"        → [9906, 23748]               (2 Tokens)
+"Erdbeere"          → [36, 6634, 12, 90716]        (4 Tokens, deutsche Umlaute teurer)
+"strawberry"        → [496, 675, 15717]            (3 Tokens)
+"🍓"                → [9468, 235, 241]             (3 Tokens — Emoji = mehrere Bytes)
+"AAAAAAAAAAAA"      → [32, 32, 32, ...]            (oft 1 Token pro A, weil ungewöhnlich)
+"the"               → [1820]                       (1 Token, sehr häufig)</code></pre>
+
+  <h2>Drei Konsequenzen, die in der Praxis zählen</h2>
+
+  <h3>Lemma 1: Deutsche Texte sind teurer als englische</h3>
+  <p>Das Vokabular wird auf englischen Daten trainiert. Folge: deutsche Wörter zerfallen in mehr Tokens. „Donaudampfschifffahrtsgesellschaftskapitän" sind ~14 Tokens. Das englische Equivalent gibt es nicht — was vielleicht ein Geschenk ist.</p>
+
+  <h3>Lemma 2: Modelle sehen keine Zeichen</h3>
+  <p>„Wie viele R sind in &apos;Strawberry&apos;?" ist für ein LLM <em>kein</em> Buchstaben-Zähl-Problem. Es sieht <code>[496, 675, 15717]</code>. Buchstaben existieren nicht in seinem Universum, außer es hat das Wort buchstabenweise auswendig gelernt. Daher die berühmten Counting-Fails.</p>
+
+  <h3>Lemma 3: Whitespace ist wesentlich</h3>
+  <p>Im BPE-Tokenizer ist <code>" Welt"</code> (mit Leerzeichen) ein <em>anderes Token</em> als <code>"Welt"</code> (ohne). Das Modell sieht eine Welt als eine Welt-mit-Leerzeichen oder ohne — und behandelt sie verschieden. Ein einsamer Trailing-Space im Prompt kann die Antwort sichtbar verändern.</p>
+
+  <h2>Korollar: was du ablesen kannst</h2>
+  <ul>
+    <li><strong>Kostenrechnung:</strong> Englische API-Kosten ≠ deutsche API-Kosten für „denselben" Text. Differenzfaktor 1.4–2×.</li>
+    <li><strong>Tokenizer-Tools:</strong> <code>tiktoken</code> für OpenAI, <code>tokenizers</code> (Hugging Face) für alles andere. Nutze sie zum Schätzen <em>vor</em> einem teuren API-Call.</li>
+    <li><strong>Konsistenz:</strong> derselbe String → exakt dieselbe Token-Liste, deterministisch. Aber nicht über Tokenizer-Versionen hinweg — Models &amp; Tokenizer kommen als Paar.</li>
+  </ul>
+
+  <p>Q.E.D. Weiter zu den Embeddings.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="embeddings.html">→ Weiter: Embeddings</a>
+    <a class="btn ghost" href="index.html">Zurück zur Übersicht</a>
+  </div>
+
+  <p class="signoff">— Die Voraussetzung für Konsistenz ist Eindeutigkeit. Bitte verlassen Sie den Hörsaal leise.</p>
+  <footer>Kapitel 1 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

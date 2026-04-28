@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sicherheit &amp; Recovery</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Sicherheit &amp; Recovery</h1>
+  <p class="lead">Das Schöne an 1Password: keine zentrale Stelle kann deinen Vault entschlüsseln. Das Gefährliche: keine zentrale Stelle kann deinen Vault entschlüsseln. Hier ist, wie du dich nicht selber aussperrst.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#krypto">Wie 1Password verschlüsselt — Kurzversion</a></li>
+      <li><a href="#mp">Master-Passwort: was eine gute Wahl ist</a></li>
+      <li><a href="#secret-key">Der Secret Key</a></li>
+      <li><a href="#kit">Emergency Kit</a></li>
+      <li><a href="#recovery">Account-Recovery (Family/Business)</a></li>
+      <li><a href="#hardware">Hardware-Keys</a></li>
+      <li><a href="#audit">Audit deines Setups — alle 6 Monate</a></li>
+    </ul>
+  </div>
+
+  <h2 id="krypto">Wie 1Password verschlüsselt — Kurzversion</h2>
+  <p>Drei Faktoren werden gemischt, um den Verschlüsselungsschlüssel zu bilden:</p>
+  <ol>
+    <li><strong>Master-Passwort</strong> — was du tippst.</li>
+    <li><strong>Secret Key</strong> — 128-bit, einmal generiert, lokal gespeichert.</li>
+    <li><strong>Salt</strong> — pro Account.</li>
+  </ol>
+
+  <p>Das nennt sich „Two-Secret Key Derivation" (2SKD). Konsequenz: selbst wenn 1Password gehackt wird und alle verschlüsselten Vaults leakt, kann ein Angreifer nichts entschlüsseln, ohne <em>auch</em> deinen Secret Key zu haben — und der liegt nur auf deinen Geräten und im Emergency Kit.</p>
+
+  <h2 id="mp">Master-Passwort</h2>
+  <p>Es ist das einzige Passwort, das du dir merken musst. Mach es <em>lang</em>, nicht kompliziert.</p>
+
+  <h3>Empfehlung: 4-Wort-Diceware</h3>
+<pre><code>correct horse battery staple    # ~50 bits Entropy, gut merkbar
+mauer gurke wespe lampe         # 4 deutsche Wörter, gleich gut</code></pre>
+
+  <p>4 Wörter aus einer ~7700-Wort-Liste = ~52 Bit Entropie. Kombiniert mit dem Secret Key (128 Bit) ist das praktisch unknackbar.</p>
+
+  <div class="callout warn">
+    <strong>⚠️ Was du nicht tun solltest</strong>
+    Kein Geburtsdatum, kein Hundename, keine Variante deines normalen Passworts. Wer dich googelt, sollte 0% Chance haben, drauf zu kommen. Schreib es nicht in den Notes-Block deines Telefons. <em>Schreib es notfalls auf Papier und leg es ins Bankschließfach.</em>
+  </div>
+
+  <h2 id="secret-key">Der Secret Key</h2>
+  <p>34 Zeichen lang, sieht aus wie:</p>
+
+<pre><code>A3-ABCDEF-123456-GHIJK-LMNOP-QRSTU-VWXYZ</code></pre>
+
+  <p>Wird beim Account-Setup einmal generiert und ist im <strong>Emergency Kit</strong> festgehalten. Auf jedem Gerät, das du setupst, gibst du den Secret Key einmal ein — danach ist er lokal gespeichert.</p>
+
+  <p>Auf einem neuen Gerät einloggen ohne Secret Key = nicht möglich. Selbst 1Password-Support kann dir nicht helfen, wenn er weg ist und du alle Geräte verloren hast.</p>
+
+  <h2 id="kit">Emergency Kit</h2>
+  <p>Eine PDF-Vorlage mit:</p>
+  <ul>
+    <li>Deine E-Mail (Sign-in)</li>
+    <li>Sign-in-Adresse (<code>my.1password.com</code> oder dein Team-Domain)</li>
+    <li>Secret Key (vorausgefüllt)</li>
+    <li>Master-Passwort (Feld zum <em>handschriftlichen</em> Eintragen — nicht digital!)</li>
+  </ul>
+
+  <p>Ablage:</p>
+  <ul>
+    <li>Eine Kopie ausgedruckt im <strong>Bankschließfach</strong> oder bei einer Vertrauensperson.</li>
+    <li>Eine Kopie ausgedruckt zuhause an einem sicheren Ort (kein Schreibtisch, eher Safe).</li>
+    <li>Eine digitale, verschlüsselte Kopie auf einem USB-Stick, ebenfalls Bankschließfach.</li>
+    <li>NIEMALS unverschlüsselt in iCloud, Google Drive, Dropbox.</li>
+  </ul>
+
+  <div class="callout tip">
+    <strong>💡 Dead-Person-Test</strong>
+    Frag dich: „Wenn ich morgen sterbe, kommt mein:e Partner:in oder Erbe an meine Daten?" Wenn nein → Kit teilen, Recovery-Contact einrichten, oder im Testament einen Hinweis hinterlassen, wo das Kit liegt.
+  </div>
+
+  <h2 id="recovery">Account-Recovery (Family/Business)</h2>
+  <p>Family- und Business-Accounts haben ein <strong>Recovery-System</strong>, das Single-User-Accounts <em>nicht</em> haben:</p>
+
+  <p>Wenn du Master-Passwort + Secret Key vergisst, kann ein <strong>Family Organizer</strong> oder <strong>Account Recovery Admin</strong> dich resetten. Sie können nicht in deinen Vault schauen — sie können nur einen Reset-Flow auslösen, bei dem du ein neues Passwort setzt.</p>
+
+  <p>Solo-Accounts haben kein Recovery — verloren = verloren. Wenn dir das Risiko zu groß ist, upgrade auf Family (auch als Einzelperson) und mach jemand anderes zum Organizer.</p>
+
+  <h3>Recovery Codes (für 2FA-Bypass)</h3>
+  <p>Bei Aktivierung von 2-Step-Verification bekommst du Recovery-Codes. Die landen <em>nicht</em> im 1Password-Vault selbst (zirkulär), sondern z.B. ausgedruckt im Emergency Kit.</p>
+
+  <h2 id="hardware">Hardware-Keys</h2>
+  <p>Drei Stellen, an denen ein YubiKey das Setup massiv stärkt:</p>
+
+  <ol>
+    <li><strong>1Password-Account selbst</strong> als zweiter Faktor (siehe <a href="profi.html#yubi">Profi-Tipps</a>).</li>
+    <li><strong>E-Mail-Hauptaccount</strong> als zweiter Faktor (Gmail/iCloud/Proton).</li>
+    <li><strong>GitHub/GitLab</strong> als zweiter Faktor — schützt Code-Repositories.</li>
+  </ol>
+
+  <p>Mindestens zwei Keys: einer am Schlüsselbund, einer im Schließfach. <em>Nie</em> nur einen.</p>
+
+  <h2 id="audit">Audit-Routine — alle 6 Monate</h2>
+  <ul>
+    <li>☐ Master-Passwort ist immer noch ausschließlich in deinem Kopf?</li>
+    <li>☐ Emergency Kit existiert physisch an &gt;= 1 Stelle?</li>
+    <li>☐ Recovery-Contact / Family-Organizer noch erreichbar / lebt?</li>
+    <li>☐ Alle aktiven Geräte in <code>my.1password.com</code> → Devices noch deine?</li>
+    <li>☐ YubiKeys funktionieren beide noch (auch der Backup)?</li>
+    <li>☐ Watchtower hat keine roten Flaggen?</li>
+    <li>☐ E-Mail-Hauptaccount: 2FA + Recovery-Telefonnummer korrekt?</li>
+    <li>☐ Travel Mode korrekt konfiguriert (falls du verreist)?</li>
+  </ul>
+
+  <div class="callout danger">
+    <strong>🚨 Single Point of Failure: dein E-Mail-Hauptaccount</strong>
+    Wer dein E-Mail-Hauptkonto übernimmt, kann bei den meisten Diensten Passwort-Reset auslösen. Behandele es wie 1Password selbst: starkes eigenes Passwort, Hardware-Key 2FA, Recovery-Telefonnummer, regelmäßiges Audit.
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn" href="cheatsheet.html">→ Weiter: Cheatsheet</a>
+    <a class="btn ghost" href="cool.html">Zurück: Neat Shit</a>
+  </div>
+
+  <footer>Kapitel 5 von 6 · 1Password Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

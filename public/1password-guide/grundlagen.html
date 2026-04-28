@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grundlagen — Items richtig anlegen</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Grundlagen — Items richtig anlegen</h1>
+  <p class="lead">Der Unterschied zwischen einem chaotischen 1Password und einem, das dir wirklich Arbeit abnimmt, liegt in der Item-Hygiene. Hier ist, wie du es von Anfang an sauber machst.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#item-typen">1. Die Item-Typen — und welche du wirklich brauchst</a></li>
+      <li><a href="#login-felder">2. Login-Felder richtig benutzen</a></li>
+      <li><a href="#mehrere-urls">3. Mehrere URLs pro Login</a></li>
+      <li><a href="#totp">4. TOTP (2FA) direkt in 1Password</a></li>
+      <li><a href="#custom-fields">5. Custom Fields &amp; Sections</a></li>
+      <li><a href="#tags">6. Tags vs. Vaults vs. Categories</a></li>
+      <li><a href="#hygiene">7. Item-Hygiene-Checkliste</a></li>
+    </ul>
+  </div>
+
+  <h2 id="item-typen">1. Die Item-Typen — und welche du wirklich brauchst</h2>
+  <p>1Password hat ~20 Item-Typen. Die meisten Leute brauchen nur fünf bis sieben. Verwende den richtigen Typ — er bestimmt, welche Felder du bekommst, wie Autofill funktioniert und wie die Daten in der Suche auftauchen.</p>
+
+  <table>
+    <thead><tr><th>Typ</th><th>Wofür</th><th>Wichtig</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Login</strong></td><td>Jeder Account mit Username/Passwort</td><td>Default-Wahl. Mit URL-Feld → Autofill.</td></tr>
+      <tr><td><strong>Password</strong></td><td>Nur ein Passwort, kein Account drumrum</td><td>WLAN-Schlüssel, alte Notizen. Selten nötig.</td></tr>
+      <tr><td><strong>Secure Note</strong></td><td>Freitext mit Markdown</td><td>Recovery Codes, Notfall-Infos, geheime Dokus.</td></tr>
+      <tr><td><strong>Credit Card</strong></td><td>Karten</td><td>Autofill in Checkout-Formularen.</td></tr>
+      <tr><td><strong>Identity</strong></td><td>Adresse + Telefon + E-Mail</td><td>Autofill für Versand-/Registrierungs-Forms.</td></tr>
+      <tr><td><strong>API Credential</strong></td><td>API-Keys, Tokens</td><td>Felder für Type, Filename, Valid From/To. <span class="tag good">Dev</span></td></tr>
+      <tr><td><strong>SSH Key</strong></td><td>SSH-Schlüssel</td><td>Generiert direkt in 1Password, nutzt SSH-Agent. <span class="tag good">Dev</span></td></tr>
+      <tr><td><strong>Database</strong></td><td>DB-Connections</td><td>Host, Port, User, Pass, DB-Name strukturiert.</td></tr>
+      <tr><td><strong>Server</strong></td><td>Root-/SSH-Logins</td><td>Admin-Console + SSH zusammen.</td></tr>
+      <tr><td><strong>Software License</strong></td><td>Lizenzkeys</td><td>Versionsnummer + Key + Email + Bestelldatum.</td></tr>
+      <tr><td><strong>Document</strong></td><td>Datei-Anhänge</td><td>PDFs, Scans (Pässe, Verträge).</td></tr>
+      <tr><td><strong>Bank Account / Passport / Driver License</strong></td><td>Strukturierte Persönliches</td><td>Klare Felder &gt; Freitext. Suche findet&apos;s besser.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Faustregel</strong>
+    Wenn ein dedizierter Item-Typ existiert, nimm ihn. Eine Kreditkarte als „Login" anzulegen funktioniert technisch — aber Autofill, Suche und 1Password-Watchtower behandeln sie dann nicht richtig.
+  </div>
+
+  <h2 id="login-felder">2. Login-Felder richtig benutzen</h2>
+  <p>Ein Login hat fünf Standard-Felder. Sie haben jeweils eine spezifische Funktion — füll sie nicht „kreativ" um.</p>
+
+  <h3>Username</h3>
+  <p>Der eigentliche Login-Identifier. Bei den meisten Diensten ist das die <strong>E-Mail</strong>, manchmal ein Username. <em>Trag nichts anderes hier rein</em> (kein „John Doe", kein „mein Hauptaccount") — Autofill nimmt den Inhalt 1:1.</p>
+
+  <h3>Password</h3>
+  <p>Generiert über das eingebaute Password-Recipe (Würfelsymbol). Default: 20 Zeichen, Letters + Numbers + Symbols.</p>
+  <div class="callout tip">
+    <strong>💡 Pro-Move</strong>
+    Pro Login das Recipe anpassen: manche Banken erlauben max. 16 Zeichen oder keine Sonderzeichen. Klick auf das Recipe-Symbol → "Customize" → speichern. 1Password merkt sich das per Item.
+  </div>
+
+  <h3>Website (URL)</h3>
+  <p>Das wichtigste Feld für Autofill. <strong>Format-Tipp</strong>: Nur die Domain, ohne Pfad, ohne Trailing-Slash:</p>
+<pre><code>✅ https://example.com
+✅ https://app.example.com
+❌ https://example.com/login?ref=xyz
+❌ example.com</code></pre>
+
+  <h3>One-Time Password (TOTP)</h3>
+  <p>Siehe <a href="#totp">unten</a>. Pflicht für jedes Konto, das 2FA anbietet.</p>
+
+  <h3>Notes</h3>
+  <p>Markdown wird gerendert. Nutze es für: Recovery-Hints, „welche Mailadresse hat sich registriert", Hotline-Nummern, Sicherheitsfragen-Antworten.</p>
+
+  <h3 id="rich-icons">Rich Icons (automatische Logos)</h3>
+  <p>1Password holt automatisch das Favicon der Domain im URL-Feld. Damit es funktioniert:</p>
+  <ul>
+    <li>Setting an: <strong>Settings → Appearance → "Show icons"</strong> (Desktop) bzw. <strong>"Show website icons"</strong> in der Browser-Extension.</li>
+    <li>URL muss mit <code>https://</code> beginnen und sollte <em>nur</em> die Domain enthalten — keine Pfade, keine Query-Strings.</li>
+    <li>Nach Speichern lädt das Icon ein paar Sekunden später nach.</li>
+  </ul>
+  <p>Falsches Logo? Item bearbeiten → klick auf das aktuelle Icon (oben links beim Titel) → "Choose an icon" → eigenes Bild hochladen oder anderen Vorschlag wählen. Custom-Icons überschreiben das Auto-Favicon dauerhaft.</p>
+  <p>Trick: hat eine Site mehrere Domains, häng als zusätzliche URL die mit dem schöneren Favicon dran (z.B. <code>https://github.com</code> zusätzlich zu <code>https://api.github.com</code>) — 1Password nimmt typischerweise die erste mit Erfolg-Favicon.</p>
+
+  <h2 id="mehrere-urls">3. Mehrere URLs pro Login — der unterschätzte Move</h2>
+  <p>Ein Login kann <strong>beliebig viele URLs</strong> haben. Ein Item, viele Domains. Klick im URL-Feld auf "+ add another website".</p>
+
+  <p>Wann du das brauchst:</p>
+  <ul>
+    <li><code>google.com</code>, <code>youtube.com</code>, <code>gmail.com</code> → ein einziger Google-Login</li>
+    <li><code>github.com</code> + <code>github.dev</code> + <code>codespaces.new</code></li>
+    <li>Firma migriert von <code>oldcorp.com</code> auf <code>newcorp.io</code> → beide eintragen, kein Duplikat</li>
+    <li>SaaS-Tools mit Subdomains: <code>acme.atlassian.net</code>, <code>acme.slack.com</code></li>
+  </ul>
+
+  <h3>URL-Matching-Modi</h3>
+  <p>Pro URL kannst du den Match-Modus setzen (Klick auf das Drop-Down neben der URL):</p>
+  <table>
+    <tbody>
+      <tr><td><code>Base domain</code></td><td>Default. <code>example.com</code> matcht auch <code>app.example.com</code>.</td></tr>
+      <tr><td><code>Host</code></td><td>Exakter Hostname inkl. Subdomain. Für getrennte Logins auf Subdomains.</td></tr>
+      <tr><td><code>Exact</code></td><td>URL muss exakt matchen — Pfad inklusive. Selten nötig.</td></tr>
+      <tr><td><code>Never</code></td><td>Nie autofillen. Für „diese URL gehört dazu, aber nicht autofillen".</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="totp">4. TOTP (2FA) direkt in 1Password</h2>
+  <p>Du kannst Authy / Google Authenticator komplett rauswerfen. 1Password generiert TOTP-Codes <em>und</em> trägt sie automatisch ein.</p>
+
+  <h3>So fügst du einen Code hinzu</h3>
+  <ol>
+    <li>Bei Setup-2FA-Seite des Dienstes auf „QR-Code" klicken.</li>
+    <li>In 1Password → Login öffnen → Edit → "+ add field" → "One-Time Password".</li>
+    <li>Im Feld auf das QR-Symbol klicken → 1Password scannt den Code vom Bildschirm. Alternativ: Secret-String reinpasten (steht meistens unter dem QR-Code als „can't scan?").</li>
+    <li>Backup-Codes als Secure Note <em>oder</em> als Custom Field „Recovery Codes" beim selben Item.</li>
+  </ol>
+
+  <div class="callout warn">
+    <strong>⚠️ Die alte Diskussion: TOTP im selben Tool wie das Passwort?</strong>
+    Klassisch sagt man: 2FA = zweiter Faktor = sollte separat sein. Praktisch: 1Password ist mit Master-Passwort + Secret Key + (optional) Hardware-Key bereits stark genug abgesichert, dass der „compromised vault → alles weg"-Fall extrem unwahrscheinlich ist. Für die meisten Leute überwiegt der Komfort. Für <em>kritische Accounts</em> (E-Mail-Hauptaccount, 1Password selbst, Bank): zweiter Faktor mit Hardware-Key (YubiKey) statt TOTP.
+  </div>
+
+  <h2 id="custom-fields">5. Custom Fields &amp; Sections</h2>
+  <p>Jedes Item kann beliebig viele eigene Felder bekommen. Im Edit-Modus → "+ add more" → "Section". Innerhalb der Section: "+ add field".</p>
+
+  <h3>Feld-Typen — und wann du welchen nimmst</h3>
+  <table>
+    <tbody>
+      <tr><td><strong>Text</strong></td><td>Sichtbar, kopierbar, in der Suche</td></tr>
+      <tr><td><strong>Password</strong></td><td>Verdeckt, kopierbar, nicht in der Suche</td></tr>
+      <tr><td><strong>One-Time Password</strong></td><td>Generiert TOTP-Codes</td></tr>
+      <tr><td><strong>Date / Month-Year</strong></td><td>Für Ablaufdaten, Geburtstage</td></tr>
+      <tr><td><strong>Credit Card Number / PIN</strong></td><td>Mit speziellem Autofill-Verhalten</td></tr>
+      <tr><td><strong>URL</strong></td><td>Anklickbar, aber <em>kein</em> Autofill-Trigger (das macht nur das Haupt-URL-Feld)</td></tr>
+      <tr><td><strong>Email / Phone</strong></td><td>Strukturiert für Kontaktdaten</td></tr>
+      <tr><td><strong>File</strong></td><td>Anhang (Image, PDF, beliebig)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Beispiel: ein gut strukturierter GitHub-Login</h3>
+<pre><code>Title: GitHub
+Username: max@example.com
+Password: ●●●●●●●●●●●●●●
+Website: https://github.com (Base domain)
+Website: https://github.dev (Base domain)
+TOTP: ●●●●●●
+
+Section "Recovery"
+  recovery-codes: a1b2-c3d4 ... (Password field, multi-line)
+  email-on-file: max@example.com
+
+Section "API"
+  personal-access-token: ghp_xxx (Password field)
+  token-scopes: repo, workflow, write:packages (Text)
+  token-expires: 2026-12-31 (Date)
+
+Tags: dev, github</code></pre>
+
+  <h2 id="tags">6. Tags vs. Vaults vs. Categories</h2>
+  <p>Drei Konzepte, die ständig verwechselt werden. Klare Trennung:</p>
+  <table>
+    <thead><tr><th></th><th>Was</th><th>Wofür</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vault</strong></td><td>Container mit Zugriffsrechten</td><td>Trennung nach <em>wer darf rein</em>: Privat, Familie, Arbeit.</td></tr>
+      <tr><td><strong>Category</strong></td><td>Item-Typ (Login, Note, ...)</td><td>Wird automatisch durch den Typ gesetzt.</td></tr>
+      <tr><td><strong>Tag</strong></td><td>Beliebige Labels, mehrere pro Item</td><td>Querschnitts-Sortierung: <code>finance</code>, <code>dev</code>, <code>2026-cleanup</code>, <code>kids</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Tags sind hierarchisch: <code>work/clients/acme</code> erzeugt verschachtelte Tags. In der Sidebar sieht das aus wie ein Ordnerbaum. Verschachteln ist mächtig — aber ab Tiefe 3 wird&apos;s unübersichtlich.</p>
+
+  <h2 id="hygiene">7. Item-Hygiene-Checkliste</h2>
+  <p>Geh diese Liste einmal pro Quartal durch — dauert eine halbe Stunde, hält den Vault sauber:</p>
+  <ul>
+    <li>☐ Watchtower → "Compromised Passwords" leer? Sonst rotieren.</li>
+    <li>☐ Watchtower → "Reused Passwords" — alle bis auf bewusste Ausnahmen rotieren.</li>
+    <li>☐ Watchtower → "Weak Passwords" auf neue Mindeststärke bringen.</li>
+    <li>☐ "Inactive 2FA" — Sites, die 2FA anbieten, aber bei dir nicht aktiviert ist.</li>
+    <li>☐ Items ohne Tags → mindestens einen Tag vergeben.</li>
+    <li>☐ Doppelte Logins (Watchtower → "Duplicate Items") zusammenführen oder einen löschen.</li>
+    <li>☐ Tote Accounts (kündigen) löschen — nicht nur das 1Password-Item entfernen, sondern den Account beim Anbieter.</li>
+  </ul>
+
+  <div class="hero-cta">
+    <a class="btn" href="vaults.html">→ Weiter: Vaults &amp; Struktur</a>
+    <a class="btn ghost" href="index.html">Zurück zur Übersicht</a>
+  </div>
+
+  <footer>Kapitel 1 von 6 · 1Password Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

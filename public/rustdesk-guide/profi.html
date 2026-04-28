@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profi-Tipps &amp; Unorthodoxes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Profi-Tipps &amp; Unorthodoxes</h1>
+  <p class="lead">Hier wird&apos;s spaßig. Custom-Builds, TCP-Tunneling als VPN-Ersatz, Wake-on-LAN über RustDesk, Privacy-Mode mit Display-Blackout — die Sachen, die niemand erwähnt.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#custom-build">1. Custom Client mit hardcodierter Config (Killer-Move)</a></li>
+      <li><a href="#tunneling">2. TCP-Tunneling — VPN-Ersatz für ein Port</a></li>
+      <li><a href="#privacy-mode">3. Privacy Mode (Display-Blackout)</a></li>
+      <li><a href="#codecs">4. Codecs &amp; Hardware-Acceleration</a></li>
+      <li><a href="#wol">5. Wake-on-LAN über einen Always-On-Peer</a></li>
+      <li><a href="#cli">6. CLI-Tricks &amp; Scripting</a></li>
+      <li><a href="#allowlist">7. IP-Allowlist &amp; Whitelist-IDs</a></li>
+      <li><a href="#multi-monitor">8. Multi-Monitor sauber handhaben</a></li>
+      <li><a href="#mobile-tunes">9. Mobile-spezifische Tweaks</a></li>
+      <li><a href="#ungewoehnliche">10. Wirklich ungewöhnliche Use-Cases</a></li>
+    </ul>
+  </div>
+
+  <h2 id="custom-build">1. Custom Client mit hardcodierter Config</h2>
+  <p>Der mächtigste Trick im RustDesk-Universum. Du baust einen Installer, der bereits weiß, wo dein Server steht und welcher Public-Key gilt — und schickst ihn an Familie/Kunden. Die machen Doppelklick und sind verbunden, ohne irgendwas zu konfigurieren.</p>
+
+  <h3>Der einfache Weg: Rename-Trick</h3>
+  <p>RustDesk parst seinen <em>eigenen Dateinamen</em> beim Start. Wenn du den Installer nach einem bestimmten Schema benennst, übernimmt er die Settings beim ersten Start.</p>
+
+  <ol>
+    <li>In der App: Settings → Network → fülle ID-Server, Key etc. aus.</li>
+    <li>Settings → "..." (oben rechts) → <strong>Export Server Config</strong> → du bekommst einen Base64-String.</li>
+    <li>Lade den normalen Installer.</li>
+    <li>Benenn ihn um nach dem Schema:
+<pre><code>rustdesk-host=&lt;hbbs-host&gt;,key=&lt;public-key&gt;.exe</code></pre>
+      <p>Beispiele:</p>
+<pre><code>rustdesk-host=rd.example.com,key=ABC...XYZ.exe</code></pre>
+    </li>
+    <li>Empfänger lädt das Ding herunter, doppelklickt → installiert mit deinen Settings <em>vorausgefüllt</em>.</li>
+  </ol>
+
+  <h3>Der saubere Weg: api.rustdesk.com</h3>
+  <p>Auf <code>api.rustdesk.com</code> (offizieller Build-Service) gibst du deine Server-Adresse + Key + ein paar Tweaks ein, klickst „Build", lädst nach 2–3 Minuten einen vollständig vorkonfigurierten Installer (Windows/Mac/Linux). Kostet ein bisschen, dafür sauber signiert.</p>
+
+  <h3>Der DIY-Weg: selbst kompilieren</h3>
+  <p>Repo clonen, in <code>libs/hbb_common/src/config.rs</code> die Default-Werte für <code>RENDEZVOUS_SERVERS</code>, <code>RS_PUB_KEY</code> etc. ändern → kompilieren. Detail-Anleitung steht im RustDesk-Wiki unter „Customize the Software".</p>
+
+  <div class="callout tip">
+    <strong>💡 Why this matters</strong>
+    Familie + Freunde betreuen ist eine Sache von Sekunden. „Klick auf diesen Link, klick auf das EXE, fertig." Keine Telefon-Anleitungen, keine Server-Adresse-tippen, keine Public-Key-Mismatch-Verwirrung.
+  </div>
+
+  <h2 id="tunneling">2. TCP-Tunneling — VPN-Ersatz für einen einzelnen Port</h2>
+  <p>RustDesk kann beliebige TCP-Ports über die Verbindung tunneln. Bedeutet: du kannst von deinem Laptop aus auf einen Service hinter NAT zugreifen, <em>ohne</em> VPN aufzubauen.</p>
+
+  <h3>Beispiel: SSH zum Heim-Server</h3>
+  <ol>
+    <li>Auf dem Heim-PC läuft RustDesk-Service. SSH-Server lauscht lokal auf Port 22.</li>
+    <li>Vom Laptop verbindest du dich auf den Heim-PC (Permanent Password).</li>
+    <li>In der Verbindungs-Toolbar: <strong>TCP Tunneling</strong> → "+ Add Tunnel".</li>
+    <li>Local Port: <code>2222</code>, Remote Host: <code>localhost</code>, Remote Port: <code>22</code>.</li>
+    <li>Auf dem Laptop: <code>ssh -p 2222 user@localhost</code> → bist auf dem Heim-PC.</li>
+  </ol>
+
+  <p>Funktioniert für alles TCP: VNC, RDP zu einem <em>anderen</em> Rechner im Heimnetz, Web-UIs (Synology, Pi-hole, Home Assistant), Datenbank-Verbindungen.</p>
+
+  <div class="callout">
+    <strong>Use-Case</strong>
+    Heim-Server hat ein Home-Assistant-Webinterface auf <code>http://homeserver.lan:8123</code>. Du tunnelst <code>local 8123 → homeserver.lan:8123</code> über deinen anderen Heim-PC und öffnest <code>http://localhost:8123</code> auf dem Laptop. Wireguard-frei.
+  </div>
+
+  <h2 id="privacy-mode">3. Privacy Mode (Display-Blackout)</h2>
+  <p>Wenn du remote auf einem Office-PC arbeitest, sollte niemand vor Ort sehen, was du tust. Privacy Mode macht den lokalen Bildschirm <strong>schwarz</strong> während der Session.</p>
+
+  <p>Aktivierung: in der Toolbar während Verbindung → 🔒 Privacy Mode → On.</p>
+
+  <h3>Voraussetzungen</h3>
+  <ul>
+    <li>Windows-Host (auf macOS/Linux nicht verfügbar — OS-Limit).</li>
+    <li><strong>RustDesk Privacy Mode Driver</strong> installiert (Settings → Display → "Install Privacy Mode Driver"). Es ist ein virtueller Display-Treiber, der einen schwarzen Bildschirm vorgaukelt.</li>
+    <li>Auf neueren Builds gibt&apos;s alternativ "virtual display" Modus, der ohne Treiber-Install auskommt — funktioniert aber nicht auf jeder GPU.</li>
+  </ul>
+
+  <p>Lokale Tastatur/Maus werden ebenfalls geblockt — wenn jemand am Schreibtisch wackelt, passiert nichts.</p>
+
+  <h2 id="codecs">4. Codecs &amp; Hardware-Acceleration</h2>
+  <p>Default-Codec ist VP9. Funktioniert immer, ist aber CPU-lastig. Wenn dein PC eine moderne GPU hat, kannst du auf Hardware-Codecs umstellen für deutlich flüssigere Bilder bei niedrigerer CPU-Last.</p>
+
+  <p>In der Toolbar während Verbindung → <strong>Display</strong> → <strong>Codec</strong>:</p>
+
+  <table>
+    <thead><tr><th>Codec</th><th>Wann</th></tr></thead>
+    <tbody>
+      <tr><td><code>VP9</code></td><td>Default. Software-encoded. Verlässlich, mittlere Performance.</td></tr>
+      <tr><td><code>VP8</code></td><td>Älterer Codec. Wenn VP9 stottert, manchmal stabiler. Größere Bandbreite.</td></tr>
+      <tr><td><code>AV1</code></td><td>Modernster Codec. Beste Qualität bei niedriger Bandbreite. CPU-hungrig auf Hosts ohne AV1-Hardware-Encoder. Auf neuen Intel/AMD/Nvidia GPUs <strong>der</strong> Codec der Wahl.</td></tr>
+      <tr><td><code>H264</code></td><td>Hardware-Acceleration auf praktisch jedem Rechner. Sehr schnell. Etwas größere Files. <span class="tag good">guter Default für Gaming/Video</span></td></tr>
+      <tr><td><code>H265</code></td><td>Wie H264, bessere Qualität pro Bit. Erfordert HEVC-Hardware-Encoder.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Settings → Display → "Use hardware codec" einschalten + Codec wählen. Beim Verbinden zu einem Linux-Host mit <code>vaapi</code>-fähiger GPU funktioniert H264-HW-Encode auch dort.</p>
+
+  <div class="callout tip">
+    <strong>💡 Quality vs. Speed</strong>
+    Im Verbindungs-Toolbar gibt&apos;s einen <strong>Image-Quality</strong>-Slider: <em>Best</em>, <em>Balanced</em>, <em>Low</em>, <em>Custom</em>. „Custom" lässt dich Bitrate und Quantizer manuell setzen — Sweet-Spot für DSL-Leitungen meistens 2–3 Mbit, FPS auf 30 begrenzt. Bei mobilem 4G: 1 Mbit, 20 FPS.
+  </div>
+
+  <h2 id="wol">5. Wake-on-LAN über einen Always-On-Peer</h2>
+  <p>Klassisches Problem: Heim-PC ist aus, du willst dich verbinden. Lösung: ein winziger Always-On-Peer im Heimnetz (Raspberry Pi 4 reicht, oder dein NAS) sendet das WoL-Magic-Packet.</p>
+
+  <h3>Setup</h3>
+  <ol>
+    <li>Auf dem Heim-PC im BIOS Wake-on-LAN aktivieren. Im OS: Netzwerkadapter → "Wake on Magic Packet".</li>
+    <li>Auf dem Always-On-Peer (RPi mit Linux): RustDesk-Service installieren, Permanent Password setzen.</li>
+    <li>Pro-Trick: in RustDesk-Settings auf dem RPi einen Custom-Befehl hinterlegen, der <code>wakeonlan AA:BB:CC:DD:EE:FF</code> ausführt — kann via <em>Run program</em>-Permission ferngesteuert werden.</li>
+    <li>Vom Laptop: RustDesk → connect zum RPi → Toolbar → "Run command" → WoL feuert ab.</li>
+    <li>30 Sekunden warten → Verbindung zum Heim-PC.</li>
+  </ol>
+
+  <p>Alternative: RustDesk-Pro hat WoL als nativen Toolbar-Button im Address Book. Kein Pi nötig, aber Pro-Lizenz.</p>
+
+  <h2 id="cli">6. CLI-Tricks &amp; Scripting</h2>
+  <p>Der RustDesk-Client hat einen unterdokumentierten CLI-Modus:</p>
+
+<pre><code># Direkt verbinden mit Passwort (Linux/Mac)
+rustdesk --connect 123456789 --password "deinpasswort"
+
+# File-Transfer-Modus direkt öffnen
+rustdesk --file-transfer 123456789 --password "..."
+
+# Port-Forwarding nur (kein Bildschirm)
+rustdesk --port-forward 123456789
+
+# Config-Datei lesbar machen
+cat ~/.config/rustdesk/RustDesk.toml</code></pre>
+
+  <p>Use-Case: tägliches Connect-Skript zur Arbeitsmaschine — alias <code>work</code> auf der Shell, das die ID + Pass aus deinem Passwort-Manager zieht und direkt connectet.</p>
+
+  <h3>Headless-Server steuern</h3>
+  <p>Für Linux-Server ohne Display brauchst du einen virtuellen X-Server (Xvfb). RustDesk-Wiki hat dazu eine Anleitung — funktioniert, ist aber Frickel-Arbeit. Für Server-Admin sind SSH + tmux meistens die bessere Wahl.</p>
+
+  <h2 id="allowlist">7. IP-Allowlist &amp; Whitelist-IDs</h2>
+  <p>Settings → Security:</p>
+
+  <ul>
+    <li><strong>Whitelist (IP)</strong> — nur Verbindungen aus diesen IPs/CIDRs werden überhaupt akzeptiert. Format: <code>192.168.1.0/24, 84.144.0.0/16</code>. Hochwirksam gegen Brute-Force von außen.</li>
+    <li><strong>Verifiable Public-IDs</strong> (Pro) — nur Clients, die auf einer Liste stehen, dürfen verbinden. Selbst mit korrektem Passwort: kein Connect, wenn ID nicht gelistet.</li>
+  </ul>
+
+  <p>Kombinier IP-Allowlist mit dynamischer DNS: ein Cron-Job auf dem Heim-PC schreibt deine aktuelle Office-IP regelmäßig in die Allowlist. So bist du auch bei dynamischen IPs immer erreichbar, aber nicht für die Welt.</p>
+
+  <h2 id="multi-monitor">8. Multi-Monitor sauber handhaben</h2>
+  <p>Wenn der Host mehrere Monitore hat, hast du in der Toolbar eine Display-Auswahl:</p>
+  <ul>
+    <li><strong>Single-Monitor</strong> — nur ein Display, nimm das aktive.</li>
+    <li><strong>All Displays</strong> — alle nebeneinander in einem großen Stream. Bandbreiten-hungrig, aber praktisch.</li>
+    <li><strong>Mehrere Fenster</strong> — pro Display ein eigenes RustDesk-Fenster (Pro-Feature in einigen Builds).</li>
+  </ul>
+
+  <p>Auf modernen Builds gibt&apos;s die Option <code>Show remote cursor</code> + <code>Track active display</code>. Wenn Track-active an ist, springt der Stream automatisch zum Display, auf dem die Maus gerade ist. Praktisch, manchmal verwirrend — kennst du den Stream-Wechsel nicht, denkst du, der Bildschirm „spinnt".</p>
+
+  <h2 id="mobile-tunes">9. Mobile-spezifische Tweaks</h2>
+  <ul>
+    <li><strong>Datensparmodus</strong>: in der Verbindung → Display → Image quality → "Low". Spart bei mobilem Internet ~70% Bandbreite, schlechte Lesbarkeit.</li>
+    <li><strong>Show remote cursor</strong>: aus auf dem Telefon → Cursor-Position kommt aus dem letzten Tap, nicht dauernd übertragen → spart minimal Bandbreite, fühlt sich aber „kaputter" an. Default an lassen.</li>
+    <li><strong>Bildschirm-aus-Modus</strong>: bei Android — wenn der Screen schwarz wird, läuft die Verbindung weiter (Background-Service-Berechtigung vorausgesetzt).</li>
+    <li><strong>Floating Action Button</strong> auf Android — kannst du verstecken, wenn er stört. Settings in der Verbindung selbst.</li>
+  </ul>
+
+  <h2 id="ungewoehnliche">10. Wirklich ungewöhnliche Use-Cases</h2>
+
+  <h3>RustDesk als „Kiosk-Display"</h3>
+  <p>Eine Steam-Box / Nuc / RPi an einem Fernseher. Auf dem Couch-Laptop läuft RustDesk im Vollbild → quasi „dein Laptop sendet auf den TV". Latenz mit H264 + Direct-Connect: 50–80ms — gut für Filme, mäßig für schnelle Spiele, aber für Office-Demo top.</p>
+
+  <h3>Eltern-Support, ohne dass sie was tun müssen</h3>
+  <p>Custom Build mit hardcodiertem Server + permanentem Passwort + Service-Install + IP-Allowlist auf deine IP. Eltern kriegen einmal den Installer per Mail, Doppelklick — du kannst danach jederzeit ohne ihre Aktion ran. Dazu in den Permissions <code>require local approval</code> AUS — sonst müssen sie doch klicken.</p>
+
+  <h3>Drei-Klick-Onboarding für externe Mitarbeiter</h3>
+  <p>Custom Build inkl. <em>vorbefülltem Permanenten Passwort</em> (geht via Config-Override). Mitarbeiter installiert, du hast sofort Zugriff auf den Office-PC. Combine with Service-Account-Tokens auf API-Server-Seite für Audit-Logs.</p>
+
+  <h3>RustDesk + Tailscale = Overkill, aber wasserdicht</h3>
+  <p>Wenn du eh Tailscale im Netz hast: RustDesk-Server auf einer Tailscale-IP betreiben. ID-Server-Adresse zeigt auf <code>100.x.y.z</code>. Außerhalb des Tailscale-Netzes ist dein RustDesk-Setup komplett unsichtbar — Public-Key + Tailscale-WireGuard. Maximale Paranoia, minimal Reibung.</p>
+
+  <h3>Audio-Streaming als „Spotify-Speaker"</h3>
+  <p>Audio-Permission an, dann hörst du den System-Sound des Hosts. Klingt nach Trivia, aber: dein Heim-Server spielt FLAC ab, du hörst es vom Laptop. Latenz ist nicht optimal für Live-Hören, aber okay für Hintergrundbeschallung.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="troubleshooting.html">→ Weiter: Troubleshooting</a>
+    <a class="btn ghost" href="selfhost.html">Zurück: Self-Hosting</a>
+  </div>
+
+  <footer>Kapitel 4 von 6 · RustDesk Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

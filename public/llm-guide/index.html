@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM Guide — Übersicht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Reiseführer</span>
+  <div class="voice">„Willkommen. Vor euch liegen 15 Stationen über Sprachmodelle. An jeder erzählt euch jemand anderes seine Wahrheit. Manche sind genau, manche poetisch, manche bitter. Hört allen zu — die Wahrheit liegt im Schnittmuster."</div>
+
+  <h1>LLM Guide — 15 Stimmen, ein Thema</h1>
+  <p class="lead">Was passiert eigentlich, wenn du „Hallo" tippst und ChatGPT antwortet? Dieser Guide läuft die Pipeline ab — von Token zu Antwort — und nimmt dich danach mit zu den Themen, die in der Praxis wirklich beißen: RAG, Tools, Hallucinations, Kosten, lokale Modelle.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="tokenization.html">→ Bei der Mathematikerin starten</a>
+    <a class="btn ghost" href="prompting.html">Direkt zum Prompting</a>
+  </div>
+
+  <h2>Die Stationen</h2>
+
+  <h3>Mechanik — was unter der Haube passiert</h3>
+  <div class="grid">
+    <a class="card" href="tokenization.html"><span class="icon">🔢</span><h3>Tokenisierung</h3><p><em>Die Mathematikerin.</em> Wie aus „Erdbeere" plötzlich drei Zahlen werden.</p></a>
+    <a class="card" href="embeddings.html"><span class="icon">🌌</span><h3>Embeddings</h3><p><em>Der Lyriker.</em> Bedeutung als Punkt im Raum. Wer hätte das gedacht.</p></a>
+    <a class="card" href="context.html"><span class="icon">🏛️</span><h3>Kontextfenster</h3><p><em>Die Architektin.</em> Wie groß ist das Gedächtnis, und warum kostet es so viel.</p></a>
+    <a class="card" href="sampling.html"><span class="icon">🎲</span><h3>Sampling</h3><p><em>Der Croupier.</em> Temperature, Top-P, Top-K — Zufall mit System.</p></a>
+  </div>
+
+  <h3>Bedienung — wie du redest, damit das Modell hört</h3>
+  <div class="grid">
+    <a class="card" href="prompting.html"><span class="icon">🪷</span><h3>Prompting</h3><p><em>Der Zen-Meister.</em> Klar fragen ist die halbe Antwort.</p></a>
+    <a class="card" href="cot.html"><span class="icon">🔍</span><h3>Chain of Thought</h3><p><em>Sherlock Holmes.</em> Lass es laut nachdenken.</p></a>
+    <a class="card" href="hallucinations.html"><span class="icon">📰</span><h3>Halluzinationen</h3><p><em>Der zynische Reporter.</em> Warum dein Modell mit Selbstvertrauen lügt.</p></a>
+  </div>
+
+  <h3>Erweitern — über das nackte Modell hinaus</h3>
+  <div class="grid">
+    <a class="card" href="rag.html"><span class="icon">📚</span><h3>RAG</h3><p><em>Die Bibliothekarin.</em> Wissen mitliefern, statt zu hoffen.</p></a>
+    <a class="card" href="finetuning.html"><span class="icon">💪</span><h3>Fine-Tuning</h3><p><em>Der Personal Trainer.</em> Reps und Sets fürs Modell.</p></a>
+    <a class="card" href="agents.html"><span class="icon">📋</span><h3>Tools &amp; Agents</h3><p><em>Der Vorarbeiter.</em> Modelle, die anrufen können.</p></a>
+    <a class="card" href="multimodal.html"><span class="icon">🎨</span><h3>Multimodal</h3><p><em>Der Synästhetiker.</em> Bild + Ton + Text in einer Schüssel.</p></a>
+  </div>
+
+  <h3>Praxis — was du wirklich täglich brauchst</h3>
+  <div class="grid">
+    <a class="card" href="local.html"><span class="icon">🦴</span><h3>Lokale LLMs</h3><p><em>Der Punk.</em> Ollama, llama.cpp, raus aus der Cloud.</p></a>
+    <a class="card" href="costs.html"><span class="icon">📒</span><h3>Kosten &amp; Speed</h3><p><em>Die Buchhalterin.</em> Eine Tabelle, harte Zahlen.</p></a>
+    <a class="card" href="history.html"><span class="icon">🔥</span><h3>Geschichte</h3><p><em>Die Geschichtenerzählerin.</em> Wie wir hier gelandet sind.</p></a>
+    <a class="card" href="mistakes.html"><span class="icon">🥲</span><h3>Klassische Fehler</h3><p><em>Der grumpy Senior.</em> Bitte nicht. Bitte. NICHT.</p></a>
+  </div>
+
+  <footer>15 Erzähler·innen · ein Thema · Stand 2026</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

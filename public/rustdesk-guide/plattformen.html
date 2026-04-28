@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows ↔ Android</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Windows ↔ Android</h1>
+  <p class="lead">Beide Richtungen funktionieren — aber jede hat ihre eigene Falle. Hier sind die Setups, mit denen es <em>wirklich</em> reibungslos läuft.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#android-zu-windows">A. Android steuert Windows</a></li>
+      <li><a href="#windows-zu-android">B. Windows steuert Android</a></li>
+      <li><a href="#bidirektional">C. Beide Wege gleichzeitig</a></li>
+      <li><a href="#android-zu-android">D. Android steuert Android</a></li>
+    </ul>
+  </div>
+
+  <h2 id="android-zu-windows">A. Android steuert Windows</h2>
+  <p>Der einfachere Fall — Windows ist großzügig mit Remote-Input.</p>
+
+  <h3>Setup auf dem Windows-PC</h3>
+  <ol>
+    <li>RustDesk als Service installieren (siehe <a href="grundlagen.html#install">Grundlagen</a>).</li>
+    <li>Permanent Password setzen.</li>
+    <li>ID notieren.</li>
+  </ol>
+
+  <h3>Setup auf dem Android-Gerät</h3>
+  <ol>
+    <li>RustDesk-App installieren (Play Store oder APK).</li>
+    <li>App öffnen → ID des PCs eingeben → Connect → Permanent Password.</li>
+  </ol>
+
+  <h3>Bedien-Modi auf Android</h3>
+  <p>Oben im Verbindungs-Bildschirm gibt's einen Toggle zwischen zwei Modi — <em>kennt fast keiner</em>, macht aber den Unterschied:</p>
+
+  <table>
+    <thead><tr><th>Modus</th><th>Wie es sich anfühlt</th><th>Wofür</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Touch / Direct</strong></td><td>Wo du tippst, wird geklickt</td><td>Schnell mal was klicken, schlechte Präzision bei kleinen Targets</td></tr>
+      <tr><td><strong>Mouse / Trackpad</strong></td><td>Touch-Display als Trackpad — Cursor bewegt sich relativ</td><td>Präzise Arbeit, kleine Buttons, längere Sessions</td></tr>
+    </tbody>
+  </table>
+
+  <p>Im Trackpad-Modus zählen die typischen Gesten:</p>
+  <ul>
+    <li><strong>1-Finger-Tap</strong> = Linksklick</li>
+    <li><strong>2-Finger-Tap</strong> = Rechtsklick</li>
+    <li><strong>2-Finger-Drag</strong> = Scrollen</li>
+    <li><strong>Long-Press + Drag</strong> = Drag &amp; Drop</li>
+  </ul>
+
+  <div class="callout tip">
+    <strong>💡 Unorthodoxer Tipp</strong>
+    Schließ eine OTG-Maus oder Bluetooth-Tastatur an dein Android — RustDesk leitet die Eingaben durch. Dann ist dein Telefon ein vollwertiger Mini-Laptop für SSH ins Heimnetz oder eine Notfall-RDP-Session. Mit einem 7"-Tablet + Mini-Maus passt das in jede Tasche.
+  </div>
+
+  <h3>On-Screen-Keyboard für Sondertasten</h3>
+  <p>In der Tab-Bar unten gibt's drei Keyboard-Modi:</p>
+  <ul>
+    <li><strong>Soft</strong> — die normale Android-Tastatur. Für reines Tippen.</li>
+    <li><strong>Translate</strong> — wandelt deine Eingaben in „echte" Keystrokes um. Wichtig für Spiele, Terminals, Sondertasten.</li>
+    <li><strong>Legacy / Map</strong> — Roh-Keystrokes, jede Taste 1:1. Für komplexe Shortcuts.</li>
+  </ul>
+
+  <p>Für eine deutsche Tastatur am PC + Android: <strong>Translate</strong>-Modus benutzen, sonst kommt aus „ä" plötzlich „;". Mehr dazu im <a href="troubleshooting.html#tastatur">Troubleshooting</a>.</p>
+
+  <h2 id="windows-zu-android">B. Windows steuert Android</h2>
+  <p>Der knifflige Fall — Android lässt aus Sicherheitsgründen nicht jede App Input simulieren oder Bildschirm aufnehmen.</p>
+
+  <h3>Setup auf Android (das Gesteuerte)</h3>
+  <ol>
+    <li><strong>RustDesk</strong> aus Play Store / APK installieren.</li>
+    <li><strong>RustDesk Input</strong> als <em>separate</em> App installieren — dieselbe Quelle.<br>
+        <span class="tag warn">Wichtig</span> Ohne diese App kannst du das Gerät nur <em>anschauen</em>, nicht steuern.</li>
+    <li>RustDesk öffnen → "Start Service" tippen → Permission-Dialoge:
+      <ul>
+        <li><strong>Display over other apps</strong> (für Input-App) — erlauben.</li>
+        <li><strong>Accessibility Service</strong> für RustDesk Input — manuell in den Android-Settings aktivieren (RustDesk öffnet die Einstellungen für dich).</li>
+        <li><strong>MediaProjection</strong> — beim ersten Connect kommt der Dialog „Aufnahme starten" → erlauben.</li>
+        <li><strong>Notification</strong> für Persistent-Service.</li>
+      </ul>
+    </li>
+    <li>One-Time-Code wird angezeigt <em>oder</em> Permanent Password setzen.</li>
+  </ol>
+
+  <h3>Setup auf Windows (das Steuernde)</h3>
+  <ol>
+    <li>RustDesk öffnen → ID des Android-Geräts eingeben → Connect.</li>
+    <li>Code/Passwort eingeben.</li>
+    <li>Du siehst den Android-Bildschirm in einem Fenster.</li>
+  </ol>
+
+  <h3>Spezielle Gesten / Tasten von Windows aus</h3>
+  <p>Der Toolbar oben in der Verbindung hat Android-spezifische Buttons:</p>
+  <ul>
+    <li><strong>Home</strong> / <strong>Back</strong> / <strong>Recent Apps</strong> — die drei Android-Navi-Buttons als Klick-Buttons</li>
+    <li><strong>Volume +/–</strong>, <strong>Power</strong> — Hardware-Tasten simuliert</li>
+    <li><strong>Rotation lock</strong> — sinnvoll, sonst dreht sich das Bild auf dem PC, wenn du das Telefon kippst</li>
+  </ul>
+
+  <p>Maus + Tastatur am PC funktionieren nativ — Cursor wird auf Android übertragen, Tastendrücke kommen als Hardware-Events durch.</p>
+
+  <div class="callout warn">
+    <strong>⚠️ Android-Gotcha: Service stoppt nach Reboot</strong>
+    Nach einem Neustart ist der RustDesk-Service auf vielen Android-Skins (Xiaomi, Samsung, OnePlus) <em>nicht</em> automatisch aktiv. Workaround: in den Android-Settings RustDesk + RustDesk Input von der Akku-Optimierung ausnehmen UND als Autostart-App freigeben (auf Xiaomi: "Berechtigungen" → "Autostart"). Sonst musst du nach jedem Reboot manuell starten.
+  </div>
+
+  <div class="callout tip">
+    <strong>💡 Unorthodoxer Workaround</strong>
+    Wenn dein Android nach Reboot nicht selbst startet, hau eine Tasker- oder MacroDroid-Regel rein: „Bei Boot abgeschlossen → öffne RustDesk → tippe ‚Start Service'". Funktioniert zuverlässiger als die offizielle Autostart-Geschichte und überlebt System-Updates.
+  </div>
+
+  <h3>Was nicht geht</h3>
+  <ul>
+    <li><strong>DRM-geschützter Inhalt</strong> (Netflix, Disney+) erscheint schwarz — MediaProjection-Limit, kein RustDesk-Bug.</li>
+    <li><strong>Banking-Apps</strong> blocken oft Screen-Capture per <code>FLAG_SECURE</code>. Workaround: ROOT (auf eigene Gefahr) oder die App auf einem Alt-Gerät bedienen.</li>
+    <li><strong>Sehr alte Android-Versionen</strong> (&lt; 7) haben kein MediaProjection — RustDesk geht erst ab Android 7+ richtig.</li>
+  </ul>
+
+  <h2 id="bidirektional">C. Beide Wege gleichzeitig</h2>
+  <p>Du kannst auf <em>beiden</em> Geräten gleichzeitig steuernd UND steuerbar sein. Praktisches Setup:</p>
+
+  <ul>
+    <li>Auf Windows + Android <em>beide</em> Geräte als „verfügbar" einrichten (Permanent Password, Service läuft).</li>
+    <li>Address Book auf beiden — gegenseitig die ID des anderen abspeichern.</li>
+    <li>Vom Telefon → PC starten, oder vom PC → Telefon starten — je nach Bedarf.</li>
+  </ul>
+
+  <p>Praxis-Use-Case: Du sitzt am PC, willst eine 2FA-SMS aus deinem Android holen → vom PC aus auf Android verbinden, SMS-Code lesen, fertig. Brauchst nicht zum Telefon greifen.</p>
+
+  <h2 id="android-zu-android">D. Android steuert Android</h2>
+  <p>Ja, geht. Beide Geräte: RustDesk + RustDesk Input + alle Permissions wie oben. Use-Case: Familie helfen, ohne dass sie den PC starten müssen.</p>
+
+  <p>Auf dem steuernden Android: Connect zum anderen Android. Die Toolbar oben enthält dann beide Sets von Buttons (Sender + Empfänger Hardware-Keys). Etwas eng auf kleinen Displays — Tablet ist hier deutlich angenehmer.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="selfhost.html">→ Weiter: Eigener Server (hbbs/hbbr)</a>
+    <a class="btn ghost" href="grundlagen.html">Zurück: Grundlagen</a>
+  </div>
+
+  <footer>Kapitel 2 von 6 · RustDesk Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

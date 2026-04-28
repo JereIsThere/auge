@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halluzinationen</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die zynische Reporterin</span>
+  <div class="voice">„Vier Espresso, drei deadlines, kein Schlaf seit Dienstag. Ich hab Pressemitteilungen gelesen, in denen ‚AI hallucinations are nearly solved&apos; stand. Lass mich raten — du glaubst das. Komm her, Kleine, ich erzähl dir, was wirklich los ist."</div>
+
+  <h1>Halluzinationen</h1>
+  <p class="lead">Ein LLM weiß nicht, was wahr ist. Es weiß, was wahrscheinlich ist. In 99% der Fälle stimmt das überein. Im verbleibenden Prozent sieht es genauso aus, klingt genauso plausibel — und ist erfunden. Mit voller Selbstbewusstheit serviert.</p>
+
+  <h2>Was eine Halluzination tatsächlich ist</h2>
+  <p>Keine Halbwahrheit. Keine Fehlinterpretation. Eine vollkommen erfundene Aussage, die statistisch plausibel klingt, weil im Trainingsdaten-Korpus ähnliche Aussagen <em>existieren</em>, nur nicht diese genaue. Beispiele aus der Realität (alle dokumentiert):</p>
+
+  <ul>
+    <li>Ein Anwalt zitiert in einem Gerichtsverfahren <em>sechs erfundene Präzedenzfälle</em> aus ChatGPT (Mata v. Avianca, 2023). Sanktioniert.</li>
+    <li>Ein Pulitzer-Preisträger findet sich selbst auf einer Shortlist, auf der er nie war — Modell-generierter Lebenslauf-Eintrag.</li>
+    <li>Air Canadas Chatbot verspricht einem Kunden einen Bereavement-Tarif, den es nicht gibt. Gericht: Air Canada haftet (2024).</li>
+    <li>Code-Models erfinden Library-Funktionen, die nicht existieren. Manchmal taggen Angreifer dann eine Malware-Library mit dem Namen — „Slopsquatting".</li>
+  </ul>
+
+  <h2>Warum sie passieren — die unbequeme Mechanik</h2>
+  <p>LLMs sind trainiert, das nächste plausible Token zu generieren. „Ich weiß es nicht" ist statistisch oft <em>weniger plausibel</em> als ein konfident klingendes Statement, weil im Trainingsdaten-Set Menschen selten „ich weiß es nicht" schreiben. Sie schreiben Antworten.</p>
+
+  <p>Konsequenz: das Modell ist <em>literally trained to guess confidently</em>. Halluzinationen sind kein Bug. Sie sind ein Feature des Trainings-Setups.</p>
+
+  <h2>Drei Klassen von Halluzinationen</h2>
+
+  <table>
+    <thead><tr><th>Typ</th><th>Was passiert</th><th>Beispiel</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Faktisch</strong></td><td>Erfundene Fakten</td><td>„Goethe starb 1841." (war 1832)</td></tr>
+      <tr><td><strong>Zitat</strong></td><td>Erfundene Quellen, URLs, ISBNs</td><td>„Smith et al. (2019), Journal of Nothing." Existiert nicht.</td></tr>
+      <tr><td><strong>Kontext-Drift</strong></td><td>Widerspricht dem mitgelieferten Material</td><td>Du gibst Doku rein, Modell antwortet aus seinem Trainings-Wissen statt aus deiner Doku.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Was wirklich hilft (nicht: was Marketing sagt)</h2>
+
+  <h3>RAG — die wirksamste einzelne Maßnahme</h3>
+  <p>Wenn das Modell aus einer mitgelieferten Wissensbasis antworten muss („verwende ausschließlich die untenstehenden Dokumente"), sinken Halluzinationsraten messbar. Nicht auf null. Aber spürbar. Mehr dazu bei der Bibliothekarin.</p>
+
+  <h3>Zitat-Pflicht</h3>
+  <p>„Belege jede Aussage mit einer wörtlichen Stelle aus dem Material. Wenn keine Stelle existiert, sage: keine Information vorhanden." Wirkt überraschend gut. Modelle sind eher bereit, „nicht im Material" zu sagen, wenn sie um Belege gebeten werden.</p>
+
+  <h3>Niedrige Temperature</h3>
+  <p>T=0 oder 0.1 für Faktenfragen. Höhere Temperature streut auch Token-Mehrwege durch das Halluzinations-Land.</p>
+
+  <h3>Reasoning-Modelle</h3>
+  <p>Modelle mit eingebautem Chain-of-Thought halluzinieren etwas weniger. Verifizieren in Zwischenschritten. Aber: nicht null.</p>
+
+  <h3>Verifikation durch zweite Quelle</h3>
+  <p>Bei kritischen Aussagen: zweites Modell oder klassischer Code prüft. Antwort + Tool-Call gegen externes API für Faktencheck.</p>
+
+  <h2>Was NICHT hilft</h2>
+  <ul>
+    <li><strong>„Lüg nicht"</strong> als Anweisung im Prompt. Das Modell weiß nicht, dass es lügt — es generiert plausibel.</li>
+    <li><strong>„Sei selbstkritisch"</strong> ohne externe Verifikation. Self-Reflection ohne Grounding ändert wenig.</li>
+    <li><strong>Größeres Modell</strong> hilft moderat, ist aber kein Schutz. GPT-4 halluziniert seltener als GPT-3.5, aber halluziniert weiterhin.</li>
+    <li><strong>Hoffnung.</strong> Hoffnung ist keine Strategie.</li>
+  </ul>
+
+  <div class="callout danger">
+    <strong>🚨 Vom Newsdesk</strong>
+    Wenn dein Use-Case Lüge nicht verzeiht — Recht, Medizin, Buchhaltung, Compliance — dann ist ein nacktes LLM nicht der richtige Ort. RAG mit Belegpflicht plus menschliche Verifikation. Nicht „LLM checkt die Antwort" — Mensch. Wer das vergisst, macht Mata v. Avianca II.
+  </div>
+
+  <h2>Der zynische Schluss</h2>
+  <p>LLMs sind großartige Gesprächspartner und brauchbare Drafter. Sie sind keine Wahrheits-Maschinen und werden es nie sein, solange das Trainings-Objective „nächstes Token vorhersagen" und nicht „die Wahrheit sagen" ist. Wer beim Marketing das Wort „solved" liest, sollte tief atmen.</p>
+
+  <p>Trinken Sie was. Sie haben&apos;s gehört.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="rag.html">→ Weiter: RAG</a>
+    <a class="btn ghost" href="cot.html">Zurück: Chain of Thought</a>
+  </div>
+
+  <p class="signoff">— Off the record? Halluzinationen sind hier, um zu bleiben. Aber das hast du nicht von mir.</p>
+  <footer>Kapitel 7 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaults &amp; Struktur</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Vaults &amp; Struktur</h1>
+  <p class="lead">Vaults sind die wichtigste organisatorische Entscheidung in 1Password — und die einzige, die schwer rückgängig zu machen ist, wenn sie mit anderen geteilt wird.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#was-ist-vault">Was ein Vault wirklich ist</a></li>
+      <li><a href="#empfehlung">Empfohlenes Setup für Privatpersonen</a></li>
+      <li><a href="#family">Family-Setup (mit Partner / Kindern)</a></li>
+      <li><a href="#work">Work / Team-Setup</a></li>
+      <li><a href="#fehler">Klassische Fehler</a></li>
+    </ul>
+  </div>
+
+  <h2 id="was-ist-vault">Was ein Vault wirklich ist</h2>
+  <p>Ein Vault ist eine eigene Verschlüsselungs-Einheit. Items in <em>Vault A</em> sind kryptografisch von <em>Vault B</em> getrennt. Wer Zugriff auf Vault A hat, sieht nichts von Vault B.</p>
+
+  <p>Daraus folgt:</p>
+  <ul>
+    <li>Sharing passiert <strong>auf Vault-Ebene</strong>, nie auf Item-Ebene (außer via "Item Sharing Link", siehe Profi-Tipps).</li>
+    <li>Vaults sind <strong>nicht</strong> wie Ordner zur Sortierung gedacht. Dafür gibt&apos;s Tags.</li>
+    <li>Items zwischen Vaults zu verschieben ist möglich, aber unterbricht die Berechtigungs-Logik.</li>
+  </ul>
+
+  <h2 id="empfehlung">Empfohlenes Setup für eine Einzelperson</h2>
+  <p>Drei Vaults reichen für die meisten Leute:</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>📦 Private</h3>
+      <p>Default-Vault. Alle persönlichen Logins, Karten, Notes. ~80% deiner Items.</p>
+    </div>
+    <div class="card">
+      <h3>💼 Work</h3>
+      <p>Alles arbeitsbezogen. Wenn die Firma einen Business-Account zahlt, gehört das eher dorthin (siehe unten).</p>
+    </div>
+    <div class="card">
+      <h3>🔐 High-Security</h3>
+      <p>Krone-Juwelen: E-Mail-Hauptaccount, 1Password selbst, Bank, Steuer, Krypto. Optional mit zusätzlichem Auth-Schritt.</p>
+    </div>
+  </div>
+
+  <p>Optional ein <strong>Shared</strong>-Vault für Sachen, die du mit Familie teilst (WLAN, Streaming-Accounts).</p>
+
+  <div class="callout warn">
+    <strong>⚠️ Mix-Falle</strong>
+    Hab nie sowohl einen privaten als auch einen Business-1Password-Account auf demselben Gerät, in dem Arbeitsdaten im privaten Vault landen. Wenn du die Firma verlässt, ist der Business-Vault weg — was im privaten Vault liegt, gehört dir. Trag also work-Items ausschließlich in den Work-Vault des Business-Accounts ein.
+  </div>
+
+  <h2 id="family">Family-Setup</h2>
+  <p>Mit einem Family-Plan hat jedes Mitglied seinen eigenen Private-Vault (für andere unsichtbar) <em>plus</em> Zugriff auf gemeinsame Vaults.</p>
+
+  <h3>Sinnvolle gemeinsame Vaults</h3>
+  <ul>
+    <li><strong>Shared</strong> — Streaming, WLAN, gemeinsame Lieferdienste, Reise-Buchungen.</li>
+    <li><strong>Household</strong> — Versicherungen, Verträge, Hausverwaltung, Notar-Dokumente.</li>
+    <li><strong>Kids</strong> — Schul-Logins, Kinderarzt-Portale, Kinder-Apps. Eltern haben Read+Write.</li>
+  </ul>
+
+  <h3>Wer kriegt was?</h3>
+  <p>Pro Vault kann pro Mitglied festgelegt werden: <code>View</code>, <code>Edit</code>, <code>Manage</code>. Praktisches Muster: beide Eltern <code>Manage</code> auf <em>Household</em>, Kinder <code>View</code> auf <em>Shared</em> für Streaming-Logins.</p>
+
+  <div class="callout tip">
+    <strong>💡 Family Organizer</strong>
+    Eine Person sollte <em>Family Organizer</em> sein (Account-Recovery für andere möglich). Eine zweite Person <em>Recovery Contact</em> — falls die erste den Zugang verliert.
+  </div>
+
+  <h2 id="work">Work / Team-Setup</h2>
+  <p>In Business-Accounts werden Vaults oft pro Team oder pro Projekt aufgeteilt. Empfohlene Muster:</p>
+
+  <table>
+    <thead><tr><th>Vault</th><th>Zugriff</th><th>Inhalt</th></tr></thead>
+    <tbody>
+      <tr><td><code>Engineering — Shared</code></td><td>Alle Devs</td><td>Staging-DBs, dev-Tools, Saas-Logins</td></tr>
+      <tr><td><code>Engineering — Production</code></td><td>nur Senior+</td><td>Prod-DB, Prod-API-Keys, deploy-Tokens</td></tr>
+      <tr><td><code>Marketing</code></td><td>Marketing-Team</td><td>Social-Media-Logins, Ad-Accounts</td></tr>
+      <tr><td><code>Finance</code></td><td>CFO + Buchhaltung</td><td>Banking, Steuer, Provider-Portale</td></tr>
+      <tr><td><code>Onboarding</code></td><td>HR + Empfänger</td><td>Initial-Logins für neue Mitarbeitende</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Service Accounts</h3>
+  <p>Für CI/CD und automatisierte Systeme: <strong>nie</strong> persönliche Accounts. Stattdessen <a href="cool.html#service-accounts">Service Accounts</a> mit eigenem Token. Read-only, Vault-spezifisch, rotierbar.</p>
+
+  <h2 id="fehler">Klassische Fehler</h2>
+
+  <h3>❌ Ein Vault pro Tool / pro Kunde</h3>
+  <p>Endet mit 40 Vaults und unmöglicher Verwaltung. Stattdessen: einen Vault, viele <strong>Tags</strong>.</p>
+
+  <h3>❌ Persönliches im Business-Account</h3>
+  <p>Geht verloren, wenn du die Firma verlässt. Auch der Admin der Firma kann (theoretisch) Recovery initiieren.</p>
+
+  <h3>❌ Geteilte „Family"-Logins im persönlichen Vault</h3>
+  <p>Wenn dir was zustößt, kommt niemand ran. Shared-Vault → Recovery-Contact → safe.</p>
+
+  <h3>❌ Vaults als Sortier-Ordner missbrauchen</h3>
+  <p>"Travel", "Shopping", "Subscriptions" sind <em>Tags</em>, keine Vaults. Vaults = Wer-darf-rein.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="profi.html">→ Weiter: Profi-Tipps</a>
+    <a class="btn ghost" href="grundlagen.html">Zurück: Grundlagen</a>
+  </div>
+
+  <footer>Kapitel 2 von 6 · 1Password Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

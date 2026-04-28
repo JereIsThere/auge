@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fehlerbilder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Notfall-Cassandra</span>
+  <div class="voice">„Ich hab&apos;s euch gesagt. Ich hab&apos;s GESAGT. Aber ihr habt&apos;s gemacht. Drei Stunden Outage, vier rote Augen, zwei Kotz-Eimer. Setzt euch hin. Ich erzähl euch alles, damit ihr nicht der nächste seid."</div>
+
+  <h1>Was schiefgeht — und wie</h1>
+  <p class="lead">Eine Tour durch die häufigsten Rotation-Disasters. Jede dieser Geschichten ist real. Mehrfach. In verschiedenen Firmen.</p>
+
+  <h2>Disaster 1: Big Bang ohne Overlap</h2>
+  <p><strong>Was passiert:</strong> Du löschst alten Key gleichzeitig mit dem Erstellen des neuen. Dein deploy auf alle Services dauert 8 Minuten. In den 8 Minuten haben alle Services 5xx-Fehler.</p>
+  <p><strong>Wie es eskaliert:</strong> Externe Webhooks failen, retryen, Buffer läuft voll, Queue-Bursts, Backend explodiert.</p>
+  <p><strong>Lehre:</strong> Overlap. IMMER. Wenn dein System es nicht zulässt: Architektur-Bug.</p>
+
+  <h2>Disaster 2: Ein vergessener Service</h2>
+  <p><strong>Was passiert:</strong> Du deployest neuen Key auf alle Services. Vergisst, dass ein 6 Jahre alter Cron-Job auf einer EC2 noch den alten benutzt. Cron läuft nachts. Schlägt fehl. Niemand merkt&apos;s. Drei Wochen später: Datenbank-Backup-Job failt seit drei Wochen.</p>
+  <p><strong>Lehre:</strong> Inventur vor Rotation. Audit-Logs nach Rotation. „Last used"-Tracking pro Key.</p>
+
+  <h2>Disaster 3: Der Mobile-Client-Tod</h2>
+  <p><strong>Was passiert:</strong> JWT-Signing-Key rotiert. Mobile-App-Version 1.x kann den neuen <code>kid</code> nicht verifizieren — sie kennt nur den hardcoded alten Public-Key. 200.000 User mit alter App können sich nicht mehr einloggen.</p>
+  <p><strong>Lehre:</strong> Mobile-Clients dürfen Public-Keys NICHT hardcoden. JWKS-Endpoint mit Cache, Force-Refresh-Mechanismus, Fallback. Versioning im Token.</p>
+
+  <h2>Disaster 4: Cache-Lag</h2>
+  <p><strong>Was passiert:</strong> Du hast neuen Key in Vault. Pods cachen Secrets 1h. Du revokest alten Key. 45 Minuten lang failen Calls.</p>
+  <p><strong>Lehre:</strong> Cache-Lifetime gegen Rotation-Cutover stimmen. SIGHUP/Reload-Signal an Apps. Sidecar-basiertes Secret-Refresh (Vault-Agent, AWS-Secrets-Manager-Sidecar).</p>
+
+  <h2>Disaster 5: Symmetric vs Asymmetric verwechselt</h2>
+  <p><strong>Was passiert:</strong> Du rotierst HMAC-JWT-Secret und schiebst es per Push-Notification an alle Verbraucher. Verbraucher sind über Continents verteilt. Push-Notifications kommen verspätet an. Token, das mit altem signiert ist, wird mit neuem verifiziert. Fail.</p>
+  <p><strong>Lehre:</strong> HMAC = symmetrisch = beide Seiten brauchen gleichzeitig dasselbe Geheimnis. Bei großen Setups: lieber RS256 + Public-Key-Verteilung. Public Keys können öffentlich verteilt werden — Cache-Lag schadet nicht.</p>
+
+  <h2>Disaster 6: Der zu kleine Audit-Window</h2>
+  <p><strong>Was passiert:</strong> „Wir haben den alten Key vor 2 Tagen revoked, alles läuft, ist sauber." Eine Woche später: monatlicher Reporting-Job läuft mit altem Key. Bricht zusammen. Reports fehlen.</p>
+  <p><strong>Lehre:</strong> Audit-Window muss länger sein als die längste Job-Periodizität. Wenn du monatliche Jobs hast: warte 35 Tage zwischen Deactivate und Delete.</p>
+
+  <h2>Disaster 7: Rotation während des Incidents</h2>
+  <p><strong>Was passiert:</strong> Ihr habt einen Breach. Ihr rotiert ALLE Keys gleichzeitig in Panik. Ein Service braucht zwei Keys (sich selbst gegen Auth-Service, Auth-Service gegen DB). Reihenfolge falsch. Nichts geht mehr.</p>
+  <p><strong>Lehre:</strong> Auch im Incident: Plan. Reihenfolge. Communicate. Eine Person koordiniert. Schnell heißt nicht „alle gleichzeitig".</p>
+
+  <h2>Disaster 8: Das vergessene Mobile-Build-Token</h2>
+  <p><strong>Was passiert:</strong> Apple-Developer-Cert läuft ab. Alle Apps deiner Firma können nicht mehr installiert werden. Nicht-Updates. Komplett-Fail. (Apple, eigene App-Store, 2015. War mehrere Stunden.)</p>
+  <p><strong>Lehre:</strong> Cert-Ablauf-Monitoring. Pflicht. <code>certbot</code> für TLS, manuelle Reminders für Code-Signing. Jeder Cert hat ein Renewal-Ticket im Kalender.</p>
+
+  <h2>Disaster 9: Der Insider-Token-Vergessen</h2>
+  <p><strong>Was passiert:</strong> Mitarbeiter geht. Offboarding-Checkliste: Slack ✅, Jira ✅, Personal AWS Access Key ❌. Der hat noch einen aus &apos;22 mit Admin-Rights. Drei Monate später: nochmal eingeloggt. „Aus Versehen", angeblich.</p>
+  <p><strong>Lehre:</strong> Offboarding-Checkliste muss maschinell verifiziert sein. Audit „all keys created by user X" → revoke. AWS IAM-Access-Analyzer. GitHub Org-Member-Token-Audit.</p>
+
+  <h2>Disaster 10: Der „temporäre" Key</h2>
+  <p><strong>Was passiert:</strong> Dev erstellt Key für Debugging. „Lösche ich gleich wieder." Vier Jahre später ist der Key noch da, in einem Slack-Chat dokumentiert, mit „temp-key-don&apos;t-rotate" beschriftet. Kein Backup, niemand weiß, was den noch braucht.</p>
+  <p><strong>Lehre:</strong> Naming-Convention: jeder Key hat Owner, Created-Date, Purpose. Periodisch (alle 6 Monate) Audit: gibt&apos;s den Owner noch? Wird der Key noch benutzt? „Last used" &gt; 30 Tage = Verdachtsmoment.</p>
+
+  <h2>Die Notfall-Checkliste, falls es dich erwischt</h2>
+  <ol>
+    <li><strong>Atmen.</strong> Panik macht Reihenfolgen falsch.</li>
+    <li><strong>Was ist betroffen?</strong> Welche Services nutzen den toten Key?</li>
+    <li><strong>Können wir den alten Key kurz reaktivieren?</strong> (Disabled, nicht Deleted hilft hier.)</li>
+    <li><strong>Wenn ja:</strong> Re-Enable, dann sauber von vorne.</li>
+    <li><strong>Wenn nein:</strong> Hot-Fix priorisieren auf den geschäftskritischsten Service zuerst.</li>
+    <li><strong>Communicate.</strong> Status-Page, Stakeholder, Slack-Channel.</li>
+    <li><strong>Postmortem.</strong> Schreibe es auf. Nicht für Schuldzuweisung — für die Lessons.</li>
+  </ol>
+
+  <div class="callout danger">
+    <strong>🚨 Letzte Mahnung</strong>
+    Eine Outage durch Rotation hinterlässt Narben. Aber eine Outage durch <em>verpasste</em> Rotation (= Leak ausgenutzt) hinterlässt Schadenersatz, Pressemitteilungen, Kündigungen. Wähl das richtige Risiko.
+  </div>
+
+  <p>Ich hab&apos;s gesagt. Mehrfach. Bitte hört zu. Bitte.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="cheatsheet.html">→ Weiter: Cheatsheet</a>
+    <a class="btn ghost" href="cookbook.html">Zurück: Cookbook</a>
+  </div>
+
+  <p class="signoff">— Wer die Warnung ignoriert, wird die Warnung.</p>
+  <footer>Kapitel 5 · Key Rotation Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

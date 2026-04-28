@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Bibliothekarin</span>
+  <div class="voice">„In meiner Bibliothek findest du alles. Aber du musst wissen, in welchem Regal du suchst — und welche Frage du stellst. RAG ist genau das: Frage hinhalten, passendes Regalbrett finden, Buch vorlegen, antworten lassen."</div>
+
+  <h1>Retrieval-Augmented Generation</h1>
+  <p class="lead">RAG ist die nüchternste Antwort auf die Frage „mein Modell weiß nicht von meinen Daten". Du gibst dem Modell beim Anfrage-Zeitpunkt die richtigen Dokument-Schnipsel mit. Es antwortet daraus. Schluss mit halluzinieren.</p>
+
+  <h2>Der Aufbau, in fünf Schritten</h2>
+
+  <ol>
+    <li><strong>Indexieren</strong> — Dokumente in Chunks teilen, jeden Chunk in einen Embedding-Vektor verwandeln, in eine Vektor-DB ablegen. Einmalig.</li>
+    <li><strong>Frage einbetten</strong> — User stellt Frage; daraus auch ein Embedding.</li>
+    <li><strong>Suchen</strong> — Vektor-DB findet die k ähnlichsten Chunks (typisch k=5–10).</li>
+    <li><strong>Kontextualisieren</strong> — gefundene Chunks werden in den Prompt eingefügt.</li>
+    <li><strong>Generieren</strong> — Modell antwortet aus den Chunks.</li>
+  </ol>
+
+  <h2>Schema-Beispiel</h2>
+<pre><code>System-Prompt:
+  Du beantwortest Fragen ausschließlich auf Basis der untenstehenden
+  Dokumente. Wenn die Antwort nicht enthalten ist: sage „Nicht im Material".
+  Zitiere wörtlich.
+
+Kontext (gefundene Chunks):
+  [doc-42] „... unsere Rückgabefrist beträgt 30 Tage ab Erhalt ..."
+  [doc-87] „... bei Defekten verlängert sich die Frist auf 60 Tage ..."
+
+Frage des Users:
+  Wie lange habe ich, um defekte Ware zurückzuschicken?</code></pre>
+
+  <h2>Stille Bibliothekspflichten</h2>
+
+  <h3>Chunking — die unterschätzte Entscheidung</h3>
+  <p>Wie groß sollen die Chunks sein? Zu klein → Kontext fehlt, Antworten fragmentieren. Zu groß → Vektoren werden „diffus", schlechtere Suche.</p>
+  <ul>
+    <li>200–500 Tokens pro Chunk: gut für QA über Fließtext.</li>
+    <li>Mit <strong>Overlap</strong> (50–100 Tokens) chunken — sonst zerschneidet man Sätze.</li>
+    <li>Bei strukturierten Daten (Code, Tabellen): an logischen Grenzen splitten, nicht an Token-Counts.</li>
+  </ul>
+
+  <h3>Embedding-Modell</h3>
+  <p>Im selben Index <em>nie</em> Embeddings unterschiedlicher Modelle mischen. Faktor: gemischte Geometrien geben Müll-Suche. Wenn du das Embedding-Modell wechselst: kompletter Re-Index.</p>
+
+  <h3>Reranker — der zweite Pass</h3>
+  <p>Vektorsuche liefert „grob ähnlich". Ein <strong>Reranker</strong> (Cross-Encoder, z.B. <code>bge-reranker</code>, <code>cohere-rerank</code>) sortiert die Top 50 nochmal feiner und gibt dir die Top 5. Spürbarer Qualitätsboost. Etwas teurer, lohnt sich fast immer.</p>
+
+  <h3>Hybrid Search</h3>
+  <p>Vektorsuche ist gut bei Bedeutung, schlecht bei Eigennamen, Codes, Produktnummern. Klassische Volltext-Suche (BM25) ist umgekehrt. <strong>Hybride</strong>: beide laufen, Ergebnisse mergen. Tools: Weaviate, Qdrant, OpenSearch — alle bieten das.</p>
+
+  <h2>Was schiefgehen kann</h2>
+
+  <table>
+    <thead><tr><th>Symptom</th><th>Ursache</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>„Antwort ist im Doc, aber Modell findet nichts"</td><td>Schlechte Embedding-Suche</td><td>Reranker, Hybrid Search, Chunks anpassen</td></tr>
+      <tr><td>„Modell antwortet trotzdem aus Trainings-Wissen"</td><td>Prompt nicht streng genug</td><td>„Ausschließlich aus diesem Material" + Zitatpflicht</td></tr>
+      <tr><td>„Top-K liefert irrelevante Chunks"</td><td>Anfrage zu vage</td><td>Query-Rewriting (LLM erweitert die Frage vor der Suche)</td></tr>
+      <tr><td>„Bei langen Threads vergisst es alte Infos"</td><td>Conversation-History wird länger als sinnvoll</td><td>Memory-Layer + RAG kombinieren</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Erweiterungen, die du wissen solltest</h2>
+
+  <h3>HyDE — Hypothetical Document Embeddings</h3>
+  <p>Statt die Frage einzubetten: Modell bitten, eine <em>fiktive Antwort</em> zu generieren, und <em>diese</em> einbetten. Die fiktive Antwort matcht oft besser auf echte Dokumente, weil ähnliche Sprachgestalt.</p>
+
+  <h3>Multi-Query Retrieval</h3>
+  <p>Modell formuliert die Frage 3–5× anders um, du suchst zu jeder Variante, vereinigst die Ergebnisse. Robust gegen vage Fragen.</p>
+
+  <h3>Agentic RAG</h3>
+  <p>Statt einmal zu suchen: das Modell entscheidet, ob es Info braucht, was es genau sucht, ggf. mehrfach iterativ. Mehr dazu beim Vorarbeiter im Tools-Kapitel.</p>
+
+  <h2>Wann RAG nicht die Antwort ist</h2>
+  <ul>
+    <li>Du brauchst kein dynamisches Wissen — alles ist im Trainings-Stand. Dann reicht Prompt allein.</li>
+    <li>Daten sind sehr klein (&lt;100 Seiten) — direkt in den Kontext, kein Index nötig.</li>
+    <li>Du willst Stil/Verhalten ändern, nicht Wissen — dann Fine-Tuning, nicht RAG.</li>
+  </ul>
+
+  <p>Schhh. Sie suchen das richtige Buch. Das ist die einzige Aufgabe.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="finetuning.html">→ Weiter: Fine-Tuning</a>
+    <a class="btn ghost" href="hallucinations.html">Zurück: Halluzinationen</a>
+  </div>
+
+  <p class="signoff">— Bitte stellen Sie das Buch zurück, wenn Sie fertig sind.</p>
+  <footer>Kapitel 8 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

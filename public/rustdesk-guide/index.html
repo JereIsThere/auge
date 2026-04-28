@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RustDesk Guide — Übersicht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>RustDesk — der vollständige Guide</h1>
+  <p class="lead">Open-Source-Remote-Desktop, das TeamViewer/AnyDesk in den Schatten stellt — wenn man weiß, wo man dreht. Hier sind sieben Kapitel, vom ersten Connect bis zum self-hosted Setup mit Custom Client.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="grundlagen.html">→ Mit Grundlagen starten</a>
+    <a class="btn ghost" href="cheatsheet.html">Cheatsheet öffnen</a>
+  </div>
+
+  <h2>Was du hier lernst</h2>
+  <div class="grid">
+    <a class="card" href="grundlagen.html">
+      <span class="icon">🚀</span>
+      <h3>Grundlagen</h3>
+      <p>Installieren, ID &amp; Passwort verstehen, erste Verbindung. Permanent vs. One-Time-Password, Permissions.</p>
+    </a>
+    <a class="card" href="plattformen.html">
+      <span class="icon">📱</span>
+      <h3>Windows ↔ Android</h3>
+      <p>Vom Telefon den Desktop steuern und umgekehrt — inkl. Accessibility, MediaProjection, Maus-Modi.</p>
+    </a>
+    <a class="card" href="selfhost.html">
+      <span class="icon">🛰️</span>
+      <h3>Self-Hosting</h3>
+      <p>hbbs + hbbr auf einem 5€-VPS. Eigener Relay, eigener Rendezvous-Server, kein Drittanbieter.</p>
+    </a>
+    <a class="card" href="profi.html">
+      <span class="icon">⚙️</span>
+      <h3>Profi-Tipps</h3>
+      <p>Custom Client mit hardcodiertem Server, TCP-Tunneling, Privacy-Mode, Hardware-Codecs, IP-Allowlist.</p>
+    </a>
+    <a class="card" href="troubleshooting.html">
+      <span class="icon">🔧</span>
+      <h3>Troubleshooting</h3>
+      <p>"Key Mismatch", schwarzer Bildschirm, Tastatur-Layout, Service stoppt, Multi-Monitor-Probleme.</p>
+    </a>
+    <a class="card" href="cheatsheet.html">
+      <span class="icon">📋</span>
+      <h3>Cheatsheet</h3>
+      <p>Ports, CLI-Flags, Config-Pfade, Permissions-Matrix — alles auf einer Seite.</p>
+    </a>
+  </div>
+
+  <h2>Warum RustDesk?</h2>
+  <p>TeamViewer ist langsam und stört dich mit „commercial use detected". AnyDesk ist nett, aber nicht selbst hostbar. Chrome Remote Desktop kann fast nichts. RustDesk ist <strong>Open Source</strong>, kann komplett <strong>self-hosted</strong> betrieben werden, läuft auf jeder Plattform, hat <strong>P2P-Verbindungen</strong> wenn möglich und fällt nur auf einen Relay zurück, wenn beide Peers hinter strikten NATs sind.</p>
+
+  <p>Die Tücke: viele Features sind versteckt, schlecht dokumentiert oder unter „Advanced" verborgen. Genau dafür ist dieser Guide.</p>
+
+  <div class="callout tip">
+    <strong>💡 Tipp zum Lernen</strong>
+    Lies <a href="grundlagen.html">Grundlagen</a> + <a href="plattformen.html">Plattformen</a> linear. <a href="selfhost.html">Self-Hosting</a> nur, wenn du es wirklich brauchst — die offiziellen Public-Server sind okay für gelegentliche Nutzung. <a href="profi.html">Profi-Tipps</a> sind dein Spielplatz, sobald die Basics sitzen.
+  </div>
+
+  <footer>
+    Erstellt als Lernprojekt · Stand 2026 · Inhalt basiert auf öffentlich dokumentierten RustDesk-Features (Version 1.3+).
+  </footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

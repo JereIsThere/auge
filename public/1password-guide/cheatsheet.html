@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheatsheet</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Cheatsheet</h1>
+  <p class="lead">Eine Seite mit allem, was du je nachschlagen wirst. Ausdruck-tauglich.</p>
+
+  <h2>Shortcuts (Desktop)</h2>
+  <table>
+    <thead><tr><th>Aktion</th><th>macOS</th><th>Windows / Linux</th></tr></thead>
+    <tbody>
+      <tr><td>Quick Access</td><td><kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd></td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd></td></tr>
+      <tr><td>App öffnen</td><td><kbd>⌘</kbd>+<kbd>\</kbd></td><td><kbd>Ctrl</kbd>+<kbd>\</kbd></td></tr>
+      <tr><td>Browser-Autofill (Inline)</td><td><kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></td></tr>
+      <tr><td>Suche</td><td><kbd>⌘</kbd>+<kbd>F</kbd></td><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td></tr>
+      <tr><td>Neues Item</td><td><kbd>⌘</kbd>+<kbd>N</kbd></td><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td></tr>
+      <tr><td>Sperren</td><td><kbd>⌘</kbd>+<kbd>L</kbd></td><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td></tr>
+      <tr><td>Zwischen Vaults wechseln</td><td><kbd>⌘</kbd>+<kbd>1..9</kbd></td><td><kbd>Ctrl</kbd>+<kbd>1..9</kbd></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Such-Operatoren</h2>
+<pre><code>in:work                # Vault-Filter
+tag:dev                # Tag-Filter
+type:login             # Item-Typ (login, note, card, identity, ssh, ...)
+url:atlassian.net      # in URL-Feldern
+fave:true              # Favoriten
+recent                 # zuletzt benutzt
+weak / reused / compromised / expiring   # Watchtower-Filter</code></pre>
+
+  <h2>1Password CLI — die wichtigsten Commands</h2>
+<pre><code>op signin                              # Session starten
+op vault list                          # Vaults anzeigen
+op item list --vault Private           # Items eines Vaults
+op item get "GitHub" --fields password # Einzelnes Feld
+op item get "GitHub" --otp             # Aktuellen TOTP-Code
+op item create --category=login \
+   --title="Acme" \
+   --vault=Work \
+   username=max@example.com \
+   password=...                        # Item anlegen
+op read "op://Work/Stripe/api_key"     # Secret-Reference auflösen
+op run --env-file=.env -- npm start    # mit env vars starten
+op inject -i tpl.yaml -o out.yaml      # Template rendern
+op document get "Pass" --output=p.pdf  # Datei-Anhang abrufen
+op plugin init gh                      # Plugin für CLI-Tool
+op signout                             # Session beenden</code></pre>
+
+  <h2>Secret-Reference-Syntax</h2>
+<pre><code>op://&lt;Vault&gt;/&lt;Item-Title-or-UUID&gt;/&lt;Field&gt;
+op://&lt;Vault&gt;/&lt;Item&gt;/&lt;Section&gt;/&lt;Field&gt;     # mit Section
+op://Work/Stripe/api_key
+op://Private/GitHub/credential
+op://Work/Prod DB/Connection/host
+op://Private/SSH GitHub/private_key</code></pre>
+
+  <h2>Item-Typ → wann?</h2>
+  <table>
+    <tbody>
+      <tr><td><strong>Login</strong></td><td>Account mit Username/Password — Default</td></tr>
+      <tr><td><strong>Password</strong></td><td>nur Passwort, kein Account</td></tr>
+      <tr><td><strong>Secure Note</strong></td><td>Freitext / Markdown</td></tr>
+      <tr><td><strong>Credit Card</strong></td><td>Karten</td></tr>
+      <tr><td><strong>Identity</strong></td><td>Adresse für Form-Autofill</td></tr>
+      <tr><td><strong>API Credential</strong></td><td>API-Keys, Tokens</td></tr>
+      <tr><td><strong>SSH Key</strong></td><td>SSH-Schlüssel — mit SSH-Agent</td></tr>
+      <tr><td><strong>Database / Server</strong></td><td>strukturierte Connections</td></tr>
+      <tr><td><strong>Software License</strong></td><td>Lizenzkeys + Bestelldatum</td></tr>
+      <tr><td><strong>Document</strong></td><td>PDFs, Scans</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Watchtower-Kategorien</h2>
+  <table>
+    <tbody>
+      <tr><td><span class="tag warn">Compromised</span></td><td>im Leak aufgetaucht → sofort rotieren</td></tr>
+      <tr><td><span class="tag warn">Vulnerable</span></td><td>Service hatte Breach → rotieren</td></tr>
+      <tr><td><span class="tag">Reused</span></td><td>identisch auf mehreren Sites</td></tr>
+      <tr><td><span class="tag">Weak</span></td><td>geringe Entropie</td></tr>
+      <tr><td><span class="tag">Inactive 2FA</span></td><td>2FA nicht aktiviert</td></tr>
+      <tr><td><span class="tag">Expiring</span></td><td>Ablaufdatum nähert sich</td></tr>
+    </tbody>
+  </table>
+
+  <h2>SSH-Agent-Setup (Recap)</h2>
+<pre><code># ~/.ssh/config
+Host *
+  IdentityAgent ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+# Linux:   ~/.1password/agent.sock
+# Windows: \\.\pipe\openssh-ssh-agent</code></pre>
+
+  <h2>Git-Commit-Signing (Recap)</h2>
+<pre><code>git config --global gpg.format ssh
+git config --global user.signingkey "ssh-ed25519 AAAA..."
+git config --global commit.gpgsign true
+git config --global gpg.ssh.program \
+  "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"</code></pre>
+
+  <h2>Hygiene-Routine</h2>
+  <p><strong>Alle 3 Monate:</strong> Watchtower durchgehen, Compromised + Reused leeren, tote Accounts löschen.</p>
+  <p><strong>Alle 6 Monate:</strong> Audit (Geräte-Liste, Recovery-Kontakt, Emergency Kit, YubiKey-Test).</p>
+  <p><strong>Bei jedem Job-Wechsel:</strong> Privates aus dem Work-Account exportieren, Service-Account-Tokens rotieren.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="index.html">↑ Zur Übersicht</a>
+    <a class="btn ghost" href="grundlagen.html">Nochmal die Grundlagen</a>
+  </div>
+
+  <footer>Kapitel 6 von 6 · 1Password Guide · Drucke diese Seite und pin sie ans Whiteboard.</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

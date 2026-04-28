@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cookbook</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Mechaniker</span>
+  <div class="voice">„Komm, Hand voller Schmiere. Theorie reicht. Wir machen jetzt. Schraubenschlüssel hier, Drehmoment-Tabelle da. Pro Kandidat eine Anleitung, eingeölt und getestet."</div>
+
+  <h1>Cookbook</h1>
+  <p class="lead">Konkrete Rotation-Anleitungen pro Key-Typ. Schritte, Befehle, Stolperfallen. Hand-zertifiziert.</p>
+
+  <h2>Rezept 1: AWS Access Keys</h2>
+<pre><code># 1. Neuen Key erstellen (nur ein User-Key, neuer parallel)
+aws iam create-access-key --user-name myuser
+
+# 2. Output enthält neuen AccessKeyId + SecretAccessKey
+#    → in Secrets Manager / Vault hinterlegen
+
+# 3. Alle Verbraucher (CI, Apps, Cron) auf neuen Key umstellen.
+
+# 4. Alten Key deaktivieren (NICHT löschen!)
+aws iam update-access-key --access-key-id AKIA_OLD --status Inactive
+
+# 5. 7 Tage warten. Wenn Audit-Logs sauber:
+aws iam delete-access-key --access-key-id AKIA_OLD</code></pre>
+  <p>Pro User maximal 2 Access-Keys. Wenn du das 3. brauchst, hast du falsch organisiert.</p>
+
+  <h2>Rezept 2: OpenAI / Anthropic API-Keys</h2>
+  <ol>
+    <li>Im Provider-Dashboard neuen Key erstellen, mit aussagekräftigem Namen (<code>prod-2026-Q2</code>).</li>
+    <li>In Secrets-Manager hinterlegen.</li>
+    <li>Apps auf neuen Key umstellen — Rolling Restart deiner Pods.</li>
+    <li>Im Provider-Dashboard alten Key revoken.</li>
+  </ol>
+  <p>Trickiges Detail: viele dieser APIs erlauben kein Overlap auf Service-Ebene — beide Keys sind aktiv, bis du alten revokest. Plan für kurzes Zeitfenster, in dem dein Code beide Werte aus Config liest.</p>
+
+  <h2>Rezept 3: GitHub Personal Access Token / Fine-Grained Token</h2>
+  <ol>
+    <li><a href="https://github.com/settings/tokens">Settings → Developer Settings → Tokens</a> → neuen erstellen, Scopes minimal halten.</li>
+    <li>In CI-Secrets, lokalen Tools, gh-CLI ersetzen.</li>
+    <li>Alten widerrufen.</li>
+  </ol>
+  <p>Bonus: Fine-grained tokens haben Ablaufdatum mit Maximum 1 Jahr. Klassische PATs erlauben „No expiration" — bitte nie. Setz immer ein Ablauf.</p>
+
+  <h2>Rezept 4: SSH-Keys</h2>
+<pre><code># 1. Neuen Key generieren (modern: ED25519)
+ssh-keygen -t ed25519 -C "max@laptop-2026" -f ~/.ssh/id_ed25519_new
+
+# 2. Public Key auf alle Server, GitHub, GitLab pushen
+ssh-copy-id -i ~/.ssh/id_ed25519_new.pub user@server1
+gh ssh-key add ~/.ssh/id_ed25519_new.pub --title "laptop-2026"
+
+# 3. SSH-Config anpassen, sodass neuer Key benutzt wird
+# ~/.ssh/config:
+Host *
+  IdentityFile ~/.ssh/id_ed25519_new
+  IdentitiesOnly yes
+
+# 4. Test: Login auf alle Targets, ob neuer Key funktioniert
+ssh user@server1 "echo OK"
+
+# 5. Alten Public Key bei GitHub/GitLab/Servern entfernen
+# auf Servern: aus authorized_keys-Datei rauseditieren
+
+# 6. Lokal alten Key sicher löschen
+shred -u ~/.ssh/id_ed25519_old</code></pre>
+
+  <h2>Rezept 5: TLS-Zertifikate (Let&apos;s Encrypt)</h2>
+  <p>Auto-Renewal sollte schon laufen. Falls nicht:</p>
+<pre><code>sudo certbot renew --dry-run    # testet, ob Renewal funktioniert
+sudo certbot renew              # echtes Renewal
+# Service reloaden: nginx -s reload, oder via certbot --post-hook</code></pre>
+  <p>Faustregel: <code>certbot</code> erneuert 30 Tage vor Ablauf. Wenn das nicht in cron oder systemd-timer steht, ist dein Setup kaputt — fix das, bevor du irgendwas anderes machst.</p>
+
+  <h2>Rezept 6: JWT-Signing-Keys (RS256)</h2>
+  <ol>
+    <li>Neues Schlüsselpaar generieren mit eindeutigem <code>kid</code> (z.B. <code>v4</code>).</li>
+    <li>Beide Public-Keys in deinem JWKS-Endpoint exponieren — <code>https://yoursite/.well-known/jwks.json</code> liefert v3 + v4.</li>
+    <li>Issuer (Auth-Server) signiert ab sofort mit v4.</li>
+    <li>Alle alten Tokens (mit v3) laufen normal aus — durch ihre eigene Lebensdauer.</li>
+    <li>Nach Ablauf der maximalen Token-TTL: v3 aus JWKS entfernen.</li>
+  </ol>
+
+<pre><code># Neuen RSA-Key generieren
+openssl genrsa -out jwt_v4.pem 4096
+openssl rsa -in jwt_v4.pem -pubout -out jwt_v4_pub.pem</code></pre>
+
+  <h2>Rezept 7: Datenbank-Passwörter</h2>
+  <p>Direkter Weg ohne Downtime:</p>
+<pre><code>-- 1. Zweiten User mit gleichen Permissions
+CREATE USER app_v2 WITH PASSWORD '...neuesPasswort...';
+GRANT ALL ON DATABASE myapp TO app_v2;
+
+-- 2. App auf app_v2 umstellen, deployen.
+
+-- 3. Wenn alle Pods neu laufen:
+DROP USER app;</code></pre>
+  <p>Wer auf einem User das Passwort wechselt: alle aktiven Connections kriegen Auth-Errors beim Reconnect. Bei Pooling = Outage. Mit zwei Usern + Cutover sauberer.</p>
+
+  <h2>Rezept 8: Webhook-Signing-Secret (HMAC)</h2>
+  <ol>
+    <li>Sender unterstützt typischerweise einen „secondary secret"-Slot. Stripe, GitHub, Shopify, Slack — alle haben das.</li>
+    <li>Neues Secret im Provider-Dashboard hinzufügen.</li>
+    <li>Receiver-Code: prüft Signatur gegen <em>beide</em> Secrets, akzeptiert wenn eines matcht.</li>
+    <li>Im Provider altes Secret revoken.</li>
+    <li>Receiver-Code: zweite Prüfung wieder rausnehmen (oder lassen, wenn dein Code sauber ist).</li>
+  </ol>
+
+  <h2>Rezept 9: Encryption-Key (KEK in KMS)</h2>
+  <p>Cloud-KMS (AWS, GCP, Azure) hat <strong>automatische jährliche Rotation</strong>. Aktivieren:</p>
+<pre><code># AWS
+aws kms enable-key-rotation --key-id alias/mykey
+
+# Resultat: jährlich automatisch neue Key-Version. Alte Versionen
+# bleiben für Entschlüsselung verfügbar. Du machst gar nichts.</code></pre>
+  <p>Außerhalb-KMS: Envelope-Encryption-Setup ist Pflicht, sonst musst du alle Daten re-encrypten. Das ist eigene Architektur-Entscheidung, kein Rotation-Pattern.</p>
+
+  <h2>Rezept 10: 1Password / Passwort-Manager-Items</h2>
+  <p>Wenn du in 1Password ein Item rotieren willst:</p>
+  <ol>
+    <li>Item in 1Password öffnen.</li>
+    <li>Beim Provider neues Passwort generieren (1Password generiert dir eins, wenn du auf das Recipe-Symbol klickst).</li>
+    <li>Beim Provider altes durch neues ersetzen (oder zwei aktiv haben für Overlap, wenn Provider das erlaubt).</li>
+    <li>Im 1Password-Item unter „Password History" siehst du die alten Passwörter — gut für Audit.</li>
+  </ol>
+
+  <h2>Rezept 11: SSH-Server-Host-Keys</h2>
+  <p>Selten nötig — nur, wenn ein Server kompromittiert war. Sonst nicht anfassen.</p>
+<pre><code>sudo ssh-keygen -A   # neue Host-Keys generieren
+sudo systemctl restart sshd
+
+# Alle Clients kriegen jetzt „Host key has changed!"-Warning.
+# Du musst sie informieren und den neuen Fingerprint bekanntgeben.</code></pre>
+  <p>Daher: Host-Keys nie unnötig rotieren. Wenn Server kompromittiert: ja. Sonst: lass.</p>
+
+  <h2>Rezept 12: npm-publish-Token</h2>
+  <ol>
+    <li>npmjs.com → Account → Access Tokens → Generate New Token (Granular, mit nur den Packages, die du publishest).</li>
+    <li>In CI-Secret <code>NPM_TOKEN</code> ersetzen.</li>
+    <li>Alten Token revoken.</li>
+  </ol>
+  <p>npm-Tokens sollten <em>nie</em> in <code>.npmrc</code>-Files in Repos liegen. Auch nicht in privaten. Wenn ein Repo geleakt wird, geht der Schaden über das Repo hinaus — Angreifer kann böswillige Versionen deiner Packages publishen.</p>
+
+  <p>Hier ist der Lappen. Hände waschen vor dem Mittagessen. Nächste Station: was passiert, wenn was schief geht.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="failure.html">→ Weiter: Fehlerbilder</a>
+    <a class="btn ghost" href="strategies.html">Zurück: Strategien</a>
+  </div>
+
+  <p class="signoff">— Werkzeug zurück in den Kasten. Saubere Werkstatt, saubere Arbeit.</p>
+  <footer>Kapitel 4 · Key Rotation Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

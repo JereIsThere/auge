@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools &amp; Agents</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Vorarbeiter</span>
+  <div class="voice">„Hör zu. Auf der Baustelle reden wir nicht über Architektur — wir reden über Material, Werkzeug und Reihenfolge. Dasselbe gilt hier. Modell ist der Geselle. Tools sind sein Werkzeugkasten. Du bist der, der den Plan hat. Klar? Gut. Helm auf."</div>
+
+  <h1>Tools &amp; Agents</h1>
+  <p class="lead">Ein nacktes LLM kann Texte schreiben. Mit Tools kann es im Web suchen, Code ausführen, APIs aufrufen, Datenbanken abfragen, Termine buchen. Dieselben Modelle — andere Hebel.</p>
+
+  <h2>Tool-Use, Schritt für Schritt</h2>
+
+  <ol>
+    <li>Du registrierst beim Modell ein Tool: Name, Beschreibung, Parameter-Schema (JSON Schema).</li>
+    <li>User stellt Frage. Modell entscheidet: brauche ich ein Tool?</li>
+    <li>Falls ja: Modell gibt einen <strong>Tool-Call</strong> aus — Strukturiertes JSON mit Tool-Name + Argumenten. Es führt das Tool nicht selbst aus.</li>
+    <li>Dein Code ruft das Tool auf, kriegt das Ergebnis, gibt&apos;s ans Modell zurück.</li>
+    <li>Modell verwertet das Ergebnis und antwortet — oder ruft das nächste Tool.</li>
+  </ol>
+
+  <p>Wichtig zu kapieren: Modell ruft NIEMALS direkt eine API. Modell <em>schlägt vor</em>, du führst aus. Sicherheits-Geländer steht damit zwischen Modell und Welt.</p>
+
+  <h2>Beispiel — Wetter-Tool</h2>
+
+<pre><code>Tool-Definition:
+{
+  "name": "get_weather",
+  "description": "Aktuelles Wetter für eine Stadt.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "city": { "type": "string" }
+    },
+    "required": ["city"]
+  }
+}
+
+User: Wie ist das Wetter in Berlin?
+
+Modell-Antwort (Tool-Call):
+{
+  "tool": "get_weather",
+  "arguments": { "city": "Berlin" }
+}
+
+Dein Code: API aufrufen → { "temp": 12, "condition": "Regen" }
+
+Du gibst zurück ans Modell:
+{ "result": { "temp": 12, "condition": "Regen" } }
+
+Modell-Antwort (final):
+"In Berlin ist es gerade 12°C und es regnet."</code></pre>
+
+  <h2>Standard-Werkzeuge auf der Baustelle</h2>
+  <ul>
+    <li><strong>Web Search</strong> — Bing / Tavily / Brave / Perplexity-API</li>
+    <li><strong>Code Interpreter</strong> — Python in Sandbox ausführen, Plots erzeugen, Daten analysieren</li>
+    <li><strong>File Reader</strong> — PDFs, Excel, CSV laden und mitgeben</li>
+    <li><strong>SQL-Query</strong> — kontrollierter DB-Zugriff (read-only empfohlen)</li>
+    <li><strong>Calendar / Email</strong> — typische Office-Integrationen</li>
+    <li><strong>Browser-Automation</strong> — Playwright/Computer-Use für Klicken im Browser</li>
+  </ul>
+
+  <h2>Vom Tool-Use zum Agenten</h2>
+  <p>Ein <strong>Agent</strong> ist ein Modell, das in einer Schleife läuft: <em>denken → Tool aufrufen → Ergebnis verarbeiten → entscheiden, ob fertig oder weiter</em>. Bis Stop-Bedingung. Architektur:</p>
+
+<pre><code>while not done:
+    response = llm.invoke(messages, tools=tools)
+    if response.is_tool_call:
+        result = run_tool(response.tool_call)
+        messages.append(result)
+    else:
+        done = True
+        return response.text</code></pre>
+
+  <p>Der Witz: das Modell entscheidet selbst, wann es fertig ist. Das ist Macht. Das ist Risiko.</p>
+
+  <h2>Sicherheits-Vorschriften (lies mal richtig)</h2>
+
+  <table>
+    <thead><tr><th>Risiko</th><th>Maßnahme</th></tr></thead>
+    <tbody>
+      <tr><td>Endlos-Loop</td><td>Max-Iterations setzen (10–50)</td></tr>
+      <tr><td>Destruktive Tool-Calls (DELETE, DROP, send_email)</td><td>Confirm-Step durch Mensch oder Allowlist</td></tr>
+      <tr><td>Prompt Injection via Tool-Result</td><td>Tool-Outputs sanitizen, keine Markdown-Links blind anklicken</td></tr>
+      <tr><td>Datenleck durch unkontrollierte Web-Search</td><td>Allowlist von Domains, kein Auto-Fetch</td></tr>
+      <tr><td>Kosten-Explosion durch Loops</td><td>Token-Limits, Cost-Limits pro Run</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠️ Vorarbeiter-Regel #1</strong>
+    JEDES Tool, das was außerhalb des Sandboxes verändert (Mail senden, Geld bewegen, Daten löschen, Code mergen), bekommt einen <em>Confirm-Schritt</em>. Modell schlägt vor — Mensch klickt OK. Wer das überspringt, kriegt Geschichten zu erzählen, die niemand hören will.
+  </div>
+
+  <h2>Multi-Agent-Setups</h2>
+  <p>Mehrere spezialisierte Agenten, die zusammenarbeiten. Beliebte Pattern:</p>
+  <ul>
+    <li><strong>Planner + Executor</strong> — einer plant, einer arbeitet ab.</li>
+    <li><strong>Spezialisten-Pool</strong> — Researcher, Coder, Reviewer, Editor.</li>
+    <li><strong>Critic</strong> — separater Agent prüft Output des ersten.</li>
+  </ul>
+
+  <p>Ehrlich gesagt: in 80% der Fälle reicht ein einzelner Agent mit guten Tools. Multi-Agent ist hipp, oft over-engineered. Erst Komplexität rechtfertigen, dann bauen.</p>
+
+  <h2>Frameworks</h2>
+  <table>
+    <tbody>
+      <tr><td><strong>LangChain / LangGraph</strong></td><td>Älter, mächtig, oft zu abstrakt. Lernkurve steil.</td></tr>
+      <tr><td><strong>LlamaIndex</strong></td><td>RAG-fokussiert, aber kann Agents.</td></tr>
+      <tr><td><strong>CrewAI</strong></td><td>Multi-Agent mit Rollen-Metapher.</td></tr>
+      <tr><td><strong>OpenAI Assistants / Anthropic Agent SDK</strong></td><td>Anbieter-eigene Frameworks. Weniger Magie, mehr Kontrolle.</td></tr>
+      <tr><td><strong>Selbst gebaut (loop + tool dispatch)</strong></td><td>Oft am wenigsten leid. ~150 Zeilen Python reichen.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Plan steht. Werkzeuge sind im Kasten. Jetzt arbeiten.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="multimodal.html">→ Weiter: Multimodal</a>
+    <a class="btn ghost" href="finetuning.html">Zurück: Fine-Tuning</a>
+  </div>
+
+  <p class="signoff">— Halt dich an den Plan. Wenn du improvisierst, pass auf, wo der Hammer landet.</p>
+  <footer>Kapitel 10 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

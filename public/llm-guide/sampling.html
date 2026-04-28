@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sampling &amp; Temperature</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Croupier</span>
+  <div class="voice">„Setzen Sie Ihre Token, meine Herrschaften! Faites vos jeux! Das Modell rollt, wir bestimmen nur, <em>wie heiß</em> die Kugel ist und <em>welche</em> Felder im Spiel sind. Rien ne va plus."</div>
+
+  <h1>Sampling &amp; Temperature</h1>
+  <p class="lead">Das Modell gibt dir keine Antwort — es gibt dir eine Wahrscheinlichkeitsverteilung über alle möglichen nächsten Tokens. Sampling ist die Kunst, daraus eine Wahl zu treffen. Mehrere Knöpfe. Jeder verschiebt das Spiel.</p>
+
+  <h2>Der Tisch: ein einzelner Token-Schritt</h2>
+<pre><code>Eingabe so far: "Der Himmel ist"
+
+Verteilung über alle 100.000 Tokens im Vokabular:
+" blau"      0.42
+" klar"      0.18
+" grau"      0.11
+" wunderschön"  0.07
+" voller"    0.04
+... (95% mass concentrated, rest sehr klein)</code></pre>
+
+  <p>Jetzt würfelt der Croupier. Wie? Das ist die Frage.</p>
+
+  <h2>Strategie 1 — Greedy: nimm das Wahrscheinlichste</h2>
+<pre><code>output = argmax(prob)</code></pre>
+  <p>Deterministisch. Bei jedem Aufruf dieselbe Antwort. Vorteil: reproduzierbar. Nachteil: oft langweilig, zyklisch, manchmal falsch (lokale Optima).</p>
+
+  <h2>Strategie 2 — Temperature</h2>
+  <p>Bevor wir würfeln, „temperieren" wir die Verteilung:</p>
+
+<pre><code>p&apos;_i = softmax(logit_i / T)</code></pre>
+
+  <ul>
+    <li><strong>T = 0</strong>: Greedy. Höchste Spitze schluckt alles.</li>
+    <li><strong>T = 0.7</strong>: leichte Streuung. Häufige Tokens bevorzugt, aber nicht ausschließlich. <span class="tag good">guter Default</span></li>
+    <li><strong>T = 1.0</strong>: untemperiert, ehrliche Verteilung.</li>
+    <li><strong>T = 1.5+</strong>: hohe Kreativität. Risiko: Modell wird komisch, manchmal Wort-Salat.</li>
+    <li><strong>T = 2.0</strong>: chaotisch. Nur für „kreatives Schreiben" oder als Joke.</li>
+  </ul>
+
+  <h2>Strategie 3 — Top-K</h2>
+  <p>Schneide die Verteilung auf die <code>k</code> wahrscheinlichsten Tokens ab. Sample nur aus denen. Typisch <code>k=40</code>.</p>
+  <p>Vorteil: schließt absurde Token aus. Nachteil: starre Schwelle — manchmal sind 5 Optionen im Lead, manchmal 100.</p>
+
+  <h2>Strategie 4 — Top-P (Nucleus Sampling)</h2>
+  <p>Nimm die kleinste Menge der wahrscheinlichsten Tokens, deren Summe ≥ <code>p</code> ist (typisch 0.9). Sample daraus.</p>
+  <p>Adaptiv: wenn das Modell sich „sicher" ist (eine Spitze), wird das Set klein. Bei Unsicherheit wird es größer. Praktisch der Default für die meisten Anwendungen, oft kombiniert mit Temperature.</p>
+
+  <h2>Strategie 5 — Min-P (modern)</h2>
+  <p>Setze einen Mindest-Faktor relativ zur Top-Wahrscheinlichkeit. Nimm alle Tokens mit p ≥ <code>min_p × p_max</code>. Robust gegen sowohl scharfe als auch flache Verteilungen.</p>
+
+  <h2>Strategie 6 — Frequency &amp; Presence Penalty</h2>
+  <p>Bestraft Tokens, die schon vorgekommen sind:</p>
+  <ul>
+    <li><strong>Frequency Penalty</strong> — pro Vorkommen wird Wahrscheinlichkeit gesenkt. Kontert Wiederholungs-Loops.</li>
+    <li><strong>Presence Penalty</strong> — einmal-vorgekommen reicht. Kontert &quot;immer dieselben Wörter&quot;.</li>
+  </ul>
+
+  <h2>Croupier-Empfehlungen pro Spielart</h2>
+
+  <table>
+    <thead><tr><th>Aufgabe</th><th>T</th><th>Top-P</th><th>Anmerkung</th></tr></thead>
+    <tbody>
+      <tr><td>Code-Generierung</td><td>0.0–0.2</td><td>1.0</td><td>Determinismus, kein Quatsch</td></tr>
+      <tr><td>Faktische QA</td><td>0.0–0.3</td><td>0.95</td><td>weniger Kreativität, mehr Korrektheit</td></tr>
+      <tr><td>Chat-Assistant</td><td>0.7</td><td>0.9</td><td>Default für conversational</td></tr>
+      <tr><td>Kreatives Schreiben</td><td>0.9–1.2</td><td>0.95</td><td>Variation erlaubt</td></tr>
+      <tr><td>Brainstorm</td><td>1.0–1.4</td><td>0.95</td><td>weite Streuung gewollt</td></tr>
+      <tr><td>JSON / strukturiert</td><td>0.0</td><td>—</td><td>plus Output-Schema-Constraint</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠️ Hausregel</strong>
+    <strong>Verändere nicht beide gleichzeitig.</strong> Temperature UND Top-P simultan zu ändern macht das Verhalten kaum vorhersagbar. Wähl einen, lass den anderen auf Default.
+  </div>
+
+  <h2>Ein letzter Trick: Seeds</h2>
+  <p>Manche APIs (OpenAI, lokale Modelle) erlauben einen <code>seed</code>-Parameter. Mit fixem Seed + T=0 wird das Sampling reproduzierbar — gut für Tests. Aber: Anbieter geben „best effort", absolute Reproduzierbarkeit ist nicht garantiert (Hardware-Unterschiede zwischen Servern).</p>
+
+  <p>Faites vos jeux. Setzen Sie weise.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="prompting.html">→ Weiter: Prompting</a>
+    <a class="btn ghost" href="context.html">Zurück: Kontext</a>
+  </div>
+
+  <p class="signoff">— Das Haus gewinnt nicht — aber das Haus bestimmt, mit welchen Würfeln gewürfelt wird. Vergessen Sie das nicht.</p>
+  <footer>Kapitel 4 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

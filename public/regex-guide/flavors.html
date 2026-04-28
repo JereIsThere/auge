@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dialekte</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Weltreisende</span>
+  <div class="voice">„Ich war überall. PCRE, JavaScript, Python, Go, .NET, Ruby, Java, sed, awk, grep — und ich sage dir: sie sind sich nicht einig. Hier ist mein Reisetagebuch."</div>
+
+  <h1>Dialekte</h1>
+  <p class="lead">„Regex" ist kein einheitlicher Standard. Es gibt grobe Familien, und innerhalb jeder Familie eigene Akzente. Wer mehr als eine Sprache kennt, läuft permanent in „aber das ging doch in PCRE"-Fallen. Wir gehen die wichtigsten Unterschiede durch.</p>
+
+  <h2>Die zwei Familien</h2>
+
+  <table>
+    <thead><tr><th>Familie</th><th>Engines</th><th>Eigenheit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>NFA-basiert</strong> (mit Backtracking)</td><td>PCRE, JS, Python, Ruby, Java, .NET, Perl</td><td>Lookarounds, Backreferences, ALLES — aber kann <em>katastrophal langsam</em> werden</td></tr>
+      <tr><td><strong>DFA-basiert</strong> (linear)</td><td>Go's RE2, Rust's regex-Crate, Hyperscan, awk</td><td>Garantiert linear in der Laufzeit. Kein Backtracking, daher KEINE Backreferences und KEINE Lookarounds</td></tr>
+    </tbody>
+  </table>
+
+  <p>Das ist <em>der</em> große Bruch. Wenn du in Go programmierst und denkst „ich nutze einfach Lookahead", gute Nachricht: kannst du nicht. Schlechte: du denkst um.</p>
+
+  <h2>Was geht wo? Die Karte</h2>
+
+  <table>
+    <thead><tr><th>Feature</th><th>PCRE</th><th>JS</th><th>Python</th><th>.NET</th><th>Go (RE2)</th><th>Rust</th></tr></thead>
+    <tbody>
+      <tr><td>Backreferences <code>\1</code></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Lookahead</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Lookbehind variable Länge</td><td>seit 10.30</td><td>✅ modern</td><td>nur <code>regex</code>-Modul</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Named Groups</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Atomic Groups <code>(?&gt;...)</code></td><td>✅</td><td>ab ES2018?</td><td>nur <code>regex</code>-Modul</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Possessive <code>*+</code></td><td>✅</td><td>❌</td><td>nur <code>regex</code>-Modul</td><td>seit 5</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Unicode <code>\p{...}</code></td><td>✅</td><td>mit <code>u</code>-Flag</td><td>nur <code>regex</code>-Modul</td><td>✅</td><td>nur Properties</td><td>✅</td></tr>
+      <tr><td>Lineare Laufzeit garantiert</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Die wichtigsten Akzent-Stolperfallen</h2>
+
+  <h3>Python: <code>re</code> vs <code>regex</code></h3>
+  <p>Das Python-Standard-Modul <code>re</code> kann eine Menge nicht. Das externe <code>regex</code>-Modul (drop-in compatible) ist mächtiger:</p>
+  <ul>
+    <li>Lookbehind variable Länge: nur <code>regex</code>.</li>
+    <li>Possessive Quantoren: nur <code>regex</code>.</li>
+    <li>Bessere Unicode-Properties: nur <code>regex</code>.</li>
+  </ul>
+<pre><code>pip install regex
+import regex as re   # statt: import re</code></pre>
+
+  <h3>JavaScript: das <code>u</code>- und <code>v</code>-Flag</h3>
+  <p>Ohne <code>u</code> arbeitet JS-Regex auf UTF-16 Code-Units, nicht auf Codepoints — Emojis brechen. Mit <code>v</code>-Flag (ES2024+) kommen Set-Operationen in Klassen dazu: <code>[\p{L}--\p{Lu}]</code> = „Buchstaben außer Großbuchstaben".</p>
+
+  <h3>Go (RE2): wirklich kein Lookahead</h3>
+  <p>Es gibt keinen Trick, das nachzubauen. Wenn du Lookarounds brauchst, lade <code>regexp/syntax</code> raus und nimm eine alternative Lib (<code>github.com/dlclark/regexp2</code> portiert .NET-Regex).</p>
+
+  <h3>sed: BRE vs ERE</h3>
+  <p>Klassisches <code>sed</code> nutzt BRE (Basic Regular Expressions). Da müssen <code>(</code>, <code>)</code>, <code>+</code>, <code>?</code>, <code>{</code> mit Backslash escaped werden — sonst sind&apos;s Literale. Mit <code>sed -E</code> oder <code>sed -r</code> kriegst du ERE, das deinem Bauchgefühl näher ist.</p>
+
+<pre><code>sed 's/(foo)/\1!/'           # nichts passiert in BRE
+sed 's/\(foo\)/\1!/'         # so geht&apos;s in BRE
+sed -E 's/(foo)/\1!/'        # ERE, sieht aus wie überall sonst</code></pre>
+
+  <h3>grep: drei Modi</h3>
+  <ul>
+    <li><code>grep</code> = BRE — Klammern müssen escaped</li>
+    <li><code>grep -E</code> = ERE — modern</li>
+    <li><code>grep -P</code> = PCRE — wie in Perl/Python (nicht überall verfügbar — z.B. macOS-Default-grep hat das nicht)</li>
+  </ul>
+
+  <h3>vim: eigene Welt</h3>
+  <p>Vim hat <em>fünf</em> Magie-Levels (<code>\v</code>, <code>\m</code>, <code>\M</code>, <code>\V</code>). Standard ist „magic": die meisten Metazeichen sind Literale. Mit <code>\v</code> („very magic") wird&apos;s wie überall sonst:</p>
+<pre><code>:%s/\v(\w+)\s+\1/\1/g     # mit very-magic, lesbar</code></pre>
+
+  <h2>Empfehlung: was sollst du lernen?</h2>
+  <ol>
+    <li>Lerne <strong>PCRE-Style</strong> als Default. Das ist die Lingua Franca: PCRE, Python, JS, Java, .NET sind 90% kompatibel zueinander.</li>
+    <li>Wenn du in Go/Rust schreibst, akzeptiere die DFA-Beschränkungen. Sie sind ein Feature: keine ReDoS-Sorgen.</li>
+    <li>In Bash/sed/awk-Land: nimm <code>grep -E</code> oder <code>perl -pe</code> für Komplexes — viel weniger Backslash-Hölle.</li>
+  </ol>
+
+  <div class="hero-cta">
+    <a class="btn" href="cookbook.html">→ Weiter zum Cookbook</a>
+    <a class="btn ghost" href="groups.html">Zurück: Gruppen</a>
+  </div>
+
+  <p class="signoff">— Pack einen Konverter für deine Reise: in PCRE läuft, was in RE2 stirbt. Frag nicht, weshalb.</p>
+  <footer>Kapitel 5 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

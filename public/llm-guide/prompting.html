@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompting</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Zen-Meister</span>
+  <div class="voice">„Schüler fragte den Meister: ‚Wie schreibe ich einen guten Prompt?&apos; — Der Meister antwortete: ‚Wenn du wüsstest, was du willst, wäre der Prompt schon geschrieben.&apos; — Der Schüler verstand."</div>
+
+  <h1>Prompting</h1>
+  <p class="lead">Ein Prompt ist nicht nur eine Frage. Er ist eine Vereinbarung zwischen dir und dem Modell, was passieren soll. Klar gemacht: gute Antwort. Diffus gemacht: Antwort, die zu deiner Diffusion passt.</p>
+
+  <h2>Die erste Lehre: das Modell sieht nur, was du tippst</h2>
+  <p>Du weißt, was du meinst. Das Modell weiß es nicht. Es hat keinen Kontext über deine Situation, deine Vorkenntnisse, deinen Tonfall-Wunsch. Was du nicht schreibst, ergänzt es aus seinem Trainings-Bauchgefühl. Manchmal trifft es. Oft nicht.</p>
+
+  <h2>Die zweite Lehre: vier Bausteine reichen</h2>
+
+  <ol>
+    <li><strong>Rolle</strong> — wer ist das Modell gerade? „Du bist ein erfahrener Steueranwalt..." setzt Sprache, Tiefe, Vorbehalte.</li>
+    <li><strong>Aufgabe</strong> — was soll geschehen? Verb am Anfang. „Schreibe...", „Vergleiche...", „Extrahiere...".</li>
+    <li><strong>Kontext</strong> — was muss das Modell wissen? Daten, Constraints, Zielgruppe.</li>
+    <li><strong>Format</strong> — wie soll das Ergebnis aussehen? JSON? Liste? Markdown? Maximal 3 Sätze?</li>
+  </ol>
+
+  <p>Wer alle vier nennt, wird selten enttäuscht.</p>
+
+  <h2>Beispiel — vorher und nachher</h2>
+
+  <h3>Vor dem Erleuchten</h3>
+<pre><code>was ist gut für meine sql query</code></pre>
+
+  <h3>Nach dem Erleuchten</h3>
+<pre><code>Du bist ein PostgreSQL-Performance-Reviewer. Ich gebe dir eine SQL-Query
+für eine Tabelle mit ~50M Zeilen. Bewerte:
+1. Welche Indexe würden helfen
+2. Ob die JOIN-Reihenfolge problematisch ist
+3. Ob es ein N+1-Risiko gibt
+
+Antworte als Markdown-Liste mit kurzen Erklärungen, je 1-2 Sätze.
+
+Query:
+SELECT u.name, COUNT(o.id)
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.name;</code></pre>
+
+  <p>Selber Schüler, anderer Geist. Der Unterschied ist die Klarheit.</p>
+
+  <h2>Sieben Koans des Promptens</h2>
+
+  <h3>Koan 1: „Sei spezifisch"</h3>
+  <p>„Schreib einen Marketing-Text" → schwammig. „Schreib einen LinkedIn-Post von max. 80 Wörtern, lockerer Tonfall, eine konkrete Zahl als Hook, mit Call-to-Action am Ende" → präzise.</p>
+
+  <h3>Koan 2: „Zeig, statt nur zu erklären" (Few-Shot)</h3>
+  <p>Beispiele schlagen Beschreibungen. Drei gute Input-Output-Paare prägen das Modell stärker als drei Absätze Anweisungen.</p>
+
+  <h3>Koan 3: „Frag nicht nach Wissen, das nicht da ist"</h3>
+  <p>Wenn die Information nicht im Trainings-Set ist, halluziniert es. Bei aktuellen Daten: RAG. Bei privaten Daten: in den Prompt einfügen.</p>
+
+  <h3>Koan 4: „Definiere, was du nicht willst"</h3>
+  <p>„Antworte ohne Disclaimer." „Verwende keine Aufzählungspunkte." „Erwähne nicht das Wort &apos;leverage&apos;." Negation funktioniert besser, als die meisten denken.</p>
+
+  <h3>Koan 5: „Lass es atmen"</h3>
+  <p>Komplexe Aufgaben in Schritte zerlegen. „Erst plane. Dann schreibe. Dann überarbeite." (Mehr dazu beim Detective.)</p>
+
+  <h3>Koan 6: „Prüfe das Output, nicht die Logik"</h3>
+  <p>Glaub nicht, was das Modell <em>sagt</em> getan zu haben. Glaub, was im Output steht. Modelle lügen über ihre eigene Argumentation, ohne zu wissen, dass sie lügen.</p>
+
+  <h3>Koan 7: „Der einfachste Prompt, der funktioniert"</h3>
+  <p>Lange Prompts klingen seriös. Sie sind oft schlechter als kurze. Iteriere von kurz zu lang, nicht andersrum. Wenn ein 2-Satz-Prompt das Ergebnis liefert, gewinnt er gegen den 50-Zeilen-Mantel.</p>
+
+  <h2>Zen-Praxis</h2>
+  <ul>
+    <li>Schreib den Prompt einmal. Lies ihn. Wenn ein Mensch ihn nicht eindeutig verstehen würde, wird das Modell auch nicht.</li>
+    <li>Test mit drei verschiedenen Inputs, bevor du es deployst.</li>
+    <li>Wenn das Modell konsequent falsch antwortet, ist der Prompt der Fehler. Nicht das Modell.</li>
+    <li>Halte Prompts in Versionskontrolle. Sie sind Code.</li>
+  </ul>
+
+  <p>Atme. Prompte. Atme.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="cot.html">→ Weiter: Chain of Thought</a>
+    <a class="btn ghost" href="sampling.html">Zurück: Sampling</a>
+  </div>
+
+  <p class="signoff">— Wer den perfekten Prompt schreibt, hat keine Frage mehr.</p>
+  <footer>Kapitel 5 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

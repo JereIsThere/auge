@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embeddings</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Lyriker</span>
+  <div class="voice">„Stell dir einen Raum vor. Nicht drei Dimensionen. Tausend. Vielleicht zwölftausend. Jedes Wort schwebt darin, ein Stern, an einem Platz, den niemand zu sehen kürt — außer man fragt: <em>wo bist du, im Verhältnis zu den anderen?</em>"</div>
+
+  <h1>Embeddings</h1>
+  <p class="lead">Eine Zahl ist eine Zahl. Aber zwölftausend Zahlen, im richtigen Verhältnis zueinander — das ist Bedeutung. Embeddings machen aus jedem Token (oder Satz oder Bild) einen Punkt im hochdimensionalen Raum, an dem ähnliche Dinge nah beieinander liegen.</p>
+
+  <h2>Eine Vorstellung in drei Zeilen</h2>
+<pre><code>"König"   →  [0.12, -0.84, 0.33, ..., 0.07]      (1536 Zahlen)
+"Königin" →  [0.13, -0.81, 0.34, ..., 0.05]      (sehr nah dran)
+"Kaffee"  →  [0.91,  0.02, -0.55, ..., 0.71]     (woanders)</code></pre>
+
+  <p>Die Magie: <strong>Distanz im Raum ≈ Bedeutungsähnlichkeit</strong>. Zwei Vektoren mit Cosine-Similarity 0.97 reden ungefähr über dasselbe. Bei 0.12 reden sie aneinander vorbei.</p>
+
+  <h2>Die Lieder des Vektorraums</h2>
+
+  <h3>Die alte Beschwörung</h3>
+<pre><code>vec("König") - vec("Mann") + vec("Frau") ≈ vec("Königin")</code></pre>
+  <p>Das war die Wow-Folie von 2013 (word2vec). Funktioniert in modernen Embeddings auch noch, aber unzuverlässiger — das Modell hat nicht versprochen, dass jede semantische Achse ein gerades Lineal ist.</p>
+
+  <h3>Die nahe Suche</h3>
+  <p>Du hast 1.000.000 Dokumente. Embedding pro Dokument speichern. User stellt Frage → Embedding der Frage berechnen → Cosine-Similarity gegen alle 1M Dokumente → top 10 ausgeben. Das ist <strong>semantische Suche</strong>.</p>
+
+  <p>Praktisch nicht über alle 1M iterieren — nimm einen Vektor-Index (FAISS, HNSW, ScaNN, Qdrant, pgvector). Lookup in O(log N).</p>
+
+  <h2>Wie nah ist nah? Die Cosine-Similarity</h2>
+<pre><code>sim(a, b) = (a · b) / (||a|| × ||b||)
+           = Wert zwischen -1 und 1
+           = 1   → identisch ausgerichtet
+           = 0   → unkorreliert (orthogonal)
+           = -1  → entgegengesetzt</code></pre>
+
+  <p>In der Praxis liegen Real-World-Embeddings selten unter 0.5 — der Raum ist „eng besiedelt". Setz Schwellwerte empirisch, nicht aus dem Lehrbuch.</p>
+
+  <h2>Drei Wahrheiten, die niemand singt</h2>
+
+  <h3>Erste: Embeddings sind nicht gleich Embeddings</h3>
+  <p>Ein Embedding aus OpenAI <code>text-embedding-3-small</code> (1536 Dim) ist NICHT vergleichbar mit einem aus Cohere <code>embed-english-v3</code> (1024 Dim). Wer unterschiedliche Embeddings mischt, mischt Sprachen. Konsistent bei einem Anbieter bleiben.</p>
+
+  <h3>Zweite: Bedeutung ist unscharf</h3>
+  <p>„Apple" ist die Frucht UND der Konzern. Das Embedding-Modell gibt dir <em>einen</em> Vektor — ein Mittelwert beider Bedeutungen. In Texten mit Kontext klärt sich das, aber in einer einzelnen Phrase: ambig.</p>
+
+  <h3>Dritte: Embeddings altern</h3>
+  <p>Ein Modell, das vor zwei Jahren trainiert wurde, kennt keinen Begriff, der seitdem entstanden ist. „Vibe coding"? Vielleicht in der Frucht-Apple-Region. Embeddings nicht für aktuelle Eigennamen.</p>
+
+  <h2>Wofür man sie tatsächlich nutzt</h2>
+  <ul>
+    <li><strong>Semantische Suche</strong> — der Hauptanwendungsfall (siehe RAG-Kapitel)</li>
+    <li><strong>Klassifikation</strong> — Embedding + lineare Schicht = guter Klassifikator</li>
+    <li><strong>Clustering</strong> — Themengruppen aus Texten finden</li>
+    <li><strong>Empfehlungen</strong> — „Nutzer mochte X, Y ist nah an X" → empfehl Y</li>
+    <li><strong>Duplikat-Erkennung</strong> — leicht abweichende Texte als ähnlich erkennen</li>
+  </ul>
+
+  <p>Vergesst die Algebra für einen Moment. Embeddings sind die Karte, mit der das Modell <em>überhaupt erst</em> denken kann.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="context.html">→ Weiter: Kontextfenster</a>
+    <a class="btn ghost" href="tokenization.html">Zurück: Tokenisierung</a>
+  </div>
+
+  <p class="signoff">— „Bedeutung ist Nähe." Notiere das, geh weiter, vergiss es nie.</p>
+  <footer>Kapitel 2 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

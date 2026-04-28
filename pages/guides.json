@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "1password-guide",
+    "title": "1Password Guide",
+    "icon": "🔐",
+    "accent": "#4f8cff",
+    "section": "Tools & Sicherheit",
+    "desc": "Items, Vaults, CLI/SSH, Secret-References im CI. 6 Kapitel."
+  },
+  {
+    "slug": "rustdesk-guide",
+    "title": "RustDesk Guide",
+    "icon": "🖥️",
+    "accent": "#06b6d4",
+    "section": "Tools & Sicherheit",
+    "desc": "Open-Source-Remote-Desktop, Self-Hosting, Privacy Mode. 6 Kapitel."
+  },
+  {
+    "slug": "key-rotation-guide",
+    "title": "Key Rotation Guide",
+    "icon": "🔑",
+    "accent": "#ef4444",
+    "section": "Tools & Sicherheit",
+    "desc": "AWS, OpenAI, GitHub, SSH, TLS, JWT — rotieren ohne Outage. 12 Rezepte."
+  },
+  {
+    "slug": "regex-guide",
+    "title": "Regex Guide",
+    "icon": "📐",
+    "accent": "#84cc16",
+    "section": "Lernen",
+    "desc": "Basics bis Backtracking, 7 Kapitel mit 7 Erzähler·innen."
+  },
+  {
+    "slug": "llm-guide",
+    "title": "LLM Guide",
+    "icon": "🤖",
+    "accent": "#a855f7",
+    "section": "Lernen",
+    "desc": "Tokenisierung bis Agents, 15 Kapitel mit 15 Erzähler·innen."
+  }
+]

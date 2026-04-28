@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neat Shit — CLI, SSH, Secrets</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Neat Shit — CLI, SSH, Secrets</h1>
+  <p class="lead">Hier wird&apos;s geil. 1Password kann <code>.env</code>-Dateien ohne Plaintext-Secrets, deine SSH-Keys verwalten und mit einem Touch deine Git-Commits signieren. Wenn du Dev bist, ist das der Teil, der dein Leben verändert.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#cli-install">1. 1Password CLI installieren &amp; verbinden</a></li>
+      <li><a href="#secret-refs">2. Secret References — die Killer-Idee</a></li>
+      <li><a href="#op-run">3. <code>op run</code> — env vars ohne .env</a></li>
+      <li><a href="#op-inject">4. <code>op inject</code> — Templates rendern</a></li>
+      <li><a href="#ssh-agent">5. SSH-Agent — Keys mit biometrischem Touch</a></li>
+      <li><a href="#git-signing">6. Git-Commits mit SSH-Key signieren</a></li>
+      <li><a href="#plugins">7. CLI-Plugins (gh, aws, stripe, …)</a></li>
+      <li><a href="#service-accounts">8. Service Accounts für CI/CD</a></li>
+      <li><a href="#dev-tools">9. 1Password for Developers in IDEs</a></li>
+    </ul>
+  </div>
+
+  <h2 id="cli-install">1. 1Password CLI installieren &amp; verbinden</h2>
+<pre><code># macOS
+brew install --cask 1password-cli
+
+# Linux (Debian/Ubuntu)
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+  sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] \
+  https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" | \
+  sudo tee /etc/apt/sources.list.d/1password.list
+sudo apt update &amp;&amp; sudo apt install 1password-cli
+
+# Windows
+winget install AgileBits.1Password.CLI</code></pre>
+
+  <p>In der Desktop-App: Settings → Developer → ✅ "Integrate with 1Password CLI" + ✅ "Biometric unlock for 1Password CLI". Das verbindet <code>op</code> mit der App, sodass du nicht jedesmal das Master-Passwort tippen musst — Touch ID / Windows Hello reicht.</p>
+
+  <pre><code>op signin            # einmal pro Shell-Session
+op vault list        # checkt, dass alles läuft
+op item list --vault Private</code></pre>
+
+  <h2 id="secret-refs">2. Secret References — die Killer-Idee</h2>
+  <p>Statt Secrets in <code>.env</code>, in CI-Variablen oder im Code zu speichern, schreibst du einen <strong>Reference-String</strong>:</p>
+
+<pre><code>op://&lt;Vault&gt;/&lt;Item&gt;/&lt;Field&gt;</code></pre>
+
+  <p>Beispiele:</p>
+
+<pre><code>op://Private/GitHub/credential
+op://Work/AWS Production/access_key_id
+op://Work/Stripe/api_key
+op://Private/SSH GitHub/private_key</code></pre>
+
+  <p>Diese Strings sind <strong>nicht geheim</strong>. Du kannst sie ins Repo committen, in Slack posten, in Dotfiles ablegen. Der eigentliche Wert wird erst zur Laufzeit aus 1Password aufgelöst — und nur, wenn dein Vault entsperrt ist.</p>
+
+  <p>Reference holen ist einfach: in der Desktop-App auf einem Feld <kbd>Rechtsklick</kbd> → "Copy Secret Reference".</p>
+
+  <h2 id="op-run"><code>op run</code> — env vars ohne plaintext .env</h2>
+  <p>Statt <code>.env</code> mit echten Secrets:</p>
+
+<pre><code># .env (committen!)
+DATABASE_URL=op://Work/Prod DB/connection_string
+STRIPE_KEY=op://Work/Stripe/api_key
+GITHUB_TOKEN=op://Private/GitHub/credential</code></pre>
+
+  <p>Programm starten:</p>
+
+<pre><code>op run --env-file=.env -- npm start
+op run --env-file=.env -- python app.py
+op run --env-file=.env -- ./run-deploy.sh</code></pre>
+
+  <p>1Password löst die Refs <em>nur im Speicher</em> des Subprozesses auf. Auf der Platte liegen niemals Plaintext-Secrets.</p>
+
+  <div class="callout tip">
+    <strong>💡 Killer-Move</strong>
+    Schreib in <code>.gitignore</code> NUR <code>.env.local</code>. <code>.env</code> mit den Refs darf ins Repo. Onboarding eines neuen Devs: <code>git clone</code> → 1Password installieren → <code>op signin</code> → fertig. Keine Secrets per Slack mehr.
+  </div>
+
+  <h2 id="op-inject"><code>op inject</code> — Templates rendern</h2>
+  <p>Für Configs, die kein <code>.env</code>-Format haben (z.B. Kubernetes-Secrets, JSON-Configs, Nginx-Configs):</p>
+
+<pre><code># config.template.yaml
+database:
+  host: db.internal
+  password: op://Work/Prod DB/password
+api:
+  stripe_key: op://Work/Stripe/api_key</code></pre>
+
+<pre><code>op inject -i config.template.yaml -o config.yaml</code></pre>
+
+  <p>Erzeugt eine fertige <code>config.yaml</code> mit den aufgelösten Werten. Pipe-fähig:</p>
+
+<pre><code>op inject -i k8s-secret.template.yaml | kubectl apply -f -</code></pre>
+
+  <h2 id="ssh-agent">5. SSH-Agent — Keys mit biometrischem Touch</h2>
+  <p>1Password kann ein voller SSH-Agent sein. Deine Private-Keys liegen verschlüsselt in 1Password. Jede SSH-Auth braucht einen biometrischen Touch.</p>
+
+  <h3>Setup</h3>
+  <ol>
+    <li>Settings → Developer → ✅ "Use the SSH agent".</li>
+    <li>Existing Key importieren: in 1Password "+ New Item" → "SSH Key" → "Import" → vorhandene <code>id_ed25519</code> hochladen.<br>
+        Oder neu generieren: "SSH Key" → "Generate" → ED25519.</li>
+    <li>Public Key kopieren → bei GitHub/GitLab/Server hinzufügen.</li>
+    <li>Setze in <code>~/.ssh/config</code>:
+<pre><code>Host *
+  IdentityAgent ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+  # Linux: ~/.1password/agent.sock
+  # Windows: \\.\pipe\openssh-ssh-agent</code></pre>
+    </li>
+  </ol>
+
+  <p>Jetzt: <code>ssh user@host</code> → 1Password popup → Touch ID → drin. Der Private-Key verlässt 1Password nie.</p>
+
+  <h3>Mehrere Keys, automatische Auswahl</h3>
+  <p>1Password schickt automatisch alle gespeicherten Keys mit. Server pickt den passenden. Wenn du Kontrolle willst:</p>
+<pre><code>Host github.com
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/id_personal.pub   # Pub-Key zur Auswahl
+
+Host gitlab.work.internal
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/id_work.pub</code></pre>
+
+  <h2 id="git-signing">6. Git-Commits mit SSH-Key signieren</h2>
+  <p>Statt GPG (Schmerz): SSH-Key zum Signieren. Mit 1Password = jeder Commit braucht Touch ID.</p>
+
+<pre><code>git config --global gpg.format ssh
+git config --global user.signingkey "ssh-ed25519 AAAA... your_email@..."
+git config --global commit.gpgsign true
+git config --global gpg.ssh.program \
+  "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"</code></pre>
+
+  <p>Bei GitHub: Settings → SSH and GPG keys → "Signing Key" (separat von Authentication-Key, aber kann derselbe sein).</p>
+
+  <p><code>git commit</code> → Touch ID → Commit zeigt grünes "Verified" Badge auf GitHub.</p>
+
+  <h2 id="plugins">7. CLI-Plugins</h2>
+  <p>1Password kann sich vor andere CLI-Tools schalten und Auth transparent injizieren. Plugin einrichten:</p>
+
+<pre><code>op plugin init gh         # GitHub CLI
+op plugin init aws        # AWS CLI
+op plugin init stripe     # Stripe CLI
+op plugin init cargo      # crates.io
+op plugin init databricks
+# ... ~30 Plugins verfügbar</code></pre>
+
+  <p>Danach läuft <code>gh repo list</code> — und 1Password injiziert deinen GitHub-Token aus dem Vault, ohne dass er irgendwo auf der Platte liegt. <code>gh auth login</code> brauchst du nie wieder.</p>
+
+  <h2 id="service-accounts">8. Service Accounts für CI/CD</h2>
+  <p>In GitHub-Actions / GitLab-CI willst du Secrets aus 1Password ziehen — aber kein menschlicher Account-Login.</p>
+
+  <p>Lösung: <strong>Service Account</strong>. Eigener Token, scoped auf bestimmte Vaults, read-only.</p>
+
+  <ol>
+    <li><code>my.1password.com</code> → Developer → Service Accounts → New.</li>
+    <li>Vaults wählen, Permissions setzen (meist read-only).</li>
+    <li>Token wird einmal angezeigt — kopieren, in GitHub-Secret <code>OP_SERVICE_ACCOUNT_TOKEN</code> ablegen.</li>
+  </ol>
+
+  <p>In der GitHub Action:</p>
+
+<pre><code>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          STRIPE_KEY: op://Work/Stripe/api_key
+          DATABASE_URL: op://Work/Prod DB/connection_string
+      - run: ./deploy.sh   # Secrets sind als env vars verfügbar</code></pre>
+
+  <p>Vorteil: keine Secrets in GitHub-Secrets selbst — nur das eine Service-Account-Token. Rotation passiert in 1Password, GitHub merkt nichts.</p>
+
+  <h2 id="dev-tools">9. 1Password for Developers in IDEs</h2>
+  <ul>
+    <li><strong>VS Code Extension "1Password for VS Code"</strong> — markiert Secrets im Code, bietet "Save in 1Password" an, autocomplete für Secret-Refs.</li>
+    <li><strong>JetBrains Plugin</strong> — analog für IntelliJ/PyCharm/WebStorm.</li>
+    <li><strong>Pre-commit-Hook</strong>: <code>op</code> kann scannen, ob versehentlich Plaintext-Secrets in einen Commit rutschen.</li>
+  </ul>
+
+  <pre><code># .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/1Password/op-pre-commit
+    rev: v1.0.0
+    hooks:
+      - id: detect-secrets</code></pre>
+
+  <div class="hero-cta">
+    <a class="btn" href="security.html">→ Weiter: Sicherheit &amp; Recovery</a>
+    <a class="btn ghost" href="profi.html">Zurück: Profi-Tipps</a>
+  </div>
+
+  <footer>Kapitel 4 von 6 · 1Password Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

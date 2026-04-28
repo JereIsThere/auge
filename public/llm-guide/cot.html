@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chain of Thought</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Detektiv</span>
+  <div class="voice">„Mein lieber Watson, der Verdächtige hat ein Geständnis abgelegt — vorschnell. Wir prüfen die Zwischenschritte. Eine Antwort ohne nachverfolgbare Argumentation ist eine Behauptung, kein Beweis."</div>
+
+  <h1>Chain of Thought</h1>
+  <p class="lead">Das Modell muss laut nachdenken dürfen, sonst rät es. Chain of Thought (CoT) ist die simple, aber durchschlagende Erkenntnis: wenn man dem Modell erlaubt, Zwischenschritte zu schreiben, werden seine finalen Antworten <em>spürbar</em> richtiger.</p>
+
+  <h2>Aktenfall 1: Klassisches Beispiel</h2>
+
+  <h3>Ohne CoT</h3>
+<pre><code>Frage: Eine Schale enthält 5 rote, 3 grüne und 2 blaue Kugeln.
+       Wahrscheinlichkeit, in zwei Zügen ohne Zurücklegen
+       zwei rote zu ziehen?
+
+Modell: 0.25</code></pre>
+
+  <p>Falsch. Aber selbstbewusst.</p>
+
+  <h3>Mit CoT</h3>
+<pre><code>Frage: ... wie oben.
+       Lass uns Schritt für Schritt durchdenken.
+
+Modell:
+1. Erste rote: 5 von 10 Kugeln, also 5/10 = 1/2.
+2. Nach dem Ziehen sind 4 rote von 9 Kugeln übrig: 4/9.
+3. Beide Ereignisse: 1/2 × 4/9 = 4/18 = 2/9 ≈ 0.222.
+
+Antwort: 2/9.</code></pre>
+
+  <p>Richtig. Indem das Modell Zwischenschritte erzeugt, gibt es seinen eigenen Antworten Halt — jeder Schritt ist näher an gelernten Beispielen als der riesige Sprung „Frage → Endantwort".</p>
+
+  <h2>Drei Arten, CoT auszulösen</h2>
+
+  <h3>1. Zero-Shot CoT</h3>
+  <p>Magic Words: <strong>„Lass uns Schritt für Schritt überlegen"</strong> oder im Original „Let&apos;s think step by step". 2022 publiziert; war eine Sensation, weil es nichts kostet außer 6 Wörtern und Modelle damit Mathe-Aufgaben besser lösten.</p>
+
+  <h3>2. Few-Shot CoT</h3>
+  <p>Du zeigst dem Modell Beispiele, in denen die Argumentation explizit ist:</p>
+
+<pre><code>Beispiel 1:
+Frage: Wenn Anna 3 Äpfel hat und 5 dazubekommt, wie viele hat sie?
+Reasoning: Anfangs 3, plus 5 = 8.
+Antwort: 8.
+
+Beispiel 2:
+Frage: Wenn Tom 12 Bonbons hat und 4 verschenkt, wie viele bleiben?
+Reasoning: 12 minus 4 = 8.
+Antwort: 8.
+
+Frage [eigentliche Aufgabe]:
+...</code></pre>
+
+  <h3>3. Eingebautes Reasoning</h3>
+  <p>Moderne „Reasoning"-Modelle (o-Serie von OpenAI, Claude mit „Extended Thinking", Gemini Thinking) <em>tun das von selbst</em> — sie generieren intern eine Reasoning-Trace, dann die Antwort. Du musst CoT nicht mehr explizit anfordern; du wartest nur länger und zahlst für die Thinking-Tokens mit.</p>
+
+  <h2>Methoden über CoT hinaus</h2>
+
+  <h3>Self-Consistency</h3>
+  <p>Nimm dieselbe CoT-Frage, sample mehrere Antworten mit Temperature &gt; 0 — und nimm die <em>häufigste</em>. Bei Mathe-Problemen merklich genauer als ein einzelner Versuch.</p>
+
+  <h3>Tree of Thoughts</h3>
+  <p>Statt linear einen Gedankengang zu verfolgen: mehrere Zweige parallel evaluieren, die schlechteren prunen. Teurer, aber bei kombinatorischen Problemen (Schach-artige Zugfolgen, Planung) genauer.</p>
+
+  <h3>Self-Reflection</h3>
+  <p>Modell antwortet, dann fragst du dasselbe Modell: „Prüfe deine eigene Antwort auf Fehler". Erstaunlich oft korrigiert es sich. Nicht immer — manchmal verkäst es eine richtige Antwort. Vorsicht beim Einsatz.</p>
+
+  <h2>Die unbequeme Wahrheit, Watson</h2>
+  <p>CoT-Reasoning, das das Modell zeigt, ist <em>nicht zwingend dasselbe</em> wie das, was intern wirklich passiert ist. Das Modell schreibt einen Reasoning-Text, der <em>plausibel klingt</em> — der aber post-hoc rationalisiert sein kann. Studien zeigen: zwingt man Modelle zu einer Antwort und fragt dann nach Begründung, schreiben sie eine plausible Begründung für die <em>aufgezwungene</em> Antwort.</p>
+
+  <p>Konsequenz: CoT verbessert <em>im Schnitt</em> die Antworten, ist aber kein Beweis-Mechanismus. Argumentationsprüfung durch Mensch oder zweiten Pass durch ein anderes Modell ist der Goldstandard für kritische Anwendungen.</p>
+
+  <h2>Wann CoT NICHT hilft</h2>
+  <ul>
+    <li>Einfache Lookup-Fragen („Hauptstadt von Frankreich") — direkt antworten ist genauso gut.</li>
+    <li>Aufgaben, in denen die Antwort entweder „bekannt" oder „nicht bekannt" ist — Reasoning fügt nichts hinzu.</li>
+    <li>Latenz- und Kostensensitive Endpoints — CoT verlängert Antworten 5–20×.</li>
+  </ul>
+
+  <p>Der Fall ist gelöst — aber nur, weil wir die Schritte sehen durften. Sonst hätten wir geraten.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="hallucinations.html">→ Weiter: Halluzinationen</a>
+    <a class="btn ghost" href="prompting.html">Zurück: Prompting</a>
+  </div>
+
+  <p class="signoff">— Elementar, Watson. Aber nur, wenn man zuhört.</p>
+  <footer>Kapitel 6 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

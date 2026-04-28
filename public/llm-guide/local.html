@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lokale LLMs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Punk</span>
+  <div class="voice">„WAS WILLST DU? Cloud-Bullshit für dein Tagebuch? Glaubst du wirklich, OpenAI braucht deine Daten? Hör auf zu zahlen, hör auf zu uploaden, lade dir das Ding RUNTER und lass es auf deinem alten ThinkPad laufen. JA, das geht. Komm rein."</div>
+
+  <h1>Lokale LLMs</h1>
+  <p class="lead">Modelle laufen auf deiner Hardware. Keine Cloud, keine Telemetrie, keine Account-Pflicht, kein Zensur-Layer. Auch keine Rechnung am Monatsende. Klingt zu gut? Ist es nicht. Hat halt Trade-offs.</p>
+
+  <h2>Warum überhaupt</h2>
+  <ul>
+    <li>Datenschutz. Deine Konversationen verlassen den Rechner nicht.</li>
+    <li>Keine Rate-Limits, keine API-Kosten, keine Abos.</li>
+    <li>Kein Internet nötig. Plane, Zug, Bunker — alles fein.</li>
+    <li>Volle Kontrolle: System-Prompts deinerseits, kein „I cannot help with that".</li>
+    <li>Du lernst, wie das Zeug wirklich funktioniert.</li>
+  </ul>
+
+  <h2>Warum nicht</h2>
+  <ul>
+    <li>Kleinere Modelle sind merklich schwächer. 7B ist 7B, kein GPT-4.</li>
+    <li>Brauchst Hardware. RAM, GPU oder mindestens viel Geduld.</li>
+    <li>Wartung — Updates, Modelle wechseln, Quantisierung verstehen.</li>
+  </ul>
+
+  <h2>Die Tools — Punk-Tier-Liste</h2>
+
+  <table>
+    <thead><tr><th>Tool</th><th>Wofür</th><th>Vibe</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ollama</strong></td><td>Mac/Linux/Win. <code>ollama run llama3</code> und gut.</td><td>Einsteiger, kein Stress</td></tr>
+      <tr><td><strong>LM Studio</strong></td><td>GUI mit Chat, Modell-Browser, OpenAI-API-Server</td><td>Wer kein Terminal mag</td></tr>
+      <tr><td><strong>llama.cpp</strong></td><td>Die Engine unter fast allem. C++.</td><td>Wenn du genau wissen willst, was passiert</td></tr>
+      <tr><td><strong>vLLM</strong></td><td>Server für Production-Throughput</td><td>Wenn lokal heißt: deine Firmen-GPU</td></tr>
+      <tr><td><strong>text-generation-webui</strong></td><td>Schweizer Taschenmesser</td><td>Power-User-Spielwiese</td></tr>
+      <tr><td><strong>Jan / Msty</strong></td><td>Polierte Desktop-Apps</td><td>Wenn du der Familie was hinstellen willst</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Hardware — was du brauchst</h2>
+
+  <table>
+    <thead><tr><th>Modell-Größe</th><th>RAM/VRAM (Q4-Quantisiert)</th><th>Realistisches Setup</th></tr></thead>
+    <tbody>
+      <tr><td>3B Modelle (Phi, kleine Llamas)</td><td>~3 GB</td><td>jeder Laptop seit 2018</td></tr>
+      <tr><td>7B (Llama, Mistral, Qwen)</td><td>~5 GB</td><td>16 GB MacBook, 8 GB-GPU PCs</td></tr>
+      <tr><td>13B</td><td>~9 GB</td><td>Apple Silicon mit 16 GB+, Gaming-PC mit 12 GB GPU</td></tr>
+      <tr><td>30B/34B</td><td>~20 GB</td><td>32 GB Mac, RTX 3090/4090, A100</td></tr>
+      <tr><td>70B</td><td>~40 GB</td><td>64 GB Mac Studio, Multi-GPU Setup</td></tr>
+      <tr><td>Mixtral 8x7B / Llama 405B</td><td>~50–250 GB</td><td>Mac Studio Ultra, dediziertes Server-Rig</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Quantisierung — der heimliche Hauptgewinn</h2>
+  <p>Native Modellgewichte sind FP16 (16 Bit pro Parameter). <strong>Quantisierung</strong> komprimiert das auf 8, 5, 4, sogar 2 Bit. Modell wird kleiner, schneller, ein bisschen dümmer.</p>
+
+  <ul>
+    <li><strong>Q8_0</strong> — minimaler Qualitätsverlust, halber Speicher</li>
+    <li><strong>Q5_K_M</strong> / <strong>Q4_K_M</strong> — Sweetspot, Standard-Empfehlung</li>
+    <li><strong>Q3</strong> oder darunter — spürbar dümmer, nimm größeres Modell und Q4 stattdessen</li>
+  </ul>
+
+  <p>Faustregel des Punks: nimm das größte Modell, das in dein RAM/VRAM passt, in Q4_K_M. Größer + dümmer schlägt kleiner + schlauer fast immer.</p>
+
+  <h2>Quickstart — eine Stunde, zum mitmachen</h2>
+
+<pre><code># Mac/Linux
+curl -fsSL https://ollama.com/install.sh | sh
+ollama run llama3.2
+
+# Damit hast du eine Chat-CLI. Fertig.
+# Optional: API-Server läuft automatisch auf :11434
+# Open-WebUI für Browser-UI: docker run -p 3000:8080 ghcr.io/open-webui/open-webui:main</code></pre>
+
+  <h2>Modelle, die sich anzuhören lohnen (Stand 2026)</h2>
+  <ul>
+    <li><strong>Llama 3.x</strong> — Meta&apos;s Standard-Familie. 8B/70B/405B. Brave und vielseitig.</li>
+    <li><strong>Qwen 2.5/3</strong> — Alibabas Reihe. Sehr stark, mehrsprachig, gute Coding-Modelle.</li>
+    <li><strong>Mistral / Mixtral</strong> — französisch, lange Kontextfenster, MoE-Varianten.</li>
+    <li><strong>Phi-4</strong> — Microsoft, klein aber überraschend kompetent.</li>
+    <li><strong>Gemma 2/3</strong> — Google&apos;s Open-Familie.</li>
+    <li><strong>DeepSeek-V3 / R1</strong> — chinesische Reasoning-Modelle, top Open-Source-Kontender.</li>
+    <li><strong>Coder-Spezialisten</strong>: Qwen2.5-Coder, DeepSeek-Coder — speziell trainiert auf Code, oft besser als General-Modelle gleicher Größe.</li>
+  </ul>
+
+  <h2>Ehrliche Trade-offs</h2>
+  <ul>
+    <li>7B-Modell vs. GPT-4o: GPT-4o ist klar smarter. Für komplexes Reasoning nimm GPT.</li>
+    <li>30B-Modell vs. GPT-3.5: ähnlich. Lokales 30B mit gutem Prompting reicht für viele Tasks.</li>
+    <li>70B-Modell vs. GPT-4 (älter): nahe dran, oft ausreichend.</li>
+    <li>Latenz: lokales 7B auf einer guten GPU = 50–150 tok/s. CPU-only = 5–20 tok/s. Geduld als Tugend.</li>
+  </ul>
+
+  <h2>Was niemand sagt</h2>
+  <p>Lokale LLMs sind ein Bewegungs-Statement. Auch wenn das Cloud-Modell besser ist — du behältst Kontrolle. Open-Weights bleibt offen, auch wenn der Anbieter morgen pleite geht. Das ist Politik mit Hardware. Punk in der Praxis.</p>
+
+  <p>Und ja, sie werden besser. Jeden Monat.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="costs.html">→ Weiter: Kosten &amp; Speed</a>
+    <a class="btn ghost" href="multimodal.html">Zurück: Multimodal</a>
+  </div>
+
+  <p class="signoff">— Vergiss die SaaS-Scheiße. Wir gehen offline. Mosh-Pit auf der Festplatte.</p>
+  <footer>Kapitel 12 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1Password Guide — Übersicht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">1P</div><span>1Password Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Items richtig anlegen</a>
+    <a href="vaults.html" data-page="vaults">Vaults &amp; Struktur</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps</a>
+    <a href="cool.html" data-page="cool">Neat Shit (CLI, SSH, Secrets)</a>
+    <a href="security.html" data-page="security">Sicherheit &amp; Recovery</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>1Password — der vollständige Guide</h1>
+  <p class="lead">Vom sauberen Anlegen eines Logins bis zum Secret-Reference im CI-Pipeline. Alles, was du wissen willst — strukturiert in sechs Kapiteln.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="grundlagen.html">→ Mit Grundlagen starten</a>
+    <a class="btn ghost" href="cheatsheet.html">Cheatsheet öffnen</a>
+  </div>
+
+  <h2>Was du hier lernst</h2>
+  <div class="grid">
+    <a class="card" href="grundlagen.html">
+      <span class="icon">📝</span>
+      <h3>Grundlagen</h3>
+      <p>Item-Typen, Felder richtig nutzen, mehrere URLs, TOTP, Custom Fields, Tags vs. Vaults.</p>
+    </a>
+    <a class="card" href="vaults.html">
+      <span class="icon">🗄️</span>
+      <h3>Vaults &amp; Struktur</h3>
+      <p>Wie du Vaults sinnvoll trennst — Privat, Familie, Arbeit — ohne dass es zum Chaos wird.</p>
+    </a>
+    <a class="card" href="profi.html">
+      <span class="icon">⚡</span>
+      <h3>Profi-Tipps</h3>
+      <p>Quick Access, Watchtower richtig lesen, Travel Mode, Custom Recipes, Saved Searches, Sharing-Links.</p>
+    </a>
+    <a class="card" href="cool.html">
+      <span class="icon">🧪</span>
+      <h3>Neat Shit</h3>
+      <p>1Password CLI, <code>op run</code>, SSH-Agent, Git-Commit-Signing, Plugins für gh/aws/stripe.</p>
+    </a>
+    <a class="card" href="security.html">
+      <span class="icon">🛡️</span>
+      <h3>Sicherheit &amp; Recovery</h3>
+      <p>Secret Key verstehen, Emergency Kit, YubiKey, Master-Passwort-Strategie, Account-Wiederherstellung.</p>
+    </a>
+    <a class="card" href="cheatsheet.html">
+      <span class="icon">📋</span>
+      <h3>Cheatsheet</h3>
+      <p>Alle Shortcuts, CLI-Commands und Secret-Reference-Syntax auf einer Seite.</p>
+    </a>
+  </div>
+
+  <h2>Warum dieser Guide?</h2>
+  <p>Die meisten Leute benutzen 1Password wie einen Browser-Autofill mit besserem Logo. Es kann aber <em>so viel mehr</em>: TOTP-Codes statt Authy, SSH-Keys mit biometrischem Touch, <code>.env</code>-Dateien ohne Plaintext-Secrets, signierte Git-Commits, Domain-Breach-Reports — alles eingebaut.</p>
+  <p>Dieser Guide geht vom „ich lege gerade meinen ersten Login an" bis zum „ich injiziere Secrets in eine GitHub-Action via 1Password Service Account". Du kannst linear durchgehen oder springen.</p>
+
+  <div class="callout tip">
+    <strong>💡 Tipp zum Lernen</strong>
+    Lies <a href="grundlagen.html">Grundlagen</a> und <a href="vaults.html">Vaults</a> komplett. Den Rest kannst du als Nachschlagewerk benutzen, wenn du eine konkrete Frage hast.
+  </div>
+
+  <footer>
+    Erstellt als persönliches Lernprojekt · Stand 2026 · Inhalt basiert auf öffentlich dokumentierten 1Password-Features.
+  </footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

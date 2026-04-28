@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welche Keys?</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Taxonomin</span>
+  <div class="voice">„Ein „Key" ist kein Ding. Es sind sieben Dinge, die wir alle „Key" nennen, weil unsere Sprache faul ist. Wir sortieren sie. Erst Ordnung, dann Strategie."</div>
+
+  <h1>Welche Keys gibt es eigentlich?</h1>
+  <p class="lead">Bevor wir rotieren, müssen wir kategorisieren. Verschiedene Key-Arten haben verschiedene Bedrohungsmodelle, Lebenszyklen und Werkzeuge. Hier ist die Taxonomie.</p>
+
+  <h2>Klasse 1: Symmetrische Geheimnisse („Shared Secrets")</h2>
+  <p>Ein Wert, den beide Seiten kennen. Wer ihn hat, kann sich authentisieren oder Daten entschlüsseln.</p>
+  <ul>
+    <li><strong>API-Keys</strong> (OpenAI, Stripe, AWS, GitHub Personal Access Tokens). Lange Strings, oft mit Prefix wie <code>sk-...</code>, <code>ghp_...</code>.</li>
+    <li><strong>Webhook-Secrets</strong> (HMAC-Signatur-Schlüssel)</li>
+    <li><strong>Datenbank-Passwörter</strong></li>
+    <li><strong>Encryption-Keys (DEK/KEK)</strong> — der Schlüssel, mit dem Daten at rest verschlüsselt werden</li>
+    <li><strong>JWT-Signing-Secrets</strong> (HS256)</li>
+    <li><strong>Session-Cookies-Secret</strong></li>
+  </ul>
+  <p>Charakteristika: leicht zu kopieren, leicht zu verlieren. Höchste Rotations-Priorität.</p>
+
+  <h2>Klasse 2: Asymmetrische Schlüsselpaare</h2>
+  <p>Public + Private. Privat wird gehütet, public verteilt.</p>
+  <ul>
+    <li><strong>SSH-Keys</strong> — User-Login, Host-Identifizierung</li>
+    <li><strong>TLS-Zertifikate</strong> — HTTPS, mTLS</li>
+    <li><strong>JWT-Signing-Keys (RS256, ES256)</strong> — eines unterschreibt, viele verifizieren</li>
+    <li><strong>GPG-Keys</strong> — Mail-Signaturen, Commit-Signaturen, Package-Signing</li>
+    <li><strong>SSH-Host-Keys</strong> — Identität deines Servers für Clients</li>
+  </ul>
+  <p>Charakteristika: Private bleibt lokal, Public muss verteilt werden. Rotation = neuer Public-Key bei allen Trustern eintragen.</p>
+
+  <h2>Klasse 3: Ephemere / Session-Tokens</h2>
+  <ul>
+    <li><strong>OAuth Access-Tokens</strong> (kurz: 15min–1h)</li>
+    <li><strong>OAuth Refresh-Tokens</strong> (länger: Tage–Monate)</li>
+    <li><strong>Browser-Session-Cookies</strong></li>
+    <li><strong>STS-Tokens</strong> (AWS, GCP)</li>
+  </ul>
+  <p>Charakteristika: kurzlebig by design. „Rotation" passiert automatisch durch Refresh oder Re-Login. Fokus liegt darauf, dass <em>echtes</em> Refresh implementiert ist und nicht „1 Jahr Token, klingt sicher".</p>
+
+  <h2>Klasse 4: Provider-managed</h2>
+  <p>Du klickst auf „Rotate" — der Provider macht den Rest. Beispiele:</p>
+  <ul>
+    <li><strong>AWS IAM Access Keys</strong> — pro User max. 2 aktive, sodass Rollover möglich</li>
+    <li><strong>Cloud-KMS-Keys</strong> (AWS KMS, GCP KMS, Azure Key Vault) — automatische jährliche Rotation auf Knopfdruck</li>
+    <li><strong>Database-managed credentials</strong> (AWS RDS Secrets Manager, GCP Cloud SQL)</li>
+    <li><strong>Service-Account-Keys</strong> (GCP)</li>
+  </ul>
+  <p>Charakteristika: am einfachsten zu rotieren. Sollte dein Default-Choice sein, wo verfügbar.</p>
+
+  <h2>Klasse 5: Hardware-gebundene Keys</h2>
+  <ul>
+    <li><strong>YubiKeys / FIDO2</strong> — Private Key verlässt nie das Device</li>
+    <li><strong>HSMs</strong> — Hardware-Security-Modules in Rechenzentren</li>
+    <li><strong>TPM-gespeicherte Keys</strong></li>
+    <li><strong>Mobile-Secure-Enclave</strong> (Apple, Android Keystore)</li>
+  </ul>
+  <p>Charakteristika: Private existiert nur auf dem Device. Rotation = neues Device pairen, altes deauthorizen.</p>
+
+  <h2>Klasse 6: Passwörter (User-controlled)</h2>
+  <p>Streng genommen Klasse-1, aber separat behandelt:</p>
+  <ul>
+    <li>User-Passwörter</li>
+    <li>Master-Passwort eines Passwort-Managers</li>
+    <li>Recovery-Codes</li>
+  </ul>
+  <p>Charakteristika: nicht zu oft rotieren! Studien zeigen: erzwungene 90-Tage-Rotation führt zu schwächeren Passwörtern (User hängen +1 dran). NIST empfiehlt seit 2017: nur bei Verdacht auf Compromise.</p>
+
+  <h2>Klasse 7: Kryptografisches Material in Anwendungen</h2>
+  <ul>
+    <li><strong>App-Signing-Keys</strong> (Android Play, iOS-Distribution)</li>
+    <li><strong>Code-Signing-Certs</strong> (Microsoft Authenticode, Apple Developer)</li>
+    <li><strong>Package-Signing</strong> (apt, rpm, npm-Provenance)</li>
+  </ul>
+  <p>Charakteristika: super-langlebig. Wenn Android-Signing-Key leakt, sind alle Updates für die App kompromittiert. Rotation kostet User-Action (App neu installieren). Hochwert-Asset.</p>
+
+  <h2>Tabelle: was gehört wohin?</h2>
+  <table>
+    <thead><tr><th>Du hast</th><th>Klasse</th><th>Wer rotiert?</th></tr></thead>
+    <tbody>
+      <tr><td>OpenAI <code>sk-...</code></td><td>1</td><td>du</td></tr>
+      <tr><td>AWS Access Key</td><td>1+4</td><td>du, mit Provider-Hilfe</td></tr>
+      <tr><td>SSH-Key für Server-Login</td><td>2</td><td>du</td></tr>
+      <tr><td>Let&apos;s-Encrypt-Cert</td><td>2+4</td><td>certbot, automatisch</td></tr>
+      <tr><td>JWT-Signing-Key in deiner App</td><td>1 oder 2</td><td>du</td></tr>
+      <tr><td>OAuth-Refresh-Token</td><td>3</td><td>der Provider, automatisch</td></tr>
+      <tr><td>Postgres-Passwort</td><td>1</td><td>du</td></tr>
+      <tr><td>YubiKey für 2FA</td><td>5</td><td>du, durch Pairing</td></tr>
+      <tr><td>npm-publish-Token</td><td>1</td><td>du</td></tr>
+    </tbody>
+  </table>
+
+  <p>Soeben sortiert. Ordnung gemacht. Gehen wir zu den Strategien.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="strategies.html">→ Weiter: Strategien</a>
+    <a class="btn ghost" href="why.html">Zurück: Warum</a>
+  </div>
+
+  <p class="signoff">— Wer den Typ kennt, kennt die Methode. Klassifizieren ist die halbe Lösung.</p>
+  <footer>Kapitel 2 · Key Rotation Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eigener Server (hbbs/hbbr)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">RD</div><span>RustDesk Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="grundlagen.html" data-page="grundlagen">Grundlagen — Install &amp; erste Verbindung</a>
+    <a href="plattformen.html" data-page="plattformen">Windows ↔ Android</a>
+    <a href="selfhost.html" data-page="selfhost">Eigener Server (hbbs/hbbr)</a>
+    <a href="profi.html" data-page="profi">Profi-Tipps &amp; Unorthodoxes</a>
+    <a href="troubleshooting.html" data-page="troubleshooting">Troubleshooting</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <h1>Eigener Server (hbbs/hbbr)</h1>
+  <p class="lead">Der wahre Grund, RustDesk zu nutzen. Auf einem 5€-VPS in 15 Minuten aufgesetzt — und du bist nicht mehr von öffentlichen Servern abhängig.</p>
+
+  <div class="toc">
+    <div class="toc-title">Auf dieser Seite</div>
+    <ul>
+      <li><a href="#warum">Warum überhaupt selbst hosten?</a></li>
+      <li><a href="#vps">Was du für einen VPS brauchst</a></li>
+      <li><a href="#docker">Setup mit Docker (empfohlen)</a></li>
+      <li><a href="#binary">Setup ohne Docker (Binaries)</a></li>
+      <li><a href="#ports">Ports &amp; Firewall</a></li>
+      <li><a href="#client-config">Client auf den eigenen Server zeigen</a></li>
+      <li><a href="#key">Public Key — der Trick gegen MITM</a></li>
+      <li><a href="#pro-edition">Pro-Edition: lohnt sich das?</a></li>
+    </ul>
+  </div>
+
+  <h2 id="warum">Warum überhaupt selbst hosten?</h2>
+  <ul>
+    <li><strong>Latenz</strong> — die offiziellen Public-Relays sitzen verteilt, aber nicht immer nah. Eigener Server in deinem Rechenzentrum = wenige ms.</li>
+    <li><strong>Datenschutz</strong> — bei Relay-Verbindungen läuft dein Bildschirm-Stream durch fremde Server. Verschlüsselt, ja — aber metadata leakt.</li>
+    <li><strong>Verfügbarkeit</strong> — die Public-Server sind manchmal überlastet, dein VPS ist verlässlich für dich allein.</li>
+    <li><strong>Whitelist-Setup</strong> — wenn nur dein Server bekannt ist, ist deine ID auch nur dort auflösbar.</li>
+  </ul>
+
+  <h2 id="vps">Was du brauchst</h2>
+  <ul>
+    <li>Ein VPS mit öffentlicher IPv4 — Hetzner CX11 (~4€/Monat), Netcup, OVH, DigitalOcean, alles tut. ARM oder x86, egal.</li>
+    <li>Bandbreite: hbbs braucht fast nichts (nur ID-Lookups). hbbr nur, wenn Verbindungen <em>gerelayt</em> werden — das passiert nur, wenn beide Peers hinter strikten NATs sind. Faustregel: für 5–10 User reichen 100 Mbit.</li>
+    <li>Optional: eigene (Sub-)Domain, z.B. <code>rd.example.com</code> → A-Record auf die VPS-IP.</li>
+  </ul>
+
+  <h2 id="docker">Setup mit Docker (empfohlen)</h2>
+
+  <h3>Compose-File</h3>
+<pre><code># /opt/rustdesk/docker-compose.yml
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbs
+    command: hbbs -r rd.example.com:21117
+    volumes:
+      - ./data:/root
+    network_mode: host
+    restart: unless-stopped
+
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbr
+    command: hbbr
+    volumes:
+      - ./data:/root
+    network_mode: host
+    restart: unless-stopped</code></pre>
+
+  <p>Erklärung der Tricks:</p>
+  <ul>
+    <li><code>network_mode: host</code> — RustDesk braucht UDP-Hole-Punching, was mit Docker-NAT zu Headaches führt. Host-Mode umgeht das.</li>
+    <li><code>-r rd.example.com:21117</code> — sagt hbbs, wo der hbbr-Relay erreichbar ist. Wenn nur eine Maschine: derselbe Hostname, Port 21117.</li>
+    <li>Volume <code>./data</code> — hier landen die Public-Keys. Nicht löschen, sonst ändern sich die Keys und alle Clients zeigen „Mismatch".</li>
+  </ul>
+
+  <pre><code>cd /opt/rustdesk
+docker compose up -d
+docker compose logs -f hbbs   # zeigt Public-Key beim ersten Start</code></pre>
+
+  <h3>Public-Key holen</h3>
+<pre><code>cat /opt/rustdesk/data/id_ed25519.pub</code></pre>
+
+  <p>Den 44-Zeichen-String brauchst du gleich auf den Clients.</p>
+
+  <h2 id="binary">Setup ohne Docker</h2>
+  <p>Falls du Docker nicht magst:</p>
+
+<pre><code>cd /opt
+wget https://github.com/rustdesk/rustdesk-server/releases/latest/download/rustdesk-server-linux-amd64.zip
+unzip rustdesk-server-linux-amd64.zip
+
+# systemd unit für hbbs
+sudo tee /etc/systemd/system/hbbs.service &lt;&lt;EOF
+[Unit]
+Description=RustDesk hbbs
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/rustdesk
+ExecStart=/opt/rustdesk/hbbs -r rd.example.com:21117
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# analog für hbbr (ohne -r-Flag)
+sudo systemctl enable --now hbbs hbbr</code></pre>
+
+  <h2 id="ports">Ports &amp; Firewall</h2>
+  <table>
+    <thead><tr><th>Port</th><th>Protokoll</th><th>Wofür</th></tr></thead>
+    <tbody>
+      <tr><td><code>21115</code></td><td>TCP</td><td>NAT-Test (optional, aber empfohlen)</td></tr>
+      <tr><td><code>21116</code></td><td>TCP</td><td>hbbs ID-Registrierung</td></tr>
+      <tr><td><code>21116</code></td><td>UDP</td><td>hbbs Heartbeats / Hole-Punch <span class="tag warn">unbedingt</span></td></tr>
+      <tr><td><code>21117</code></td><td>TCP</td><td>hbbr Relay</td></tr>
+      <tr><td><code>21118</code></td><td>TCP</td><td>hbbs Web-Client (optional, Pro-Feature)</td></tr>
+      <tr><td><code>21119</code></td><td>TCP</td><td>hbbr Web-Client (optional)</td></tr>
+    </tbody>
+  </table>
+
+<pre><code># UFW
+sudo ufw allow 21115:21119/tcp
+sudo ufw allow 21116/udp
+
+# nftables / iptables — analog freischalten</code></pre>
+
+  <div class="callout warn">
+    <strong>⚠️ Häufiger Fehler</strong>
+    UDP 21116 vergessen → Direkt-Verbindungen funktionieren <em>scheinbar</em>, sind aber langsam, weil sie über Relay laufen. Mit allen Ports offen klappt P2P, ohne Relay-Last für deinen VPS.
+  </div>
+
+  <h2 id="client-config">Client auf den eigenen Server zeigen</h2>
+  <p>Auf <em>jedem</em> Client (Windows, Mac, Linux, Android, iOS):</p>
+  <ol>
+    <li>Settings → Network → ID/Relay Server.</li>
+    <li><strong>ID Server</strong>: <code>rd.example.com</code> (Port wird automatisch 21116 sein).</li>
+    <li><strong>Relay Server</strong>: <em>leer</em> lassen — hbbs verteilt das automatisch via <code>-r</code>-Flag.</li>
+    <li><strong>API Server</strong>: leer (außer du hast Pro mit Web-Console).</li>
+    <li><strong>Key</strong>: der 44-Zeichen-String aus <code>id_ed25519.pub</code>.</li>
+    <li>Apply → der ID-Wert ändert sich (neuer Server = neue ID).</li>
+  </ol>
+
+  <h2 id="key">Public Key — der Trick gegen MITM</h2>
+  <p>Wenn du den Key <em>nicht</em> hinterlegst, akzeptiert der Client den ersten Public Key, den der Server schickt — Trust on first use. Wer den Server hijacken kann (DNS/Routing-Angriff), kann seinen eigenen Key unterschieben.</p>
+
+  <p>Mit hinterlegtem Key wird jede Server-Antwort gegen den Public Key validiert. Manipulation = sichtbare Warnung, Verbindung abgelehnt.</p>
+
+  <div class="callout tip">
+    <strong>💡 Distribution-Trick</strong>
+    Statt jedem Familienmitglied per Telefon den Key zu erklären: bau einen <a href="profi.html#custom-build">Custom Client</a> mit hardcodierten Server-Settings. Eine Datei verschicken → Doppelklick → fertig. Mehr dazu auf der Profi-Seite.
+  </div>
+
+  <h2 id="pro-edition">Pro-Edition: lohnt sich das?</h2>
+  <p>RustDesk-Server-Pro (kommerzielle Lizenz) bietet zusätzlich:</p>
+  <ul>
+    <li><strong>Web-Konsole</strong> — User/Permissions-Management im Browser</li>
+    <li><strong>Address-Book-Sync</strong> — gemeinsames Adressbuch für ganzes Team</li>
+    <li><strong>2FA</strong> server-seitig erzwingbar</li>
+    <li><strong>OIDC/LDAP-Login</strong></li>
+    <li><strong>Audit-Logs</strong></li>
+    <li><strong>Geo-Failover</strong> für mehrere Relays</li>
+  </ul>
+
+  <p>Lizenz: ~$10/Monat aufwärts, je nach User-Zahl. Faustregel: bis 3 User reicht <strong>OSS</strong> komplett. Für ein kleines Unternehmen mit 10+ Geräten ist Pro die Investition wert.</p>
+
+  <p>Alternative für Pro-ähnliche Features ohne Bezahlmodell: <a href="https://github.com/sctg-development/rustdesk-api-server"><code>rustdesk-api-server</code></a> (Community-Projekt, ungesupportet, aber funktional).</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="profi.html">→ Weiter: Profi-Tipps &amp; Unorthodoxes</a>
+    <a class="btn ghost" href="plattformen.html">Zurück: Plattformen</a>
+  </div>
+
+  <footer>Kapitel 3 von 6 · RustDesk Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

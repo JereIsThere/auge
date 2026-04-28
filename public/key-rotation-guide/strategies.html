@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategien</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Operations-Veteranin</span>
+  <div class="voice">„Ich hab das 2003 falsch gemacht, 2007 wieder, und 2012 endlich richtig. Was du gleich liest, hat mir 20 Jahre Outages erspart. Lies langsam."</div>
+
+  <h1>Rotation-Strategien</h1>
+  <p class="lead">„Neuen Key generieren, alten löschen" funktioniert nur in einem leeren Raum. In Production brauchst du Strategien, die Downtime ausschließen. Hier sind die fünf, die wirklich funktionieren.</p>
+
+  <h2>Strategie 1: Overlap (auch „Rolling Rotation")</h2>
+  <p>Der Klassiker. <em>Beide</em> Keys sind eine Zeit lang gültig.</p>
+
+  <ol>
+    <li>Neuen Key generieren. Alten weiterhin akzeptieren.</li>
+    <li>Neuen Key in alle Verbraucher ausrollen (Apps, CI, Cron-Jobs, Mobile-Clients).</li>
+    <li>Warten. Nicht zwei Stunden. Tage. Bis du sicher bist, dass kein Verbraucher mehr den alten benutzt — Audit-Logs prüfen.</li>
+    <li>Alten Key revoken.</li>
+  </ol>
+
+  <p>Fast jedes vernünftige System unterstützt Overlap: AWS erlaubt 2 Access-Keys pro User, JWT-Validation kann mehrere Public-Keys checken, OAuth-Apps haben Client-Secrets-Versionierung. <strong>Wenn dein System Overlap nicht unterstützt, ist das ein Architektur-Bug, kein Operational-Problem.</strong></p>
+
+  <h2>Strategie 2: Versioning (Key-IDs)</h2>
+  <p>Statt „der Key" gibt es „Key v1", „Key v2", ... Tokens werden mit Version signiert (z.B. JWT <code>kid</code>-Header). Verifier kennen alle aktiven Versionen.</p>
+
+  <p>Vorteil: Du kannst alte Keys weiter <em>verifizieren</em>, ohne neue damit auszustellen. Token-Lebensdauer entkoppelt von Key-Wechsel.</p>
+
+<pre><code>JWT-Header: { "alg": "RS256", "kid": "v3" }
+
+Verifier holt Key v3 aus seinem Keystore.
+Token mit kid="v2" wird noch akzeptiert (alt, aber gültig).
+Token mit kid="v1" wird abgelehnt (zurückgezogen).
+Neue Tokens werden mit v4 signiert.</code></pre>
+
+  <h2>Strategie 3: Phasing — gestaffeltes Rollout</h2>
+  <p>Großes System, viele Verbraucher? Rotation in Wellen:</p>
+
+  <ol>
+    <li><strong>Phase 1</strong>: Neuer Key generiert. Bei 1% des Traffics einsetzen (Canary).</li>
+    <li><strong>Phase 2</strong>: 24h beobachten. Errors? Rollback.</li>
+    <li><strong>Phase 3</strong>: 10%, 50%, 100% in Schritten.</li>
+    <li><strong>Phase 4</strong>: Alten Key revoken nach voller Migration.</li>
+  </ol>
+
+  <p>Klingt nach Overkill für einen API-Key. Ist es nicht, wenn der Key in 200 Microservices verwendet wird und nicht alle deine Doku gelesen haben.</p>
+
+  <h2>Strategie 4: Automatische Rotation</h2>
+  <p>Mensch ist die unzuverlässigste Komponente. Automatisierung tut das Richtige zum richtigen Zeitpunkt:</p>
+
+  <ul>
+    <li><strong>Cloud-KMS</strong> rotiert Crypto-Keys jährlich automatisch. Für jede neue Verschlüsselung wird neuer Key benutzt; Entschlüsselung alter Daten geht weiter.</li>
+    <li><strong>cert-manager</strong> erneuert TLS-Certs in Kubernetes 30 Tage vor Ablauf.</li>
+    <li><strong>AWS Secrets Manager</strong> kann DB-Credentials rotieren — schreibt das Passwort selbst, deployed an alle Verbraucher.</li>
+    <li><strong>HashiCorp Vault</strong> mit dynamischen Secrets — DB-User wird pro Session generiert, lebt 1h, wird dann gelöscht.</li>
+  </ul>
+
+  <p>Das ist der Endgame. Wer manuell rotiert, weiß, dass er manuell vergessen wird.</p>
+
+  <h2>Strategie 5: Re-Encrypt für Encryption-Keys</h2>
+  <p>Bei DEKs (Data Encryption Keys) ist „Rotation" trickier — die Daten <em>sind verschlüsselt damit</em>. Optionen:</p>
+
+  <ul>
+    <li><strong>Lazy Rewrap</strong>: alte Daten bleiben mit altem Key. Neue Daten kriegen neuen Key. Beim nächsten Schreiben werden alte Daten umverschlüsselt.</li>
+    <li><strong>Eager Re-Encrypt</strong>: Background-Job rewrapt alle Daten mit neuem Key.</li>
+    <li><strong>Envelope-Encryption</strong>: jede Datei hat ihren eigenen DEK, der mit einem KEK verschlüsselt ist. Bei Rotation muss nur der KEK rotieren — alle DEKs werden neu wrapped, die Daten bleiben unangerührt. <span class="tag good">Standard-Pattern</span></li>
+  </ul>
+
+  <h2>Architektur-Anti-Patterns, die Rotation killen</h2>
+
+  <table>
+    <thead><tr><th>Anti-Pattern</th><th>Symptom</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Hardcoded Key im Code</td><td>Rotation = Re-Deploy</td><td>Secrets-Manager + Runtime-Fetch</td></tr>
+      <tr><td>Ein Key für alles</td><td>Rotation killt alles auf einmal</td><td>Pro Service einen Key</td></tr>
+      <tr><td>Keine Key-Version im Token</td><td>Kein graduelles Migrieren möglich</td><td><code>kid</code>-Header oder <code>v</code>-Prefix</td></tr>
+      <tr><td>Keine Audit-Logs für Key-Use</td><td>Du weißt nicht, wer noch alt benutzt</td><td>Per-Key-Tracking, „last used"</td></tr>
+      <tr><td>Mobile-App-User updaten nie</td><td>Alter Key kann nicht weg</td><td>Force-Update-Mechanismus</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Mein 6-Schritte-Standard-Playbook</h2>
+  <ol>
+    <li><strong>Inventur</strong>: wo ist der Key, wer benutzt ihn?</li>
+    <li><strong>Neuer Key generiert &amp; im Secret-Manager hinterlegt.</strong></li>
+    <li><strong>Beide Keys parallel akzeptiert</strong> (Overlap-Mode).</li>
+    <li><strong>Verbraucher migrieren</strong> — Config-Update, Pod-Restart, Cron-Reload.</li>
+    <li><strong>Verifikations-Phase</strong>: Audit-Logs prüfen, kein Use des alten Keys mehr.</li>
+    <li><strong>Alten Key deaktivieren</strong> (nicht löschen, nur disablen — falls etwas auftaucht).</li>
+    <li><strong>Nach 7 Tagen ohne Vorfall</strong>: alten Key endgültig löschen.</li>
+  </ol>
+
+  <p>Schritt 1 wird unterschätzt. „Wo wird dieser Key verwendet?" beantwortet niemand auf Anhieb. Inventarisierung ist die meiste Arbeit. Tools: <code>git grep</code>, Provider-Audit-Logs, Secret-Manager-Access-Logs.</p>
+
+  <p>Damit ist die Strategie umrissen. Im nächsten Kapitel: die konkreten Schritte pro Key-Typ.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="cookbook.html">→ Weiter: Cookbook</a>
+    <a class="btn ghost" href="types.html">Zurück: Welche Keys</a>
+  </div>
+
+  <p class="signoff">— Wer Big Bang rotiert, hat Big Bang gelernt — auf Kosten der User.</p>
+  <footer>Kapitel 3 · Key Rotation Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

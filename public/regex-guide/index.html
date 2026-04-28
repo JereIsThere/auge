@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regex Guide — Übersicht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Reiseführer</span>
+  <div class="voice">„Folgt mir. Es gibt sieben Stationen, und jede wird von einer anderen Person gehalten. Manche sind nett. Manche schreien. Eine wird euch warnen, dass alles in Flammen aufgeht. Habt Spaß."</div>
+
+  <h1>Regex — der ehrliche Guide</h1>
+  <p class="lead">Reguläre Ausdrücke sind ein kleines, mächtiges Werkzeug — und ein riesiger Stolperstein, wenn man sich an der falschen Stelle verläuft. Dieser Guide hat acht Stationen, jede von jemand anderem geführt.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="basics.html">→ Bei den Bausteinen anfangen</a>
+    <a class="btn ghost" href="cookbook.html">Direkt zu den Rezepten</a>
+  </div>
+
+  <h2>Die Stationen</h2>
+  <div class="grid">
+    <a class="card" href="basics.html"><span class="icon">🌱</span><h3>Bausteine</h3><p>Die geduldige Lehrerin nimmt euch an die Hand. Was ist ein Match, was ist ein Anker, warum tut <code>.</code> alles?</p></a>
+    <a class="card" href="quantifiers.html"><span class="icon">🧮</span><h3>Quantoren</h3><p>Der Erbsenzähler erklärt <code>*</code>, <code>+</code>, <code>?</code>, <code>{m,n}</code>. Greedy vs. Lazy. Mit Tabellen.</p></a>
+    <a class="card" href="classes.html"><span class="icon">📚</span><h3>Zeichenklassen</h3><p>Der Bibliothekar sortiert <code>[a-z]</code>, <code>\d</code>, <code>\w</code>, <code>\s</code>, Unicode-Klassen.</p></a>
+    <a class="card" href="groups.html"><span class="icon">🎩</span><h3>Gruppen &amp; Lookarounds</h3><p>Der Magier zeigt <code>(...)</code>, <code>(?:...)</code>, <code>(?=...)</code>, <code>(?&lt;=...)</code> — und wie man sich nicht selbst verzaubert.</p></a>
+    <a class="card" href="flavors.html"><span class="icon">🌍</span><h3>Dialekte</h3><p>Die Weltreisende vergleicht PCRE, JS, Python, Go, sed/grep. Was geht wo, was bricht wo?</p></a>
+    <a class="card" href="cookbook.html"><span class="icon">🍳</span><h3>Cookbook</h3><p>Der Koch serviert Rezepte: E-Mails (sort of), URLs, IPs, Datumsformate, Whitespace-Tricks.</p></a>
+    <a class="card" href="backtracking.html"><span class="icon">🔥</span><h3>Backtracking</h3><p>Die Predigerin warnt vor Catastrophic Backtracking, ReDoS, und wie ein freundliches Regex deinen Server killt.</p></a>
+  </div>
+
+  <h2>Wer sollte das lesen?</h2>
+  <p>Wer Regex schon mal benutzt hat und weiß, dass es funktioniert — aber nie ganz versteht, <em>warum</em>. Wer <code>(.*)</code> schreibt und hofft. Wer beim Anblick von <code>(?&lt;=foo)</code> friert. Bonuspunkte, wenn du schon mal eine Regex-Library 30 Sekunden hängen lassen hast.</p>
+
+  <footer>Acht Erzähler·innen · ein Thema · stand 2026</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

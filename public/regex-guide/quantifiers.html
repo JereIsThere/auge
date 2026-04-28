@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantoren</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Erbsenzähler</span>
+  <div class="voice">„Wir zählen jetzt. Genau. Nicht ungefähr. Genau. Wenn du ungefähr willst, geh ins Marketing. Hier zählen wir."</div>
+
+  <h1>Quantoren</h1>
+  <p class="lead">Ein Quantor sagt: „nimm das, was direkt davor steht, eine bestimmte Anzahl von Malen". Punkt. Es gibt vier Standard-Quantoren, einen Modifikator, und drei häufige Missverständnisse. Wir gehen sie alle durch.</p>
+
+  <h2>Die vier Standard-Quantoren</h2>
+
+  <table>
+    <thead><tr><th>Notation</th><th>Bedeutung</th><th>Mindestens</th><th>Höchstens</th></tr></thead>
+    <tbody>
+      <tr><td><code>?</code></td><td>optional</td><td>0</td><td>1</td></tr>
+      <tr><td><code>*</code></td><td>beliebig oft, auch null</td><td>0</td><td>∞</td></tr>
+      <tr><td><code>+</code></td><td>mindestens einmal</td><td>1</td><td>∞</td></tr>
+      <tr><td><code>{m,n}</code></td><td>zwischen m und n Mal</td><td>m</td><td>n</td></tr>
+    </tbody>
+  </table>
+
+  <p>Sub-Notationen für <code>{m,n}</code>, weil Präzision zählt:</p>
+  <ul>
+    <li><code>{3}</code> — exakt 3 Mal. Nicht 2, nicht 4. Drei.</li>
+    <li><code>{3,}</code> — drei oder mehr.</li>
+    <li><code>{,3}</code> — funktioniert <em>nicht überall</em>. In manchen Engines ja, in manchen nein. Schreib lieber <code>{0,3}</code>.</li>
+  </ul>
+
+  <h2>Beispiele, präzise</h2>
+
+<pre><code>Muster      Match
+ab?c        ac, abc                       (b ist optional)
+ab*c        ac, abc, abbc, abbbc          (b 0+ Mal)
+ab+c        abc, abbc, abbbc              (b 1+ Mal — NICHT ac)
+ab{2,3}c    abbc, abbbc                   (b genau 2 oder 3 Mal)</code></pre>
+
+  <p>Beachte: ein Quantor wirkt auf <em>genau ein Element</em>. <code>ab+</code> bedeutet „ein a, dann ein oder mehr b", nicht „ein oder mehr ab". Wenn du letzteres willst, brauchst du Gruppen — siehe Kapitel beim Magier.</p>
+
+  <h2>Greedy vs. Lazy — der häufigste Quellcode-Müll</h2>
+  <p>Standardmäßig sind Quantoren <strong>gierig</strong> (greedy). Sie nehmen so viel wie möglich. Beobachte:</p>
+
+<pre><code>Text:    "&lt;b&gt;fett&lt;/b&gt; und &lt;i&gt;kursiv&lt;/i&gt;"
+Muster:  &lt;.+&gt;
+Match:   &lt;b&gt;fett&lt;/b&gt; und &lt;i&gt;kursiv&lt;/i&gt;        ← der ganze Block!</code></pre>
+
+  <p>Das ist <em>technisch korrekt</em>. <code>.+</code> matcht so viele Zeichen wie möglich, dann sucht <code>&gt;</code> rückwärts das letzte <code>&gt;</code>. Du wolltest aber wahrscheinlich nur ein einzelnes Tag.</p>
+
+  <p>Lösung: ein <code>?</code> hinter den Quantor. Das macht ihn <strong>lazy</strong> (faul, sparsam):</p>
+
+<pre><code>Muster:  &lt;.+?&gt;
+Match:   &lt;b&gt;
+         &lt;/b&gt;
+         &lt;i&gt;
+         &lt;/i&gt;</code></pre>
+
+  <p>Lazy nimmt so wenig wie möglich. Genauso für <code>*?</code>, <code>??</code>, <code>{m,n}?</code>.</p>
+
+  <div class="callout warn">
+    <strong>⚠️ Genauigkeitsfehler #1</strong>
+    Lazy ≠ schneller. Lazy ist meistens nur korrekter. Es gibt Fälle, in denen lazy <em>langsamer</em> ist (siehe Kapitel der Predigerin: Catastrophic Backtracking). Wähl es, weil es das richtige Match liefert, nicht weil du Performance erhoffst.
+  </div>
+
+  <h2>Possessive Quantoren — die strenge Variante</h2>
+  <p>Manche Engines (PCRE, Java, .NET 5+, Ruby) bieten zusätzlich <strong>possessive</strong>: <code>*+</code>, <code>++</code>, <code>?+</code>, <code>{m,n}+</code>. Die nehmen gierig, geben aber <em>nichts mehr zurück</em>, auch wenn das Match dann fehlschlägt.</p>
+
+<pre><code>Greedy:     a.*b      kann zurückgeben
+Lazy:       a.*?b     kann erweitern
+Possessive: a.*+b     friert das Match ein, kein Backtracking</code></pre>
+
+  <p>Wofür: Performance-Garantie gegen Catastrophic Backtracking. Mehr dazu — du ahnst es — bei der Predigerin.</p>
+
+  <h2>Drei häufige Missverständnisse</h2>
+
+  <h3>1) <code>.*</code> heißt nicht „alles bis zum Ende"</h3>
+  <p>Es matcht alles auf <em>einer Zeile</em>. Zeilenumbrüche werden standardmäßig ausgenommen. Willst du wirklich alles inklusive Newlines: das DOTALL/Singleline-Flag (<code>(?s)</code> oder pro-Engine-Setting).</p>
+
+  <h3>2) <code>+</code> matcht nicht „einmal"</h3>
+  <p>Es matcht <em>einmal oder mehr</em>. Wenn du genau einmal willst, lass den Quantor weg. <code>a+</code> matcht nicht nur „a", sondern auch „aa", „aaa", „aaaa". Das ist oft genau was du willst — aber <em>weiß</em> es bewusst.</p>
+
+  <h3>3) <code>?</code> ist überladen</h3>
+  <p>Das Fragezeichen hat zwei Bedeutungen je nach Position:</p>
+  <ul>
+    <li><strong>Hinter einem Element</strong>: optional. <code>colou?r</code> matcht „color" und „colour".</li>
+    <li><strong>Hinter einem anderen Quantor</strong>: macht ihn lazy. <code>.+?</code></li>
+    <li><strong>Innerhalb von <code>(?...)</code></strong>: leitet eine Spezialgruppe ein. Dazu mehr beim Magier.</li>
+  </ul>
+
+  <p>Drei Bedeutungen, ein Zeichen. Genauigkeit erfordert Aufmerksamkeit.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="classes.html">→ Weiter zu den Zeichenklassen</a>
+    <a class="btn ghost" href="basics.html">Zurück: Bausteine</a>
+  </div>
+
+  <p class="signoff">— Wir haben jetzt 4 Quantoren, 1 Modifikator und 3 Klarstellungen. Das ist die Bilanz dieser Einheit. Korrekt verbucht.</p>
+  <footer>Kapitel 2 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

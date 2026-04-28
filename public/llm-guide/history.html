@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geschichte</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Geschichtenerzählerin</span>
+  <div class="voice">„Setzt euch ans Feuer. Es ist Nacht. Das Holz knistert. Ich erzähle euch, wie wir hier gelandet sind. Es fängt mit einem Mann an, der einer Maschine das Übersetzen beibringen wollte..."</div>
+
+  <h1>Geschichte — wie wir hier gelandet sind</h1>
+  <p class="lead">Sprachmodelle gibt&apos;s nicht erst seit ChatGPT. Das ist eine 70-Jahre-Geschichte mit drei großen Sprüngen, einem stillen Jahrzehnt und dem unerwartetesten Plot-Twist seit langem.</p>
+
+  <h2>1950er — die ersten Träume</h2>
+  <p>1950 schreibt Alan Turing seinen Aufsatz „Computing Machinery and Intelligence". Er fragt: <em>Können Maschinen denken?</em> Und stellt den Imitation Game vor — den Turing-Test. Das ist der Funke. Der Rest ist 70 Jahre versuchte Glut.</p>
+
+  <p>1954 läuft das <strong>Georgetown-IBM-Experiment</strong>: ein Computer übersetzt 60 russische Sätze ins Englische. Die Forscher prophezeien: in 5 Jahren ist Maschinenübersetzung gelöst. Sie irren sich um 65 Jahre.</p>
+
+  <h2>1966 — ELIZA</h2>
+  <p>Joseph Weizenbaum baut <strong>ELIZA</strong>, einen Chatbot, der einen Psychotherapeuten imitiert. Pattern-Matching, ein paar hundert Zeilen Code. Menschen <em>gestehen ihm Sachen</em>, die sie ihren Ehepartnern nicht sagen. Weizenbaum ist entsetzt — schreibt jahrzehntelang darüber, wie gefährlich es ist, Maschinen zu vermenschlichen.</p>
+
+  <p>Lektion: Menschen projizieren Verstand. Auch wenn keiner da ist.</p>
+
+  <h2>1980er — der KI-Winter</h2>
+  <p>Expert Systems boomen. Dann explodieren sie. Versprechen waren zu groß, Resultate zu klein. Förderung wird gekappt. KI-Forschung wird ein Nischenthema, manche Forscher leugnen, dass sie es überhaupt machen — sie nennen es „Optimization", „Pattern Recognition", was auch immer.</p>
+
+  <h2>1997 — Schach</h2>
+  <p>Deep Blue schlägt Kasparov. Aber nur in einem extrem strukturierten Domain. Sprache bleibt unerreicht.</p>
+
+  <h2>2000er — Statistik schlägt Regeln</h2>
+  <p>Statistische Modelle (n-Gramme, HMMs) verdrängen handgeschriebene Grammatiken. Google Translate von 2006 läuft auf statistischer MT — funktioniert besser als 50 Jahre Linguisten-Arbeit. Ohne Sprachverständnis. Nur Statistik.</p>
+
+  <h2>2013 — word2vec</h2>
+  <p>Mikolov et al. zeigen: Wörter kann man in Vektorräume einbetten, sodass <code>king - man + woman ≈ queen</code>. Das erste Mal, dass Maschinen Bedeutung in Geometrie haben. Embeddings sind geboren.</p>
+
+  <h2>2017 — der Knall: „Attention Is All You Need"</h2>
+  <p>Vaswani et al. (Google Brain) publizieren das <strong>Transformer</strong>-Paper. Vorher dominant: Recurrent Networks (RNNs, LSTMs), die sequenziell denken müssen. Transformer denken parallel via <em>Self-Attention</em>: jedes Token schaut auf alle anderen, gewichtet sie.</p>
+
+  <p>Das ist der Architekt-Moment. Alles, was du heute „LLM" nennst, ist ein Transformer-Derivat. Acht Seiten Paper. Die Welt drehte sich.</p>
+
+  <h2>2018–2020 — die Skalierung</h2>
+  <p>OpenAI setzt einen Bet ab: was, wenn wir Transformer einfach <strong>größer</strong> machen? GPT-1 (2018, 117M Parameter). GPT-2 (2019, 1.5B — wird „zu gefährlich" zum Veröffentlichen befunden, später doch released). GPT-3 (2020, 175B).</p>
+
+  <p>GPT-3 zeigt: das Ding lernt aus Beispielen <em>im Prompt</em> (Few-Shot Learning), ohne Re-Training. Niemand erwartet das. Es taucht aus der Skalierung auf — emergent.</p>
+
+  <h2>November 2022 — ChatGPT</h2>
+  <p>OpenAI klatscht ein Chat-Interface auf GPT-3.5 (instruction-tuned). Veröffentlichung als „research preview". 100 Millionen User in zwei Monaten. Schnellste Adoption einer Verbraucher-App in der Geschichte.</p>
+
+  <p>Jeder, der vorher LLMs entwickelt hat, ist plötzlich relevant. Jeder, der nicht an Sprachmodelle dachte, hat ein Problem. Microsoft investiert. Google panikt. Anthropic gründet sich aus OpenAI heraus. Meta released Llama. Open-Weights-Modelle werden zur Bewegung.</p>
+
+  <h2>2023–2025 — die Kambrische Explosion</h2>
+  <ul>
+    <li>GPT-4 (2023) — schlägt Profis in Anwaltsexamen, Med-Examen.</li>
+    <li>Claude 2/3 — Long Context, weniger Refusals, vorbildliches Tool-Use.</li>
+    <li>Gemini — multimodal, lange Kontexte (1M Token).</li>
+    <li>Open-Source: Llama 2 → Llama 3 → Llama 4. Mistral, Qwen, DeepSeek, Phi.</li>
+    <li>Reasoning-Modelle: OpenAI o-Serie, Claude Extended Thinking, DeepSeek-R1. Modelle „denken" sichtbar.</li>
+    <li>Multimodal-Vereinheitlichung: ein Modell für Text+Bild+Audio+Video.</li>
+    <li>Agentic AI: Computer-Use, Browser-Automation, langlaufende autonome Tasks.</li>
+  </ul>
+
+  <h2>Was die Zeit lehrt</h2>
+  <p>Skalierung gewinnt — bis sie nicht mehr gewinnt. Architekturen sind langlebiger als gedacht (Transformer hält jetzt fast ein Jahrzehnt). Hype-Zyklen wiederholen sich (vergleicht GPT-3 mit ELIZA — Menschen projizieren Bewusstsein, jetzt wie damals). Und: niemand hat 1950 vorhergesagt, was heute geht. Niemand kann 2026 sagen, was 2035 geht.</p>
+
+  <p>Das Feuer brennt nieder. Wir gehen schlafen. Morgen geht&apos;s weiter.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="mistakes.html">→ Weiter: Klassische Fehler</a>
+    <a class="btn ghost" href="costs.html">Zurück: Kosten</a>
+  </div>
+
+  <p class="signoff">— Geschichten enden nicht. Sie machen nur Pause.</p>
+  <footer>Kapitel 14 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

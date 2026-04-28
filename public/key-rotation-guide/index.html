@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Rotation Guide — Übersicht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Reiseführer</span>
+  <div class="voice">„Schlüssel sind keine Möbel. Du stellst sie nicht hin und vergisst sie. Du wechselst sie. Wann, wie und vor allem ohne dabei alles abzureißen — das lernen wir hier. Sechs Stationen. Realistische Erzähler·innen. Ein Hauch von Schweiß."</div>
+
+  <h1>Key Rotation — der ehrliche Guide</h1>
+  <p class="lead">Rotieren ist kein Compliance-Theater. Es ist Hygiene. Aber es ist auch das, woran die meisten Teams scheitern, weil rotation done wrong = Outage. Hier ist, wie es done right aussieht.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="why.html">→ Beim Paranoiden anfangen</a>
+    <a class="btn ghost" href="cookbook.html">Direkt zum Cookbook</a>
+  </div>
+
+  <h2>Die Stationen</h2>
+  <div class="grid">
+    <a class="card" href="why.html"><span class="icon">🕵️</span><h3>Warum überhaupt?</h3><p><em>Der Paranoide.</em> Realistische Bedrohungen, nicht Theater.</p></a>
+    <a class="card" href="types.html"><span class="icon">🗂️</span><h3>Welche Keys?</h3><p><em>Die Taxonomin.</em> API-Tokens, SSH, TLS, KMS, DB, OAuth — sortiert.</p></a>
+    <a class="card" href="strategies.html"><span class="icon">⚙️</span><h3>Strategien</h3><p><em>Die Veteranin.</em> Overlap, Versioning, Phasing — wie ohne Downtime.</p></a>
+    <a class="card" href="cookbook.html"><span class="icon">🔧</span><h3>Cookbook</h3><p><em>Der Mechaniker.</em> Konkrete Schritte pro Key-Typ.</p></a>
+    <a class="card" href="failure.html"><span class="icon">🚨</span><h3>Fehlerbilder</h3><p><em>Die Notfall-Cassandra.</em> Was schiefgeht, wenn du falsch rotierst.</p></a>
+    <a class="card" href="cheatsheet.html"><span class="icon">📋</span><h3>Cheatsheet</h3><p>Frequenzen, Tools, Standards, Audit-Checklisten.</p></a>
+  </div>
+
+  <h2>In drei Sätzen, wenn du keine Zeit hast</h2>
+  <ol>
+    <li><strong>Rotation = neuer Key parallel ausrollen, alle Verbraucher umstellen, alten Key revoken.</strong> Kein Big Bang.</li>
+    <li><strong>Frequenz nach Risiko, nicht nach Kalender.</strong> Long-lived Service-Tokens jährlich, kompromittierte sofort, Sessiontokens automatisch.</li>
+    <li><strong>Compromise &gt; Schedule.</strong> Wer auf Anomalie-Trigger statt auf 90-Tage-Cron rotiert, ist die ganze Liga voraus.</li>
+  </ol>
+
+  <footer>Sechs Erzähler·innen · ein Thema · Stand 2026</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

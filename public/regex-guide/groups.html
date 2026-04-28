@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gruppen &amp; Lookarounds</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Bühnenmagier</span>
+  <div class="voice">„Meine Damen und Herren! Beobachten Sie genau, denn was jetzt kommt, sieht aus wie Magie — und ich versichere Ihnen: es IST Magie. Aber Magie mit Regeln. Und ich verrate Ihnen die Regeln."</div>
+
+  <h1>Gruppen &amp; Lookarounds</h1>
+  <p class="lead">Hier wird Regex erst richtig mächtig. Klammern teilen Muster ein. Lookarounds prüfen Kontext, ohne ihn zu verbrauchen. Alles Trickserei mit System.</p>
+
+  <h2>Trick 1: Capturing Groups — die runde Klammer</h2>
+  <p>Setz <code>(...)</code> um einen Teil deines Musters. Zwei Effekte:</p>
+  <ol>
+    <li>Die Gruppe wird als Ganzes von Quantoren behandelt: <code>(ab)+</code> matcht „ab", „abab", „ababab".</li>
+    <li>Was die Gruppe matcht, wird <em>gespeichert</em> und kann referenziert werden.</li>
+  </ol>
+
+<pre><code>Muster:  (\d{4})-(\d{2})-(\d{2})
+Text:    "2026-04-28"
+Match:   2026-04-28
+$1:      2026     ← erste Gruppe
+$2:      04       ← zweite
+$3:      28       ← dritte</code></pre>
+
+  <p>Du kannst die Gruppen <em>im selben Muster</em> via <code>\1</code>, <code>\2</code>, ... wiederverwenden:</p>
+
+<pre><code>Muster:  (\w+) \1
+Text:    "the the cat"   → Match auf „the the" (Wort, Space, dasselbe Wort)</code></pre>
+
+  <p>Klassischer Einsatz: doppelte Wörter finden. Tabula rasa für Lektorinnen.</p>
+
+  <h2>Trick 2: Non-Capturing — wenn du keine Beweise brinnen willst</h2>
+  <p>Capturing kostet (wenig) Performance und vergibt Gruppennummern. Wenn du nur gruppieren <em>willst</em>, ohne den Inhalt zu speichern: <code>(?:...)</code>.</p>
+
+<pre><code>(?:ab)+               gruppiert „ab", aber speichert nicht
+(https?|ftp)          captured Protokoll
+(?:https?|ftp)        gruppiert nur, du brauchst die Gruppe nicht weiter</code></pre>
+
+  <p><em>Faustregel des Magiers:</em> Default ist non-capturing. Capture nur, wenn du wirklich auf den Inhalt zugreifst.</p>
+
+  <h2>Trick 3: Named Groups — Beschriftung statt Nummer</h2>
+  <p>Statt <code>$1</code>, <code>$2</code>, <code>$3</code> kannst du Gruppen benennen — selbsterklärend und stabiler bei Refactorings:</p>
+
+<pre><code>Muster:  (?&lt;jahr&gt;\d{4})-(?&lt;monat&gt;\d{2})-(?&lt;tag&gt;\d{2})
+Text:    "2026-04-28"
+
+In Code:
+  match.group("jahr")   = "2026"
+  match.group("monat")  = "04"</code></pre>
+
+  <p>Notation variiert: <code>(?&lt;name&gt;...)</code> in PCRE/JS/.NET, <code>(?P&lt;name&gt;...)</code> in Python (Python akzeptiert beide ab 3.x).</p>
+
+  <h2>Trick 4: Lookaround — der unsichtbare Zauber</h2>
+  <p>Jetzt wird&apos;s elegant. Lookarounds prüfen, was <em>vor oder nach</em> der aktuellen Position steht — ohne diesen Text als Teil des Match zu zählen. Die heißen <strong>Zero-Width Assertions</strong>: sie verbrauchen keine Zeichen.</p>
+
+  <table>
+    <thead><tr><th>Notation</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td><code>(?=...)</code></td><td><strong>Lookahead</strong> positiv: nur Match, wenn ... folgt</td></tr>
+      <tr><td><code>(?!...)</code></td><td><strong>Lookahead</strong> negativ: nur Match, wenn ... NICHT folgt</td></tr>
+      <tr><td><code>(?&lt;=...)</code></td><td><strong>Lookbehind</strong> positiv: nur Match, wenn ... vorausgeht</td></tr>
+      <tr><td><code>(?&lt;!...)</code></td><td><strong>Lookbehind</strong> negativ: nur Match, wenn ... NICHT vorausgeht</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Die Vorstellung</h3>
+
+<pre><code>Muster:  \d+(?=€)
+Text:    "Preis: 99€, Wert: 50$"
+Match:   99       ← matcht Ziffern, ABER nur wenn ein € folgt
+                    Das € selber wird NICHT mitmatched.</code></pre>
+
+<pre><code>Muster:  (?&lt;=\$)\d+
+Text:    "Preis: 99€, Wert: 50$"
+Wait... das matcht nichts, weil $ nicht VOR der 50 steht.
+
+Korrigiert:
+Muster:  \d+(?=\$)
+Match:   50       ← Zahl, gefolgt von $</code></pre>
+
+  <h3>Negativer Lookahead in Aktion</h3>
+
+<pre><code>Muster:  foo(?!bar)
+Text:    "foobar foobaz fooqux"
+Match:   foo in „foobaz" und in „fooqux"
+         NICHT in „foobar" (weil bar folgt)</code></pre>
+
+  <h3>Lookbehind-Limitierung</h3>
+  <p>Der Bühnenmagier muss eine Sache zugeben: Lookbehind ist in vielen Engines auf <em>feste Länge</em> beschränkt. <code>(?&lt;=foo)</code> okay, <code>(?&lt;=fo+)</code> nicht okay (variable Länge).</p>
+
+  <ul>
+    <li>PCRE: feste Länge, später variabel</li>
+    <li>.NET: variable Länge erlaubt</li>
+    <li>Python <code>regex</code>-Modul: variable Länge</li>
+    <li>Python Standard <code>re</code>: feste Länge</li>
+    <li>JavaScript: ab Node 10 / moderne Browser variable Länge erlaubt</li>
+    <li>Go RE2: <strong>kein</strong> Lookbehind. Überhaupt nicht. Sorry.</li>
+  </ul>
+
+  <h2>Trick 5: Atomic Groups — die Falltür</h2>
+  <p>Eine atomare Gruppe <code>(?&gt;...)</code> ist wie eine non-capturing Gruppe, aber: <em>einmal gematched, wird nie wieder zurückgegeben</em>. Kein Backtracking innerhalb.</p>
+
+  <p>Der Effekt: schneller, deterministisch, immun gegen viele Catastrophic-Backtracking-Bugs. Mehr darüber jammert die Predigerin im nächsten Kapitel.</p>
+
+  <h2>Übersichtskarte</h2>
+  <table>
+    <thead><tr><th>Notation</th><th>Was sie tut</th></tr></thead>
+    <tbody>
+      <tr><td><code>(...)</code></td><td>Capturing Group + Quantor-Anker</td></tr>
+      <tr><td><code>(?:...)</code></td><td>Nur Gruppe, kein Capture</td></tr>
+      <tr><td><code>(?&lt;name&gt;...)</code></td><td>Named Capture</td></tr>
+      <tr><td><code>(?=...)</code></td><td>Positive Lookahead</td></tr>
+      <tr><td><code>(?!...)</code></td><td>Negative Lookahead</td></tr>
+      <tr><td><code>(?&lt;=...)</code></td><td>Positive Lookbehind</td></tr>
+      <tr><td><code>(?&lt;!...)</code></td><td>Negative Lookbehind</td></tr>
+      <tr><td><code>(?&gt;...)</code></td><td>Atomic Group</td></tr>
+      <tr><td><code>(?#...)</code></td><td>Inline-Kommentar (kommt später nochmal)</td></tr>
+      <tr><td><code>(?i)</code>, <code>(?s)</code>, <code>(?m)</code></td><td>Inline-Flags: case-insensitive, dotall, multiline</td></tr>
+    </tbody>
+  </table>
+
+  <div class="hero-cta">
+    <a class="btn" href="flavors.html">→ Weiter zu den Dialekten</a>
+    <a class="btn ghost" href="classes.html">Zurück: Zeichenklassen</a>
+  </div>
+
+  <p class="signoff">— *zieht ein Kaninchen aus der Klammer* — und das, meine Damen und Herren, war Lookbehind.</p>
+  <footer>Kapitel 4 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backtracking</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Predigerin der Apokalypse</span>
+  <div class="voice">„BÜRGER. Hört mir zu. Eure CPUs werden BRENNEN. Ein einziges harmloses <code>(.*)*</code> reicht. Eure Server werden in die KNIE gehen. Setzt euch. Der Vortrag dauert."</div>
+
+  <h1>Catastrophic Backtracking</h1>
+  <p class="lead">Die meisten Regex-Engines können in einen Zustand fallen, in dem ein einzelner Match-Versuch <em>Stunden</em> dauert. Auf einem 30-Zeichen-String. Das nennt man <strong>Catastrophic Backtracking</strong> oder, wenn ein Angreifer es ausnutzt, <strong>ReDoS</strong> (Regular Expression Denial of Service).</p>
+
+  <h2>Was passiert da überhaupt?</h2>
+  <p>NFA-Engines (PCRE, JS, Python, Java, .NET, ...) probieren Pfade durch das Muster und gehen zurück, wenn ein Pfad nicht klappt. Das nennt man <em>Backtracking</em>. Normalerweise harmlos.</p>
+
+  <p>Aber: wenn ein Muster <strong>mehrere überlappende Wege</strong> bietet, dasselbe zu matchen, wächst die Zahl der zu probierenden Kombinationen <em>exponentiell</em> mit der Eingabelänge. Der Klassiker:</p>
+
+<pre><code>Muster:  (a+)+b
+Eingabe: aaaaaaaaaaaaaaaaaaaaaaaaaaaaa    (29× a, kein b)</code></pre>
+
+  <p>Die Engine versucht: nimmt <code>a+</code> alle 29 a&apos;s. Kein <code>b</code> da. Backtrack. Versucht 28 + 1, 27 + 2, 27 + 1 + 1, 26 + 3, ... Es gibt 2^28 Aufteilungen der 29 a&apos;s in zwei <code>a+</code>-Gruppen. Die Engine probiert sie ALLE, bis sie aufgibt.</p>
+
+  <p>Auf meinem Laptop: 30 a&apos;s = 5 Sekunden. 35 a&apos;s = 3 Minuten. 40 a&apos;s = unbenutzbar. Bei 50 a&apos;s könnte die Sonne erkalten, bevor das Match fehlschlägt.</p>
+
+  <h2>Die roten Flaggen — erkennt sie</h2>
+  <p>Drei Muster, die FAST IMMER explodieren:</p>
+
+  <ol>
+    <li><strong>Quantor in Quantor</strong>: <code>(a+)+</code>, <code>(a*)*</code>, <code>(a+)*</code>. Verschachtelte Quantoren auf demselben Token. <span class="tag warn">tödlich</span></li>
+    <li><strong>Alternativen mit Überlappung</strong>: <code>(a|aa)+</code>, <code>(\w|\d)+</code>. Beide Alternativen können dieselben Zeichen schlucken — exponentielle Wege.</li>
+    <li><strong>Greedy + verschachtelt</strong>: <code>".*"|"[^"]*"</code> mit einer langen un-terminerten Eingabe — die Engine probiert sich exponentiell tot.</li>
+  </ol>
+
+  <h2>Beispiel aus der Realität — Cloudflare 2019</h2>
+  <p>Cloudflare hatte 2019 eine 27-minütige globale Outage durch eine einzige Regex in einem WAF-Regelsatz. Das Muster sah ungefähr so aus:</p>
+<pre><code>(?:(?:\"|'|\]|\}|\\|\d|(?:nan|infinity|true|false|null|undefined|symbol|math)|
+\`|\-|\+)+[)]*;?((?:\s|-|~|!|\{\}|\|\||\+)*.*(?:.*=.*)))</code></pre>
+  <p>Sieht plausibel aus. War katastrophal. Eine bestimmte Eingabe ließ es exponentiell explodieren — und Cloudflare lief auf 100% CPU. Komplette Edge ausgefallen.</p>
+
+  <p>Moral: <em>jede</em> Regex, die du auf User-Input loslässt, ist ein potentieller DoS-Vektor.</p>
+
+  <h2>Wie du dich schützt</h2>
+
+  <h3>Strategie 1: vermeide Quantor-in-Quantor</h3>
+  <p>Wenn du <code>(\w+)+</code> hast, was wolltest du wirklich? Meistens kannst du den inneren Quantor weglassen:</p>
+<pre><code>(\w+)+        → \w+         meistens äquivalent
+(a+)+         → a+
+([a-z]*)*     → [a-z]*</code></pre>
+
+  <h3>Strategie 2: spezifischere Patterns</h3>
+  <p>Statt <code>".*"</code> für Strings in Anführungszeichen:</p>
+<pre><code>".*"          ← gefährlich bei langen Eingaben ohne schließenden Quote
+"[^"]*"       ← schnell, weil non-greedy by class
+"(?:[^"\\]|\\.)*"   ← korrekt mit Escape-Sequenzen, aber stabil</code></pre>
+
+  <p>Die letzte Form heißt „unrolled loop" und ist linear schnell, weil sie überlappende Pfade ausschließt.</p>
+
+  <h3>Strategie 3: atomare Gruppen + possessive Quantoren</h3>
+  <p>Erinnerst du dich an den Magier? <code>(?&gt;...)</code> und <code>*+</code> erlauben kein Backtracking. Wenn du sie einsetzt, ist die Explosion strukturell unmöglich:</p>
+<pre><code>(a+)+b              ← katastrophal
+(?&gt;a+)+b            ← linear, kein Backtracking ins innere a+
+(a++)+b             ← dasselbe per possessive Quantor (PCRE/.NET)</code></pre>
+
+  <h3>Strategie 4: nimm eine RE2-Engine</h3>
+  <p>Go's <code>regexp</code>, Rust's <code>regex</code>-Crate, Hyperscan — alle <strong>garantiert linear</strong>. Du <em>kannst</em> kein Catastrophic Backtracking auslösen, weil sie keinen Backtracker haben.</p>
+
+  <p>Trade-off: kein Lookbehind, keine Backreferences, keine Recursion. Für Web-Server-Filter ein guter Trade.</p>
+
+  <h3>Strategie 5: Timeouts</h3>
+  <p>Wenn dein Stack das erlaubt, setz einen Timeout auf jede Regex-Operation. .NET, Java, modernes Python — viele Engines unterstützen das. Vor Timeout ist verlorene Zeit, aber kein verlorener Server.</p>
+
+<pre><code>// .NET
+var rx = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));</code></pre>
+
+  <h2>Test deine Pattern</h2>
+  <ul>
+    <li><strong>regex101.com</strong> — zeigt die Anzahl der Schritte. Wenn du bei moderaten Eingaben &gt;10000 siehst, ist was faul.</li>
+    <li><strong>safe-regex</strong> (npm-Paket) — heuristische Erkennung von ReDoS-Risiken.</li>
+    <li><strong>recheck</strong> (Cybozu) — moderner ReDoS-Detector.</li>
+    <li>Selbst-Test: ein langer String aus dem „bösen" Zeichen, ohne den abschließenden „guten" Zeichen — wenn dein Regex hängt: Bingo, Bug gefunden.</li>
+  </ul>
+
+  <div class="callout danger">
+    <strong>🚨 Predigt-Schluss</strong>
+    Wenn du Regex auf <em>User-Input</em> ausführst — Login-Formular, API, Log-Filter, Markdown-Renderer — und keine Timeouts oder eine RE2-Engine hast, ist es eine Frage der Zeit, bis dich jemand abschießt. Das ist keine Theorie. Es ist Statistik. Geht jetzt und prüft eure Regexes. Geht. JETZT.
+  </div>
+
+  <h2>Letzte Worte</h2>
+  <p>Regex ist mächtig. Aber Macht ohne Verantwortung führt in den Abgrund. Ich habe euch gewarnt. Ihr habt jetzt das Wissen.</p>
+
+  <p>Geht in Frieden — und schreibt eure Patterns mit Bedacht.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="index.html">↑ Zurück zur Übersicht</a>
+    <a class="btn ghost" href="cookbook.html">Zurück: Cookbook</a>
+  </div>
+
+  <p class="signoff">— Amen.</p>
+  <footer>Kapitel 7 · Regex Guide · Ende der Verkündigung</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontextfenster</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Architektin</span>
+  <div class="voice">„Jeder Bau hat eine tragende Kapazität. Bei Häusern: Quadratmeter, Last, Statik. Bei Modellen: Token-Fenster. Wer mehr reinpresst, als die Statik trägt, kriegt Risse. Lasst uns die Pläne anschauen."</div>
+
+  <h1>Kontextfenster</h1>
+  <p class="lead">Das Kontextfenster ist der Arbeitsspeicher des Modells. Alles, was es „sieht" — System-Prompt, History, dein aktueller Input — muss reinpassen. Was rausfällt, ist weg.</p>
+
+  <h2>Größenordnungen, Stand 2026</h2>
+  <table>
+    <thead><tr><th>Modell</th><th>Kontext</th><th>Output max.</th></tr></thead>
+    <tbody>
+      <tr><td>GPT-3.5</td><td>16k</td><td>4k</td></tr>
+      <tr><td>GPT-4 Turbo</td><td>128k</td><td>4k</td></tr>
+      <tr><td>GPT-5 / o-Serie</td><td>200k–400k</td><td>32k–128k</td></tr>
+      <tr><td>Claude Opus / Sonnet</td><td>200k (1M-Variante verfügbar)</td><td>64k</td></tr>
+      <tr><td>Gemini 2 Pro</td><td>1M (2M experimentell)</td><td>8k</td></tr>
+      <tr><td>Llama 3.1 70B</td><td>128k</td><td>variabel</td></tr>
+    </tbody>
+  </table>
+
+  <p>1 Million Token klingt nach „passt alles". 1M Token ≈ 750.000 Wörter ≈ 1500 Buchseiten. Praktisch passen <em>fünf bis zehn dicke Bücher</em> ins Fenster.</p>
+
+  <h2>Drei Konstruktionsregeln</h2>
+
+  <h3>Regel 1: Kosten skalieren mit Eingabelänge</h3>
+  <p>API-Anbieter rechnen pro Token. Bei 200k Token Input zahlst du 200k mal Input-Preis. Eine Konversation mit dauernder History kann pro Turn schnell ein paar Cent kosten — bei 100 Usern × 100 Turns = Geld.</p>
+
+  <h3>Regel 2: Long Context ≠ perfektes Memory</h3>
+  <p>Auch wenn das Fenster groß ist, leiden viele Modelle an <strong>"lost in the middle"</strong>: Information am Anfang oder Ende wird zuverlässig genutzt, in der Mitte vergessen. Faustregel: kritische Infos an Anfang oder Ende des Prompts platzieren.</p>
+
+  <h3>Regel 3: Token zählen ist Pflicht</h3>
+  <p>Wer Long-Context nutzt, muss vor jedem Call wissen, wie viele Token er sendet. <code>tiktoken</code> oder das Anbieter-eigene Tool. Passiert sonst: API-Error mid-flight, schlechte Antwort, oder horrende Rechnung.</p>
+
+  <h2>Statische Last: was im Fenster konkurriert</h2>
+
+  <table>
+    <tbody>
+      <tr><td><strong>System-Prompt</strong></td><td>0.5k–5k Token (deine Persona, Constraints, Tools)</td></tr>
+      <tr><td><strong>Few-Shot-Examples</strong></td><td>1k–10k Token (Beispiel-Inputs/Outputs)</td></tr>
+      <tr><td><strong>RAG-Kontext</strong></td><td>2k–50k Token (gefundene Dokument-Snippets)</td></tr>
+      <tr><td><strong>Conversation-History</strong></td><td>variabel, wächst pro Turn</td></tr>
+      <tr><td><strong>User-Input</strong></td><td>der eigentliche Inhalt</td></tr>
+      <tr><td><strong>Output-Reservierung</strong></td><td>du musst Platz für die Antwort lassen!</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Tragwerksprobleme &amp; Lösungen</h2>
+
+  <h3>Problem: Conversation wächst über die Zeit</h3>
+  <p>Lösungen, hierarchisch:</p>
+  <ul>
+    <li><strong>Sliding Window</strong> — nur die letzten N Turns mitnehmen. Einfach, aber Kontext geht verloren.</li>
+    <li><strong>Summarization</strong> — Älteres zu einer Zusammenfassung verdichten. Verbraucht zusätzliche Calls.</li>
+    <li><strong>Memory-Layer</strong> — wichtige Fakten in eine externe DB ziehen, bei Bedarf via RAG abrufen.</li>
+    <li><strong>Prompt-Caching</strong> — Anbieter wie Anthropic cachen statische Prompt-Teile, billiger pro Call. Nutzen.</li>
+  </ul>
+
+  <h3>Problem: Riesendokument analysieren</h3>
+  <p>Don&apos;t: 200k-Token-Dokument auf einmal reinwerfen und „alles wichtige zusammenfassen" sagen. Modell wird Mittelteil wegmitteln.</p>
+  <p>Do: in semantische Chunks splitten (Kapitel, Sections), pro Chunk separat zusammenfassen, dann die Zusammenfassungen zusammensetzen. Map-Reduce für LLMs.</p>
+
+  <h2>Die unsichtbare Grenze: Output-Tokens</h2>
+  <p>Selbst wenn das Eingabe-Fenster 200k beträgt, ist die <strong>Output-Generierung oft kürzer limitiert</strong> (4k–32k). Wenn du eine 50.000-Wort-Übersetzung willst, schaff es nicht in einem Call. Streamen, chunken, wieder zusammenfügen.</p>
+
+  <p>Das Gebäude hält. Die Statik ist klar. Wer drüber lädt, lernt&apos;s schmerzhaft.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="sampling.html">→ Weiter: Sampling</a>
+    <a class="btn ghost" href="embeddings.html">Zurück: Embeddings</a>
+  </div>
+
+  <p class="signoff">— Plan zuerst. Bauen danach. Räumen am Ende.</p>
+  <footer>Kapitel 3 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fine-Tuning</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Personal Trainer</span>
+  <div class="voice">„HEY. AUFSTEHEN. Du willst Ergebnisse? Die kommen nicht vom Reden. Reps. Sets. Konsistenz. Dein Modell ist ein Muskel — und du willst, dass er einen sehr spezifischen Trick lernt. Los geht&apos;s. Drei Sätze. KEIN HEULEN."</div>
+
+  <h1>Fine-Tuning</h1>
+  <p class="lead">Fine-Tuning ist, wenn du dem Modell einen <em>spezifischen Trick</em> beibringst, indem du ihm Beispiele zeigst — nicht im Prompt, sondern in den Gewichten. Nach dem Training kann es das Verhalten <em>ohne</em> Beispiele im Prompt reproduzieren.</p>
+
+  <h2>Erst die Wahrheit: brauchst du Fine-Tuning überhaupt?</h2>
+  <p>Wahrscheinlich nicht. Erst diese Reihenfolge probieren:</p>
+  <ol>
+    <li>Besseres Prompting (Few-Shot, klare Struktur).</li>
+    <li>Größeres Modell (GPT-4 statt 3.5).</li>
+    <li>RAG für fehlendes Wissen.</li>
+    <li>Tools für fehlende Fähigkeiten.</li>
+    <li>DANN — wenn Stil/Format/Verhalten konsistent gemacht werden muss — Fine-Tuning.</li>
+  </ol>
+
+  <p>Wer mit Fine-Tuning anfängt, weil Prompts zu lang werden — Disziplin, Sportler. Erst die einfachen Wege.</p>
+
+  <h2>Wofür Fine-Tuning gut ist</h2>
+  <ul>
+    <li><strong>Stil-Konsistenz</strong> — dein Modell soll immer in deinem Brand-Tone schreiben.</li>
+    <li><strong>Format-Konsistenz</strong> — JSON-Output mit deinem genauen Schema, ohne Slips.</li>
+    <li><strong>Domain-Sprache</strong> — medizinische, juristische, interne Fachsprache, die dem Basismodell schwerfällt.</li>
+    <li><strong>Token-Effizienz</strong> — Few-Shot-Beispiele können aus dem Prompt verschwinden, weil das Modell sie internalisiert hat.</li>
+    <li><strong>Distillation</strong> — kleines Modell zum Verhalten eines großen trainieren, billiger im Betrieb.</li>
+  </ul>
+
+  <h2>Wofür es NICHT gut ist</h2>
+  <ul>
+    <li><strong>Wissen einbauen</strong>, das du täglich aktualisierst. Nutz RAG. Fine-Tuning ist langsam, sperrig, einmalig.</li>
+    <li><strong>Halluzinationen reduzieren</strong>. Tut Fine-Tuning kaum. RAG &gt; FT.</li>
+    <li><strong>Fähigkeiten beibringen, die das Basismodell nicht hat</strong>. Du machst keinen GPT-3.5 zu GPT-4 mit FT.</li>
+  </ul>
+
+  <h2>Die Methoden — leicht bis schwer</h2>
+
+  <h3>1. Full Fine-Tuning</h3>
+  <p>Alle Gewichte werden trainiert. Maximale Kontrolle, maximaler GPU-Hunger, maximaler Disk-Verbrauch (du kriegst eine eigene Modellkopie). Bei großen Modellen: für Mortals nicht praktikabel.</p>
+
+  <h3>2. LoRA / QLoRA — der echte Champion</h3>
+  <p>Statt alle Gewichte zu ändern: kleine „Adapter"-Matrizen werden trainiert. Adapter ist 1–5% der Modellgröße. Original-Gewichte bleiben unangetastet. Beim Inference werden Adapter hinzugemerged.</p>
+  <ul>
+    <li>10× weniger GPU-RAM nötig</li>
+    <li>Adapter sind klein (Megabytes statt Gigabytes) — du kannst pro Use-Case einen eigenen halten</li>
+    <li>QLoRA = LoRA + 4-bit-Quantisierung — passt ein 70B-Modell-Tuning auf eine 24GB-Karte</li>
+  </ul>
+
+  <h3>3. RLHF / DPO</h3>
+  <p>Statt Input-Output-Paaren: Präferenzen. „Antwort A ist besser als B." Modelle lernen aus Vergleichen. Aufwendig, aber nötig, wenn du das <em>Verhalten</em> trainierst (Höflichkeit, Sicherheit, Stil-Nuancen). DPO (Direct Preference Optimization) ist die handhabbarere moderne Variante.</p>
+
+  <h2>Datenanforderungen — keine Ausreden</h2>
+  <p>Wie viele Beispiele brauchst du? <em>Mehr als du denkst, weniger als die Forschung suggeriert.</em></p>
+
+  <table>
+    <tbody>
+      <tr><td>50–200 Beispiele</td><td>Stil, einfaches Format. Funktioniert oft schon.</td></tr>
+      <tr><td>500–2000</td><td>Robusterer Stil, komplexere Aufgaben.</td></tr>
+      <tr><td>5000+</td><td>Domänen-Adaptation, neue Sprache.</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Qualität schlägt Quantität.</strong> 100 saubere, repräsentative, konsistente Beispiele sind besser als 10.000 halbgare. Räum dein Trainingsset auf wie deinen Kühlschrank — was riecht, fliegt.</p>
+
+  <h2>Format des Datensatzes (OpenAI-Style)</h2>
+<pre><code>{
+  "messages": [
+    {"role": "system", "content": "Du bist ein Support-Agent von Acme."},
+    {"role": "user", "content": "Wo ist mein Paket?"},
+    {"role": "assistant", "content": "Ich helfe dir gerne. Hast du eine Sendungsnummer?"}
+  ]
+}</code></pre>
+
+  <p>Eine Zeile JSONL pro Trainings-Sample. Tausend Zeilen = tausend Beispiele.</p>
+
+  <h2>Train-Routine</h2>
+
+  <ol>
+    <li><strong>Eval-Set zuerst.</strong> Bevor du trainierst, leg 10–20% beiseite. Die rührst du nicht an. Damit misst du, ob das Modell besser wurde — sonst optimierst du im Blindflug.</li>
+    <li><strong>Hyperparameter konservativ.</strong> Lower learning rate. Wenige Epochen (1–3). Mehr Epochs = Overfitting auf deine 200 Beispiele.</li>
+    <li><strong>Vergleich gegen Baseline.</strong> Vergleich getuntes Modell direkt gegen Basismodell <em>mit gutem Prompt</em>. Wenn der Prompt schon reicht, war das Tuning Verschwendung.</li>
+  </ol>
+
+  <h2>Cloud vs. Self-Hosted</h2>
+  <ul>
+    <li><strong>OpenAI / Anthropic-FT-API</strong> — einfacher, kein GPU-Setup, monatliches Hosting kostet.</li>
+    <li><strong>Hugging Face / Together / Modal</strong> — Mid-Tier-Convenience.</li>
+    <li><strong>Selber auf GPU</strong> — maximale Kontrolle, RTX 4090 reicht für 7B-Modelle mit QLoRA.</li>
+  </ul>
+
+  <p>Nimm den ersten Weg, der reicht. Sportler, der vom GPU-Spec angeben muss, hat keinen Volumen aufgebaut.</p>
+
+  <p>Letzter Satz. NOCH einer. KOMM SCHON.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="agents.html">→ Weiter: Tools &amp; Agents</a>
+    <a class="btn ghost" href="rag.html">Zurück: RAG</a>
+  </div>
+
+  <p class="signoff">— Wer fragt, ob er fine-tunen MUSS, sollte nicht. Wer es ausprobiert hat und WEISS, dass nichts anderes hilft, soll. Differenz ist alles.</p>
+  <footer>Kapitel 9 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

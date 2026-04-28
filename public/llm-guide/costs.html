@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kosten &amp; Speed</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">LM</div><span>LLM Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Mechanik</span>
+    <a href="tokenization.html" data-page="tokenization">Tokenisierung</a>
+    <a href="embeddings.html" data-page="embeddings">Embeddings</a>
+    <a href="context.html" data-page="context">Kontextfenster</a>
+    <a href="sampling.html" data-page="sampling">Sampling &amp; Temperature</a>
+    <span class="group">Bedienung</span>
+    <a href="prompting.html" data-page="prompting">Prompting</a>
+    <a href="cot.html" data-page="cot">Chain of Thought</a>
+    <a href="hallucinations.html" data-page="hallucinations">Halluzinationen</a>
+    <span class="group">Erweitern</span>
+    <a href="rag.html" data-page="rag">RAG</a>
+    <a href="finetuning.html" data-page="finetuning">Fine-Tuning</a>
+    <a href="agents.html" data-page="agents">Tools &amp; Agents</a>
+    <a href="multimodal.html" data-page="multimodal">Multimodal</a>
+    <span class="group">Praxis</span>
+    <a href="local.html" data-page="local">Lokale LLMs</a>
+    <a href="costs.html" data-page="costs">Kosten &amp; Speed</a>
+    <a href="history.html" data-page="history">Geschichte</a>
+    <a href="mistakes.html" data-page="mistakes">Klassische Fehler</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die Buchhalterin</span>
+  <div class="voice">„Setzen Sie sich. Ich habe keine Zeit für Vibes. Wir reden über Zahlen. Pro 1000 Tokens. Pro Sekunde. Pro Monat. Wer das nicht weiß, zahlt Lehrgeld — und das geht in MEINE Bilanz."</div>
+
+  <h1>Kosten &amp; Speed</h1>
+  <p class="lead">Hier sind die Zahlen ohne Schmuck. Was Modelle kosten, wie schnell sie sind, und welche Hebel deine Rechnung wirklich runterdrücken.</p>
+
+  <h2>Preise pro 1M Tokens (Stand 2026, Cloud-APIs)</h2>
+  <p>Ungefähre Größenordnungen. Anbieter wechseln Preise — vor dem Deploy aktuelle Preisseite checken.</p>
+
+  <table>
+    <thead><tr><th>Modell</th><th>Input</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Haiku 4.5</td><td>$1</td><td>$5</td></tr>
+      <tr><td>Claude Sonnet 4.6</td><td>$3</td><td>$15</td></tr>
+      <tr><td>Claude Opus 4.7</td><td>$15</td><td>$75</td></tr>
+      <tr><td>GPT-4o mini</td><td>$0.15</td><td>$0.60</td></tr>
+      <tr><td>GPT-4o</td><td>$2.50</td><td>$10</td></tr>
+      <tr><td>GPT-5 / o-Serie (Reasoning)</td><td>$5–15</td><td>$15–60</td></tr>
+      <tr><td>Gemini 2 Flash</td><td>$0.075</td><td>$0.30</td></tr>
+      <tr><td>Gemini 2 Pro</td><td>$1.25</td><td>$5</td></tr>
+      <tr><td>DeepSeek V3 (API)</td><td>$0.27</td><td>$1.10</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Speed — Tokens pro Sekunde (typische Output-Rate)</h2>
+  <table>
+    <thead><tr><th>Klasse</th><th>tok/s</th><th>Beispiele</th></tr></thead>
+    <tbody>
+      <tr><td>Sehr schnell</td><td>200–800</td><td>Groq, Cerebras (custom Hardware)</td></tr>
+      <tr><td>Schnell</td><td>80–200</td><td>Haiku, GPT-4o-mini, Gemini Flash</td></tr>
+      <tr><td>Normal</td><td>40–100</td><td>Sonnet, GPT-4o, Llama-70B auf guter GPU</td></tr>
+      <tr><td>Langsam</td><td>15–50</td><td>Opus, große Reasoning-Modelle, lokale CPU-Inference</td></tr>
+      <tr><td>Geduld</td><td>1–10</td><td>große Modelle auf zu schwacher Hardware</td></tr>
+    </tbody>
+  </table>
+
+  <p>Latenz first token (TTFT): 200–800 ms in der Cloud. Lokal: 50–500 ms je nach Hardware.</p>
+
+  <h2>Die zwölf Hebel, die wirklich Geld sparen</h2>
+
+  <ol>
+    <li><strong>Kleineres Modell für jede Aufgabe versuchen.</strong> 80% der Tasks reichen Haiku/4o-mini. Großes Modell nur, wenn das kleine nachweislich versagt.</li>
+    <li><strong>Prompt-Caching aktiv nutzen.</strong> Anthropic + OpenAI cachen statische Prompt-Teile. Cache-Hit kostet 10× weniger. System-Prompt + RAG-Kontext stabil halten.</li>
+    <li><strong>Batch-API.</strong> OpenAI / Anthropic / Bedrock bieten 50% Rabatt für asynchrone Batch-Calls (24h Antwortzeit). Für Backfills, Bulk-Processing.</li>
+    <li><strong>Output-Tokens minimieren.</strong> Output ist 3–5× teurer als Input. „Antworte in einem Satz" ist kein Stilmittel — es ist Kostenmanagement.</li>
+    <li><strong>System-Prompt kürzen.</strong> Jede Wiederholung einer 800-Token-Persona × 1M Calls ist ein Auto.</li>
+    <li><strong>Fewer Few-Shots.</strong> 3 gute Beispiele schlagen 10 mediocre. Kürze, was nicht beweist.</li>
+    <li><strong>RAG-Chunks knapp halten.</strong> Reranker + Top-3 statt Top-20.</li>
+    <li><strong>Streaming benutzen für UX, nicht für Speed.</strong> User wartet weniger, du zahlst gleich. Aber wahrgenommene Wartezeit halbiert.</li>
+    <li><strong>Stop-Tokens setzen.</strong> Kein Geblubber nach „---".</li>
+    <li><strong>Reasoning-Tokens deckeln.</strong> Reasoning-Modelle können dir 10k Thinking-Tokens schenken. Set <code>max_thinking</code> wenn die Antwort einfach ist.</li>
+    <li><strong>Function-Calling statt Freitext-Parsing.</strong> Strukturierte Outputs sparen Re-Tries.</li>
+    <li><strong>Lokal für Privates.</strong> Was nicht raus muss, läuft lokal — siehe Punk.</li>
+  </ol>
+
+  <h2>Beispielrechnung — sei nicht naiv</h2>
+<pre><code>Use-Case: Chatbot mit RAG, 1000 Conversations/Tag, 5 Turns ø
+
+Pro Turn:
+  System-Prompt:    1500 Token
+  RAG-Kontext:      4000 Token
+  History:          1500 Token (wachsend)
+  User-Input:        100 Token
+  --------------------------------
+  Input gesamt:     7100 Token
+
+  Output:            300 Token
+
+Mit Sonnet (Cache deaktiviert):
+  Pro Turn = 7100 × $3/M + 300 × $15/M = $0.0258
+  Pro Conversation (5 Turns) = $0.13
+  Pro Tag (1000 Conv.) = $130
+  Pro Monat = ~$3900
+
+Mit Cache aktiviert (System+RAG cached):
+  Cache-Hit-Cost: 5500 × $0.30/M + 1600 × $3/M + 300 × $15/M = ~$0.012
+  Pro Tag = $60
+  Pro Monat = ~$1800   ← ~50% gespart durch eine Setting</code></pre>
+
+  <h2>Wann lokal billiger wird</h2>
+  <p>Faustregel: ab ~$2000/Monat Cloud-Kosten <em>kann</em> sich lokales Hosting lohnen — abhängig von Latenz-Anspruch, Modellgröße, Devs für Maintenance. Unter $500/Monat: Cloud, immer. Dazwischen: rechnen, ehrlich.</p>
+
+  <h2>Eine letzte Tabelle — Output-Reduktion</h2>
+  <p>Was du an den Prompt schreiben kannst, um Output kurz zu halten:</p>
+  <ul>
+    <li>„Antworte in maximal X Sätzen."</li>
+    <li>„Keine Aufzählungen, keine Disclaimer, keine Wiederholung der Frage."</li>
+    <li>„Antworte nur mit der Zahl/dem Wort/dem JSON, sonst nichts."</li>
+    <li>„Kein vorausschauendes ‚I will now...&apos;."</li>
+  </ul>
+
+  <p>Jeder davon spart bei Skalierung dreistellig pro Monat. Das ist keine Pingeligkeit — das ist Buchhaltung.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="history.html">→ Weiter: Geschichte</a>
+    <a class="btn ghost" href="local.html">Zurück: Lokale LLMs</a>
+  </div>
+
+  <p class="signoff">— Wer keine Bilanz führt, macht Verlust. Punkt.</p>
+  <footer>Kapitel 13 · LLM Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

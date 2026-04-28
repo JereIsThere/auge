@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warum überhaupt rotieren?</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🔑</div><span>Key Rotation</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="why.html" data-page="why">Warum überhaupt? — der Paranoide</a>
+    <a href="types.html" data-page="types">Welche Keys? — die Taxonomin</a>
+    <a href="strategies.html" data-page="strategies">Strategien — die Veteranin</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Mechaniker</a>
+    <a href="failure.html" data-page="failure">Fehlerbilder — die Notfall-Cassandra</a>
+    <a href="cheatsheet.html" data-page="cheatsheet">Cheatsheet</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Paranoide</span>
+  <div class="voice">„Du denkst, dein Key ist sicher. Mhm. Du hast ihn auch in einer .env. Auf einer Maschine, die ein npm-Update gefressen hat, das jemand reingetan hat, dem niemand traute. Hör auf, dich sicher zu fühlen. Es ist Mathematik."</div>
+
+  <h1>Warum überhaupt Schlüssel rotieren?</h1>
+  <p class="lead">Nicht weil ein Compliance-Audit es verlangt. Sondern weil <em>jeder</em> langlebige Schlüssel ein potenzieller Sprengsatz ist, dessen Explosionsradius mit jedem Tag wächst.</p>
+
+  <h2>Die echten Bedrohungsmodelle</h2>
+
+  <h3>1. Leak durch Mensch</h3>
+  <p>Ein Dev pusht <code>.env</code> aus Versehen ins Git. GitHub-Scanner findet ihn in &lt;60 Sekunden. Bot-Netze auch. Dein AWS-Key wird benutzt, um eine Bitcoin-Mining-Farm zu starten. Du wachst auf mit einer 50.000$-Rechnung. Real.</p>
+
+  <h3>2. Leak durch Supply-Chain</h3>
+  <p>Ein npm-Paket, das du indirect installierst, läuft <code>process.env.AWS_*</code> ab und sendet das raus. <em>event-stream</em>, <em>ua-parser-js</em>, <em>colors.js</em> — alle real, alle in Production gelandet, alle haben Geheimnisse exfiltriert.</p>
+
+  <h3>3. Leak durch Logs</h3>
+  <p>Jemand hat <code>console.log(config)</code> drin. Logs gehen nach Datadog. Datadog hat Read-Access für 50 Leute. Einer wechselt die Firma. Dein Key in Splunk-Index liegt da fünf Jahre.</p>
+
+  <h3>4. Insider</h3>
+  <p>Ex-Mitarbeiter wurde nicht offboarded. Hat seinen Personal-Access-Token noch. Räumt am Wochenende auf.</p>
+
+  <h3>5. Provider-Breach</h3>
+  <p>CircleCI 2023. Heroku 2022. Twilio 2022. Storage-Provider wird gehackt, deine darin liegenden Tokens leaken.</p>
+
+  <h3>6. Kryptografische Erosion</h3>
+  <p>Algorithmen altern. Hardware wird billiger. Was 2015 als „secure" galt, ist 2026 brute-forceable. Statische Keys mit altem Algorithmus = ticking clock.</p>
+
+  <h2>Was Rotation tatsächlich verhindert</h2>
+  <ul>
+    <li><strong>Begrenzt das Zeitfenster.</strong> Ein gestohlener Key ist nur so lange nützlich, wie er gültig ist.</li>
+    <li><strong>Kürzt Insider-Risiken.</strong> Mitarbeiterin geht — alle Keys, die sie kannte, sind binnen 30 Tagen tot.</li>
+    <li><strong>Erzwingt Hygiene.</strong> Wer monatlich rotieren muss, baut Automatisierung. Wer nie rotiert, hat Ad-hoc-Chaos.</li>
+    <li><strong>Erkennt Lecks.</strong> Wenn beim Rotieren ein Service kaputtgeht, den du nicht kanntest — interessante Frage.</li>
+  </ul>
+
+  <h2>Was Rotation NICHT verhindert</h2>
+  <ul>
+    <li><strong>Den initialen Breach.</strong> Wenn dein Key heute leakt, ist Rotation morgen zu spät, wenn der Angreifer in 5 Minuten Schaden anrichtet.</li>
+    <li><strong>Schlechte Architektur.</strong> Ein Key mit zu vielen Permissions ist ein Risiko, egal wie oft du ihn drehst.</li>
+    <li><strong>Phishing.</strong> Wenn der User seinen Token in eine Fake-Page tippt, ist alles, was du eingebaut hast, irrelevant.</li>
+  </ul>
+
+  <h2>Frequenz: ehrlich gesprochen</h2>
+  <p>Compliance-Frameworks (PCI, SOC2, HIPAA) verlangen meistens 90 Tage. Realität ist nuancierter:</p>
+
+  <table>
+    <thead><tr><th>Asset</th><th>Empfohlene Frequenz</th></tr></thead>
+    <tbody>
+      <tr><td>User-Sessions</td><td>Stunden bis Tage (automatisch)</td></tr>
+      <tr><td>OAuth-Refresh-Tokens</td><td>Wochen (durch Provider gemanaged)</td></tr>
+      <tr><td>Service-Account-Keys (CI/CD)</td><td>30–90 Tage</td></tr>
+      <tr><td>Lang lebende API-Keys</td><td>90–180 Tage</td></tr>
+      <tr><td>Encryption-Keys (KEKs)</td><td>1–2 Jahre, plus on-incident</td></tr>
+      <tr><td>SSH-Server-Keys</td><td>jährlich, plus on-staff-change</td></tr>
+      <tr><td>TLS-Zertifikate</td><td>~90 Tage (Let&apos;s Encrypt-Standard)</td></tr>
+      <tr><td>Root-CAs</td><td>5–10 Jahre, sehr selten</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠️ Goldene Regel</strong>
+    <strong>Compromise-Trigger schlagen Schedule.</strong> Wenn du den geringsten Verdacht hast, dass ein Key leaked ist — sofort rotieren. Nicht „wir prüfen das morgen". Sofort. Du kannst eine sauberen Audit-Reset machen, sobald der Brand aus ist.
+  </div>
+
+  <p>Du sagst, du bist sicher? Beweise es. Ich höre zu.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="types.html">→ Weiter: Welche Keys?</a>
+    <a class="btn ghost" href="index.html">Zurück: Übersicht</a>
+  </div>
+
+  <p class="signoff">— Vertrauen ist der Anfang aller Breaches. Verifiziere.</p>
+  <footer>Kapitel 1 · Key Rotation Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

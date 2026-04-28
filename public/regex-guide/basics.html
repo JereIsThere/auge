@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bausteine</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzählerin · die geduldige Lehrerin</span>
+  <div class="voice">„Hallo, schön, dass du da bist. Setz dich, wir machen das ganz in Ruhe. Es gibt keine dummen Fragen. Nimm dir einen Tee, wir fangen vorne an."</div>
+
+  <h1>Die Bausteine</h1>
+  <p class="lead">Bevor wir irgendwas Kompliziertes machen, lernen wir, was eine Regex überhaupt ist. Drei Konzepte. Wenn du die drinhast, ist der Rest nur noch Vokabeln.</p>
+
+  <h2>Konzept 1: Eine Regex ist ein Muster</h2>
+  <p>Du gibst eine Mustervorlage vor, und die Engine prüft Text dagegen. Das war&apos;s eigentlich. Wirklich. Schauen wir uns ein einfaches Beispiel an.</p>
+
+<pre><code>Muster:   katze
+Text:     "Meine katze schläft."
+Match?    Ja, an Position 6.</code></pre>
+
+  <p>Das einfachste Muster ist einfach Text. Buchstabe für Buchstabe. Wenn der Text die Zeichen in dieser Reihenfolge enthält — Match. Sonst nicht. Du siehst, das ist gar nicht so wild, oder?</p>
+
+  <h2>Konzept 2: Manche Zeichen sind besonders</h2>
+  <p>Es gibt eine Handvoll Zeichen, die <em>nicht</em> sich selbst bedeuten, sondern eine Anweisung. Die nennt man <strong>Metazeichen</strong>. Hier die ersten drei:</p>
+
+  <table>
+    <tbody>
+      <tr><td><code>.</code></td><td>steht für <em>irgendein einzelnes Zeichen</em> (außer Zeilenumbruch)</td></tr>
+      <tr><td><code>^</code></td><td>Anker: „Anfang der Zeile"</td></tr>
+      <tr><td><code>$</code></td><td>Anker: „Ende der Zeile"</td></tr>
+    </tbody>
+  </table>
+
+  <p>Beispiel:</p>
+
+<pre><code>Muster:   ^Hallo
+Text:     "Hallo Welt"     → Match
+Text:     "Sage Hallo"     → kein Match (Hallo ist nicht am Anfang)</code></pre>
+
+  <p>Siehst du? Das <code>^</code> sagt der Engine: „Such nur, wenn du am Anfang stehst." Anker matchen <em>keine Zeichen</em>, sondern <em>Positionen</em>. Das ist wichtig — merken wir uns für später.</p>
+
+  <h2>Konzept 3: Zeichen wörtlich nehmen mit dem Backslash</h2>
+  <p>Was, wenn du wirklich einen Punkt finden willst, nicht „irgendein Zeichen"? Dann maskierst du ihn mit einem Backslash:</p>
+
+<pre><code>Muster:   3\.14
+Text:     "Pi ist ungefähr 3.14"   → Match
+Text:     "Pi ist ungefähr 3X14"   → kein Match (ohne Backslash wäre&apos;s ein Match)</code></pre>
+
+  <p>Das ist eine der häufigsten Anfänger-Fallen. Wenn du nach Punkt, Klammer, Plus, Stern, Fragezeichen etc. suchst und das wörtlich meinst — mit Backslash schreiben.</p>
+
+  <div class="callout tip">
+    <strong>💡 Kleiner Tipp</strong>
+    Probier alles, was du hier liest, sofort aus. Geh auf <a href="https://regex101.com">regex101.com</a> oder <a href="https://regexr.com">regexr.com</a>. Tipp das Muster ein, tipp Beispieltext rein, und sieh zu, wie die Treffer aufleuchten. Nichts in diesem Thema lernt man gut, ohne es zu sehen.
+  </div>
+
+  <h2>Was wir noch nicht angefasst haben</h2>
+  <p>Wir haben jetzt: <strong>Literale, Punkt, Anker, Escaping</strong>. Reicht für sehr wenig — aber das Konzept sitzt. Im nächsten Kapitel erklärt dir der Erbsenzähler, wie du sagst „nimm das letzte Zeichen drei bis fünf Mal". Das nennt sich Quantor.</p>
+
+  <p>Du machst das gut. Wirklich.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="quantifiers.html">→ Weiter zu den Quantoren</a>
+    <a class="btn ghost" href="index.html">Zurück zur Übersicht</a>
+  </div>
+
+  <p class="signoff">— Pause? Trink einen Schluck, atme. Es eilt nichts.</p>
+  <footer>Kapitel 1 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

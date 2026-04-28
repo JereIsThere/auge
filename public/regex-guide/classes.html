@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zeichenklassen</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">Re</div><span>Regex Guide</span></div>
+  <nav class="menu">
+    <span class="group">Start</span>
+    <a href="index.html" data-page="index">Übersicht</a>
+    <span class="group">Lernen</span>
+    <a href="basics.html" data-page="basics">Bausteine — die Geduldige</a>
+    <a href="quantifiers.html" data-page="quantifiers">Quantoren — der Erbsenzähler</a>
+    <a href="classes.html" data-page="classes">Zeichenklassen — der Bibliothekar</a>
+    <a href="groups.html" data-page="groups">Gruppen &amp; Lookarounds — der Magier</a>
+    <a href="flavors.html" data-page="flavors">Dialekte — die Weltreisende</a>
+    <a href="cookbook.html" data-page="cookbook">Cookbook — der Koch</a>
+    <a href="backtracking.html" data-page="backtracking">Backtracking — die Predigerin</a>
+  </nav>
+</aside>
+<main>
+  <span class="persona">Erzähler · der Bibliothekar</span>
+  <div class="voice">„Schhh. Nicht so laut. Hier ist Ordnung. Jedes Zeichen hat seinen Platz, jede Klasse ihr Regalbrett. Folge mir, ich zeige dir die Kataloge."</div>
+
+  <h1>Zeichenklassen</h1>
+  <p class="lead">Klassen sind Mengen von Zeichen. Statt „a oder b oder c" schreibst du <code>[abc]</code>. Statt „eine Ziffer" schreibst du <code>\d</code>. Sauber sortiert, korrekt abgelegt.</p>
+
+  <h2>Eckige Klammern: deine eigenen Klassen</h2>
+  <p>Innerhalb von <code>[...]</code> definierst du eine Menge. Reihenfolge egal, jedes Zeichen einmal genannt:</p>
+
+<pre><code>[abc]       ein a, b oder c
+[a-z]       Bereich a bis z (ASCII)
+[a-zA-Z]    alle ASCII-Buchstaben
+[0-9]       eine Ziffer
+[a-fA-F0-9] Hex-Ziffer
+[aeiou]     ein Vokal (ASCII)</code></pre>
+
+  <p>Bereiche werden über die ASCII/Unicode-Codepoints aufgespannt. <code>[A-z]</code> ist NICHT „alle Buchstaben" — dazwischen liegen <code>[</code>, <code>\</code>, <code>]</code>, <code>^</code>, <code>_</code>, <code>`</code>. Klassischer Anfängerfehler. Vermeide das.</p>
+
+  <h2>Negation: das Caret an Position 1</h2>
+  <p>Ein <code>^</code> ganz am Anfang einer Klasse <em>negiert</em> sie:</p>
+
+<pre><code>[^abc]      irgendein Zeichen AUSSER a, b, c
+[^0-9]      keine Ziffer
+[^\s]       kein Whitespace</code></pre>
+
+  <div class="callout">
+    <strong>Hinweis vom Bibliothekar</strong>
+    Das <code>^</code> in <code>[^...]</code> hat NICHTS mit dem Zeilenanfangs-Anker zu tun. Andere Position, andere Bedeutung. Die Notation ist überladen — bedauerlich, aber so ist es katalogisiert.
+  </div>
+
+  <h2>Vordefinierte Kurzklassen</h2>
+  <p>Häufige Mengen haben eigene Symbole. Lerne sie auswendig:</p>
+
+  <table>
+    <thead><tr><th>Symbol</th><th>Klasse</th><th>Negiert</th></tr></thead>
+    <tbody>
+      <tr><td><code>\d</code></td><td>Ziffern (0-9, oft auch Unicode-Ziffern)</td><td><code>\D</code></td></tr>
+      <tr><td><code>\w</code></td><td>„Wort": Buchstaben + Ziffern + Unterstrich</td><td><code>\W</code></td></tr>
+      <tr><td><code>\s</code></td><td>Whitespace: Space, Tab, Newline, Return, Form Feed</td><td><code>\S</code></td></tr>
+      <tr><td><code>.</code></td><td>jedes Zeichen außer Newline (ohne DOTALL)</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <p>Achtung beim Inventar: Was <code>\d</code> und <code>\w</code> genau enthalten, hängt vom Dialekt ab. In Python (mit Unicode-Default) matcht <code>\d</code> auch arabisch-indische Ziffern (٠١٢…). In Go (RE2) ist <code>\w</code> ASCII-only, außer du aktivierst Unicode-Modus. Mehr dazu bei der Weltreisenden.</p>
+
+  <h2>Anker: Positionen, keine Zeichen</h2>
+  <p>Auch wenn sie wie Klassen aussehen, sortiere ich sie hier ein, weil viele sie damit verwechseln:</p>
+
+  <table>
+    <tbody>
+      <tr><td><code>^</code></td><td>Anfang der Zeile (oder String, je nach Multiline-Flag)</td></tr>
+      <tr><td><code>$</code></td><td>Ende der Zeile / des Strings</td></tr>
+      <tr><td><code>\b</code></td><td>Wortgrenze: Position zwischen <code>\w</code> und <code>\W</code></td></tr>
+      <tr><td><code>\B</code></td><td>keine Wortgrenze</td></tr>
+      <tr><td><code>\A</code></td><td>Anfang des Strings, immer (auch im Multiline-Modus)</td></tr>
+      <tr><td><code>\z</code></td><td>Ende des Strings, immer</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Wortgrenze: das vergessene Genie</h3>
+  <p><code>\b</code> ist nützlicher, als die meisten denken. Beispiel — ich will „cat" als ganzes Wort finden, nicht innerhalb von „category":</p>
+
+<pre><code>Muster:  cat
+Text:    "I love category cats"
+Match:   cat in „category" UND cats in „cats"     ← falsch
+
+Muster:  \bcat\b
+Match:   nur das eigenständige „cat" — wenn vorhanden</code></pre>
+
+  <h2>Unicode-Klassen — der Erwachsenen-Tisch</h2>
+  <p>Wenn du nicht-ASCII-Text matchst, brauchst du Unicode-Property-Klassen. Notation: <code>\p{...}</code>.</p>
+
+<pre><code>\p{L}       irgendein Buchstabe in irgendeiner Schrift
+\p{Lu}      Großbuchstabe
+\p{Ll}      Kleinbuchstabe
+\p{N}       Zahl
+\p{P}       Punktuation
+\p{Greek}   griechische Schrift
+\p{Han}     CJK-Ideogramme
+\P{L}       NICHT ein Buchstabe (großes P negiert)</code></pre>
+
+  <p>Verfügbar in PCRE, Python (<code>regex</code>-Modul, nicht das Standard-<code>re</code>), Ruby, Java, .NET, JS (mit <code>u</code>-Flag). Nicht in Go's RE2.</p>
+
+  <h2>Zeichen, die in Klassen ihre Bedeutung verlieren</h2>
+  <p>Innerhalb von <code>[...]</code> sind viele Metazeichen plötzlich Literale:</p>
+
+  <ul>
+    <li><code>.</code> innerhalb einer Klasse ist ein normaler Punkt.</li>
+    <li><code>+</code>, <code>*</code>, <code>?</code>, <code>(</code>, <code>)</code> sind Literale.</li>
+    <li><strong>Ausnahmen</strong>: <code>]</code>, <code>\</code>, <code>^</code> (am Anfang), <code>-</code> (in der Mitte) müssen escaped werden.</li>
+  </ul>
+
+  <p>Beispiel: <code>[.+*?]</code> matcht buchstäblich einen Punkt, ein Plus, einen Stern oder ein Fragezeichen.</p>
+
+  <div class="hero-cta">
+    <a class="btn" href="groups.html">→ Weiter zu Gruppen &amp; Lookarounds</a>
+    <a class="btn ghost" href="quantifiers.html">Zurück: Quantoren</a>
+  </div>
+
+  <p class="signoff">— Bitte stelle die Klassen zurück ins Regal, wenn du fertig bist. Danke.</p>
+  <footer>Kapitel 3 · Regex Guide</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
