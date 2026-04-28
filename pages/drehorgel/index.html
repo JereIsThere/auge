@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Wissensdatenbank über mechanische Drehorgeln — Bauweise, Zahnräder, 3D-Druck. Fokus: Pari Attack." />
+  <title>Drehorgel — Wissensdatenbank · auge</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="topic">
+  <a href="#main" class="skip-link">Zum Inhalt springen</a>
+  <main id="main" class="topic-page wiki-page">
+    <a href="/" class="back" aria-label="Zurück zur Übersicht">← zurück</a>
+
+    <header class="topic-header">
+      <h1>Drehorgel</h1>
+      <p class="topic-sub">Mechanische Orgeln · Zahnräder · 3D-Druck</p>
+      <nav class="topic-nav" aria-label="Abschnitte">
+        <a href="#grundlagen">Grundlagen</a>
+        <a href="#getriebe">Getriebe &amp; Zahnräder</a>
+        <a href="#pari-attack">Pari Attack</a>
+        <a href="#3d-druck">3D-Druck</a>
+        <a href="#ressourcen">Ressourcen</a>
+      </nav>
+    </header>
+
+    <!-- ── 1. Grundlagen ── -->
+    <section class="wiki-section" id="grundlagen" aria-labelledby="h-grundlagen">
+      <h2 id="h-grundlagen">Grundlagen der Drehorgel</h2>
+      <div class="markdown-body">
+
+        <p>Eine <strong>Drehorgel</strong> (Niederl. <em>draaiorgel</em>) ist ein mechanisches
+        Musikinstrument, das Töne durch Orgelpfeifen erzeugt. Anstelle eines Spielers
+        steuert eine rotierende <strong>Stiftwalze</strong> (traditionell) oder ein
+        <strong>Lochbuch</strong> (Kartonband) die Ventile der Pfeifen.</p>
+
+        <h3>Aufbau</h3>
+        <ul>
+          <li><strong>Windlade</strong> — verteilt Druckluft an die Pfeifen</li>
+          <li><strong>Balg / Gebläse</strong> — Luftversorgung (manuell per Kurbel oder elektrisch)</li>
+          <li><strong>Abspielwerk</strong> — liest die Lochbuch-Signale ab (Stifte, Leser)</li>
+          <li><strong>Getriebe</strong> — überträgt die Kurbelkraft auf den Balg und das Lochbuch</li>
+          <li><strong>Rahmen / Gehäuse</strong> — trägt alle Komponenten</li>
+        </ul>
+
+        <h3>Tonsysteme / Tonzahl</h3>
+        <table>
+          <thead><tr><th>System</th><th>Töne</th><th>Lochbreite</th><th>Raster</th></tr></thead>
+          <tbody>
+            <tr><td>20er Orgel (Pari Attack)</td><td>20</td><td>6,5 mm</td><td>165 mm</td></tr>
+            <tr><td>26er Orgel</td><td>26</td><td>6,5 mm</td><td>214 mm</td></tr>
+            <tr><td>31er Orgel</td><td>31</td><td>~6 mm</td><td>~250 mm</td></tr>
+            <tr><td>Raffin 20</td><td>20</td><td>6 mm</td><td>160 mm</td></tr>
+          </tbody>
+        </table>
+
+        <p class="note">Das Lochbuch wird auf Endlosband gelocht — 1 cm Bandlänge entspricht
+        typischerweise einem Achtel bei 60–80 BPM Kurbelgeschwindigkeit.</p>
+      </div>
+    </section>
+
+    <!-- ── 2. Getriebe & Zahnräder ── -->
+    <section class="wiki-section" id="getriebe" aria-labelledby="h-getriebe">
+      <h2 id="h-getriebe">Getriebe &amp; Zahnräder</h2>
+      <div class="markdown-body">
+
+        <p>Das Getriebe einer Drehorgel hat zwei Hauptaufgaben:</p>
+        <ol>
+          <li><strong>Untersetzung</strong> — die Kurbelgeschwindigkeit (~60–80 U/min) wird
+          auf den Balg-Pumphub und die Lochbuch-Vorschubgeschwindigkeit umgesetzt.</li>
+          <li><strong>Gleichmäßigkeit</strong> — ruckfreier Lauf für gleichmäßigen
+          Luftdruck und Bandzug.</li>
+        </ol>
+
+        <h3>Grundbegriffe der Verzahnung (DIN 867)</h3>
+        <table>
+          <thead><tr><th>Begriff</th><th>Formel</th><th>Bedeutung</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Modul <em>m</em></strong></td><td>m = d / z</td><td>Zahn­größen­maß in mm; bestimmt Zahn­höhe und -breite</td></tr>
+            <tr><td><strong>Zähnezahl <em>z</em></strong></td><td>—</td><td>Anzahl der Zähne; mit m → Durchmesser</td></tr>
+            <tr><td><strong>Teilkreis-Ø <em>d</em></strong></td><td>d = m · z</td><td>Abwälzkreis zweier kämmender Räder</td></tr>
+            <tr><td><strong>Kopfkreis-Ø <em>d<sub>a</sub></em></strong></td><td>d<sub>a</sub> = m(z+2)</td><td>Außen­durch­messer des Zahnrads</td></tr>
+            <tr><td><strong>Fußkreis-Ø <em>d<sub>f</sub></em></strong></td><td>d<sub>f</sub> = m(z−2.5)</td><td>Grund des Zahnraums</td></tr>
+            <tr><td><strong>Druckwinkel <em>α</em></strong></td><td>Standard: 20°</td><td>Neigung der Zahnflanke; 20° ist für 3D-Druck gut geeignet</td></tr>
+            <tr><td><strong>Übersetzung <em>i</em></strong></td><td>i = z₂ / z₁</td><td>Verhältnis der Drehzahlen; i > 1 = Untersetzung</td></tr>
+            <tr><td><strong>Achsabstand <em>a</em></strong></td><td>a = (d₁ + d₂) / 2</td><td>Mitte-zu-Mitte-Abstand der Wellen</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Typische Getriebe­stufen für Drehorgeln</h3>
+        <p>Für eine 20er-Orgel sind folgende Zahnrad­paarungen typisch:</p>
+        <table>
+          <thead><tr><th>Stufe</th><th>Antrieb z₁</th><th>Abtrieb z₂</th><th>Übersetzung</th><th>Modul</th></tr></thead>
+          <tbody>
+            <tr><td>Kurbel → Balg</td><td>10–15</td><td>40–60</td><td>1 : 3–4</td><td>2–3</td></tr>
+            <tr><td>Kurbel → Bandvor­schub</td><td>12–20</td><td>30–60</td><td>1 : 2–3</td><td>2</td></tr>
+            <tr><td>Zwischen­stufe</td><td>15–20</td><td>15–20</td><td>1 : 1</td><td>2</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Modul-Empfehlung für 3D-Druck</h3>
+        <ul>
+          <li><strong>m = 2</strong> — Standardempfehlung für PLA/PETG-Zahnräder bis ~30 N·cm Drehmoment.</li>
+          <li><strong>m = 1,5</strong> — für platzsparende Kompaktgetriebe, erfordert sorgfältigen Druck (≤ 0,15 mm Schicht).</li>
+          <li><strong>m = 3</strong> — für stark belastete Antriebsstufen oder wenn Lautstärke egal ist.</li>
+          <li>Druckwinkel <strong>20°</strong> ist Standard und für 3D-Druck am besten geeignet.</li>
+          <li>Zahnbreite (Stirnbreite) = 8–12 × m für Drehorgeln empfohlen.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── 3. Pari Attack ── -->
+    <section class="wiki-section" id="pari-attack" aria-labelledby="h-pari">
+      <h2 id="h-pari">Pari Attack</h2>
+      <div class="markdown-body">
+
+        <p>Der <strong>Pari Attack</strong> ist ein niederländisches DIY-Drehorgelmodell,
+        entworfen von Pieter Vos (NL). Es ist als 20-stimmige Straßenorgel konzipiert
+        und nutzt das verbreitete <strong>20er-Lochbuch­system</strong> (165 mm Breite,
+        6,5 mm Lochraster).</p>
+
+        <h3>Besonderheiten</h3>
+        <ul>
+          <li>Vollständig aus <strong>Holz (Sperrholz 9–12 mm)</strong> und 3D-Druck-Teilen baubar.</li>
+          <li><strong>Pfeifenaufbau</strong> in zwei Registern: Prinzipal (offen) + Bourdon (gedeckt).</li>
+          <li><strong>Lochbuch­vorschub</strong> per Kurvenscheibe und Federmechanismus.</li>
+          <li>Kurbel­antrieb mit Kegelrad­übersetzung auf Balg­nockenwelle.</li>
+          <li>Offizielle Baupläne und Gemeinschaft: <strong>draaiorgel.nl</strong> / Forum &amp; Downloads.</li>
+        </ul>
+
+        <h3>Getriebe Pari Attack (geschätzte Werte — immer mit Originalplan prüfen!)</h3>
+        <table>
+          <thead><tr><th>Bauteil</th><th>Zähne</th><th>Modul</th><th>Material (Original)</th></tr></thead>
+          <tbody>
+            <tr><td>Kurbel­ritzel</td><td>~12</td><td>2</td><td>PLA / Messing</td></tr>
+            <tr><td>Haupt­rad</td><td>~48</td><td>2</td><td>PLA / Holz</td></tr>
+            <tr><td>Balg­nocken-Ritzel</td><td>~15</td><td>2</td><td>PLA</td></tr>
+            <tr><td>Band­vor­schub­rad</td><td>~24</td><td>2</td><td>PLA</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-warn">
+          <strong>Wichtig:</strong> Die obigen Zähnezahlen sind Näherungswerte aus der
+          Community. Die <em>offiziellen Baupläne von draaiorgel.nl</em> sind die verbindliche
+          Quelle — dort sind genaue Maße, Achsabstände und Zahnrad­spezifikationen angegeben.
+          Immer zuerst den Originalplan konsultieren!
+        </div>
+
+        <h3>Anpassungen für 3D-Druck</h3>
+        <ul>
+          <li>Originale Holzräder: oft einfache Evolvente m = 2, α = 20°, keine Profilverschiebung.</li>
+          <li>Beim 3D-Druck: Bohrungen 0,1–0,2 mm größer drucken (Schrumpfung).</li>
+          <li>Zähne quer zur Druckrichtung → höchste Festigkeit. Zahnrad flach drucken (auf der Stirnfläche).</li>
+          <li>Wandstärke Zahn­fuß: mindestens 2 Perimeter + 40 % Infill.</li>
+          <li>Material: <strong>PETG</strong> für leicht erhöhte Temperatur­beständigkeit, <strong>PLA+</strong> für einfaches Drucken.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── 4. 3D-Druck ── -->
+    <section class="wiki-section" id="3d-druck" aria-labelledby="h-3d">
+      <h2 id="h-3d">3D-Druck von Zahnrädern</h2>
+      <div class="markdown-body">
+
+        <h3>Druckparameter (Empfehlung)</h3>
+        <table>
+          <thead><tr><th>Parameter</th><th>PLA</th><th>PETG</th></tr></thead>
+          <tbody>
+            <tr><td>Schichthöhe</td><td>0,15–0,20 mm</td><td>0,15–0,20 mm</td></tr>
+            <tr><td>Perimeter / Wände</td><td>4–6</td><td>4–6</td></tr>
+            <tr><td>Infill</td><td>40–60 % Gyroid</td><td>40–60 % Gyroid</td></tr>
+            <tr><td>Düsendurchmesser</td><td>0,4 mm (max.)</td><td>0,4 mm</td></tr>
+            <tr><td>Stützen</td><td>nein (flach drucken)</td><td>nein</td></tr>
+            <tr><td>Druckausrichtung</td><td>Stirnfläche auf dem Druckbett</td><td>gleich</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Toleranzen &amp; Passungen</h3>
+        <ul>
+          <li><strong>Wellen-Bohrung:</strong> Nennmaß + 0,1 mm (bei Presssitz) bis + 0,3 mm (Gleitsitz).</li>
+          <li><strong>Zahn­flanken­spiel:</strong> SVG aus dem Generator hat kein Flankenspiel. Bei der Übersetzung
+              in 3D-Modell (FreeCAD/OpenSCAD) 0,05–0,10 mm pro Flanke addieren.</li>
+          <li><strong>Achsabstand:</strong> Im Rahmen 0,1–0,2 mm mehr als berechnet planen,
+              damit die Zahnräder leicht kämmen.</li>
+        </ul>
+
+        <h3>Workflow: SVG → 3D-Modell → Druck</h3>
+        <ol>
+          <li>Zahnrad im <a href="/gear-generator/">Zahnrad-Generator</a> konfigurieren.</li>
+          <li><strong>SVG exportieren</strong> (Taste im Generator).</li>
+          <li>SVG in <strong>FreeCAD</strong> importieren: <em>File → Import → SVG</em> → Part → Pad (Extrusion) → Zahnbreite eingeben.</li>
+          <li>Alternativ: <strong>OpenSCAD</strong> mit <code>import("zahnrad.svg");</code> + <code>linear_extrude(height=10);</code></li>
+          <li>Als <code>.stl</code> exportieren → Slicer → Druckbett.</li>
+        </ol>
+
+        <h3>OpenSCAD-Schnippsel</h3>
+        <pre><code>// Zahnrad aus SVG extrudieren
+linear_extrude(height = 10, convexity = 10)
+  import("zahnrad_m2_z20.svg");
+
+// Bohrung subtrahieren (falls nicht im SVG)
+// difference() { ... cylinder(h=12, d=5, center=true); }</code></pre>
+
+        <div class="callout callout-info">
+          <strong>Tipp:</strong> FreeCAD → <em>Part Design → Pad</em> erhält die Kurvenqualität
+          besser als OpenSCAD. Für genaue Evolventen immer <em>Path Workbench</em> oder
+          den <em>FCGear-Addon</em> prüfen — das Addon kann Evolventen­zahnräder direkt parametrisch erzeugen.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 5. Ressourcen ── -->
+    <section class="wiki-section" id="ressourcen" aria-labelledby="h-res">
+      <h2 id="h-res">Ressourcen &amp; Links</h2>
+      <div class="markdown-body">
+        <ul>
+          <li><strong>draaiorgel.nl</strong> — Offizielle Pari-Attack-Pläne, Forum, Downloads (Niederländisch/Englisch)</li>
+          <li><strong>FCGear (FreeCAD Addon)</strong> — parametrische Zahnrad­erzeugung direkt in FreeCAD</li>
+          <li><strong>OpenSCAD MCAD</strong> — Bibliothek mit Gear-Modul (<code>gears.scad</code>)</li>
+          <li><strong>Thingiverse / Printables</strong> — Suche nach „street organ gear", „draaiorgel", „barrel organ" — viele Community-Teile</li>
+          <li><strong>DIN 867</strong> — Grundnorm für Evolventenverzahnung (Bücherei / Beuth-Verlag)</li>
+          <li><strong>Zahnrad-Generator</strong> (diese Seite) → <a href="/gear-generator/">gear-generator</a></li>
+        </ul>
+
+        <h3>Bücher</h3>
+        <ul>
+          <li><em>Street Organs</em> — Pim Jordans (Nijmegen): umfassende historische &amp; technische Übersicht</li>
+          <li><em>Mechanical Music Digest</em> (online Archiv) — Fragen und Antworten der Orgelbauer-Community</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

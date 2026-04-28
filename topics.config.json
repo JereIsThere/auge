@@ -1,0 +1,27 @@
+{
+  "gear-generator": {
+    "title": "Zahnrad-Generator",
+    "description": "Interaktiver SVG-Zahnrad-Generator für 3D-Druck — Evolventenverzahnung, Gegenzahnrad, Export.",
+    "category": "werkzeuge",
+    "status": "in-progress",
+    "order": 1,
+    "tags": ["3d-druck", "zahnräder", "svg", "generator", "mechanik"]
+  },
+  "drehorgel": {
+    "title": "Drehorgel",
+    "description": "Wissensdatenbank über mechanische Drehorgeln — Getriebe, Zahnräder, 3D-Druck, Pari Attack.",
+    "category": "werkzeuge",
+    "status": "in-progress",
+    "order": 2,
+    "tags": ["drehorgel", "pari-attack", "getriebe", "3d-druck", "mechanik"]
+  },
+  "art-advanced": {
+    "category": "kunst"
+  },
+  "seite-eins": {
+    "category": "demo"
+  },
+  "seite-zwei": {
+    "category": "demo"
+  }
+}
