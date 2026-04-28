@@ -1,0 +1,38 @@
+{
+  "sectionOrder": [
+    "Mathe & Theorie",
+    "Daten & ML",
+    "Algorithmen & Sprachen",
+    "Systeme & Netzwerk",
+    "Web & Sicherheit",
+    "Tools"
+  ],
+  "topics": {
+    "discrete-math":              { "icon": "🔢",  "accent": "#a855f7", "section": "Mathe & Theorie" },
+    "statistics":                 { "icon": "📊", "accent": "#c084fc", "section": "Mathe & Theorie" },
+
+    "tensorflow-keras":           { "icon": "🤖", "accent": "#06b6d4", "section": "Daten & ML" },
+    "computer-vision":            { "icon": "👁️",  "accent": "#22d3ee", "section": "Daten & ML" },
+    "nlp":                        { "icon": "🗣️",  "accent": "#14b8a6", "section": "Daten & ML" },
+    "pandas-data-wrangling":      { "icon": "🐼", "accent": "#0891b2", "section": "Daten & ML" },
+
+    "data-structures-algorithms": { "icon": "🏗️",  "accent": "#84cc16", "section": "Algorithmen & Sprachen" },
+    "regex":                      { "icon": "🔍", "accent": "#65a30d", "section": "Algorithmen & Sprachen" },
+    "functional-programming":     { "icon": "λ",   "accent": "#a3e635", "section": "Algorithmen & Sprachen" },
+    "compiler-design":            { "icon": "🛠️",  "accent": "#16a34a", "section": "Algorithmen & Sprachen" },
+    "design-patterns":            { "icon": "🎯", "accent": "#4ade80", "section": "Algorithmen & Sprachen" },
+
+    "operating-systems":          { "icon": "💾", "accent": "#f59e0b", "section": "Systeme & Netzwerk" },
+    "computer-networks":          { "icon": "🌐", "accent": "#fb923c", "section": "Systeme & Netzwerk" },
+    "databases":                  { "icon": "🗄️",  "accent": "#f97316", "section": "Systeme & Netzwerk" },
+    "docker-containers":          { "icon": "🐳", "accent": "#fbbf24", "section": "Systeme & Netzwerk" },
+
+    "web-performance":            { "icon": "⚡", "accent": "#ef4444", "section": "Web & Sicherheit" },
+    "api-rest":                   { "icon": "🔌", "accent": "#f43f5e", "section": "Web & Sicherheit" },
+    "security-cryptography":      { "icon": "🔒", "accent": "#dc2626", "section": "Web & Sicherheit" },
+    "system-design":              { "icon": "🏛️",  "accent": "#e11d48", "section": "Web & Sicherheit" },
+
+    "git-version-control":        { "icon": "🌿", "accent": "#4f8cff", "section": "Tools" },
+    "latex":                      { "icon": "📝", "accent": "#6366f1", "section": "Tools" }
+  }
+}

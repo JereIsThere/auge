@@ -507,10 +507,40 @@ body:not(.home) #app p {
   opacity: 0.45;
 }
 
+.learnings-group {
+  margin-bottom: 2.6rem;
+}
+.learnings-group:last-child { margin-bottom: 0; }
+
+.learnings-group-head {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.learnings-group-title {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(168,85,247,0.7);
+  white-space: nowrap;
+}
+.learnings-group-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(168,85,247,0.4), transparent);
+}
+
 .learnings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.85rem;
+}
+
+.learning-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 35%, transparent));
 }
 
 .learning-card {

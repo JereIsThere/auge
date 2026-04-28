@@ -14,6 +14,11 @@ const ROOT = resolve(__dirname, '..');
 const learningsDir = join(ROOT, 'pages', 'claude-learnings');
 const publicDir = join(ROOT, 'public');
 const metadataOut = join(ROOT, 'pages', 'learnings.json');
+const overridesPath = join(ROOT, 'pages', 'learnings-overrides.json');
+
+const overrides = existsSync(overridesPath)
+  ? JSON.parse(readFileSync(overridesPath, 'utf8'))
+  : { sectionOrder: [], topics: {} };
 
 const LEVELS = {
   beginner:     { emoji: '🟢', label: 'Beginner',     color: '#84cc16' },
@@ -298,8 +303,31 @@ function main() {
     if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
     mkdirSync(outDir, { recursive: true });
     writeFileSync(join(outDir, 'index.html'), html);
-    metadata.push({ slug, title, desc });
+
+    const o = overrides.topics?.[slug] || {};
+    metadata.push({
+      slug,
+      title,
+      desc,
+      ...(o.icon ? { icon: o.icon } : {}),
+      ...(o.accent ? { accent: o.accent } : {}),
+      ...(o.section ? { section: o.section } : {}),
+    });
   }
+
+  // Sort by section index in sectionOrder, then alphabetically by slug;
+  // unsectioned items go to the end as "Sonstiges".
+  const sectionOrder = overrides.sectionOrder || [];
+  const sectionIndex = (s) => {
+    const i = sectionOrder.indexOf(s);
+    return i === -1 ? sectionOrder.length : i;
+  };
+  metadata.sort((a, b) => {
+    const sa = sectionIndex(a.section);
+    const sb = sectionIndex(b.section);
+    if (sa !== sb) return sa - sb;
+    return a.slug.localeCompare(b.slug);
+  });
 
   writeFileSync(metadataOut, JSON.stringify(metadata, null, 2));
   console.log(`✓ Rendered ${topics.length} learning paths → public/<topic>/index.html`);

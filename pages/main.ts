@@ -15,6 +15,9 @@ type Learning = {
   slug: string;
   title: string;
   desc: string;
+  icon?: string;
+  accent?: string;
+  section?: string;
 };
 
 const stack = document.querySelector<HTMLDivElement>('#links-stack')!;
@@ -65,19 +68,43 @@ if (guidesStack) {
 
 const learningsStack = document.querySelector<HTMLDivElement>('#learnings-stack');
 if (learningsStack) {
-  // Cycle a small palette so cards aren't all the same colour but stay
-  // within the AUGE theme.
+  // Fallback palette for topics without an explicit accent in the overrides.
   const palette = ['#a855f7', '#06b6d4', '#84cc16', '#f59e0b', '#ef4444', '#4f8cff', '#d4a200'];
 
-  learningsStack.innerHTML = (learnings as Learning[])
-    .map((l, i) => `
-      <a href="/${l.slug}/" class="learning-card" style="--accent:${palette[i % palette.length]}">
-        <div class="learning-body">
-          <span class="learning-title">${l.title}</span>
-          <span class="learning-slug">${l.slug}</span>
-          ${l.desc ? `<span class="learning-desc">${l.desc}</span>` : ''}
+  // Group by section, preserving the input order (already pre-sorted by the
+  // render script). Topics without a section fall into "Sonstiges".
+  const groups: Record<string, Learning[]> = {};
+  const sectionOrder: string[] = [];
+  let paletteIdx = 0;
+  (learnings as Learning[]).forEach((l) => {
+    const section = l.section || 'Sonstiges';
+    if (!groups[section]) {
+      groups[section] = [];
+      sectionOrder.push(section);
+    }
+    groups[section].push(l);
+    if (!l.accent) (l as Learning).accent = palette[paletteIdx++ % palette.length];
+  });
+
+  learningsStack.innerHTML = sectionOrder
+    .map((section) => `
+      <div class="learnings-group">
+        <div class="learnings-group-head">
+          <span class="learnings-group-title">${section}</span>
+          <span class="learnings-group-line"></span>
         </div>
-        <span class="learning-arr">→</span>
-      </a>`)
+        <div class="learnings-grid">
+          ${groups[section].map((l) => `
+            <a href="/${l.slug}/" class="learning-card" style="--accent:${l.accent}">
+              ${l.icon ? `<span class="learning-icon">${l.icon}</span>` : ''}
+              <div class="learning-body">
+                <span class="learning-title">${l.title}</span>
+                <span class="learning-slug">${l.slug}</span>
+                ${l.desc ? `<span class="learning-desc">${l.desc}</span>` : ''}
+              </div>
+              <span class="learning-arr">→</span>
+            </a>`).join('')}
+        </div>
+      </div>`)
     .join('');
 }
