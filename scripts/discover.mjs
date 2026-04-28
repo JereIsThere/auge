@@ -97,6 +97,8 @@ ${availableLevels.map(l => `<a href="#${l.name}">${escapeHtml(l.name)}</a>`).joi
 <meta name="color-scheme" content="dark">
 <meta name="description" content="${escapeHtml(title)} — auge.">
 <title>${escapeHtml(title)} · auge</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body class="topic">
