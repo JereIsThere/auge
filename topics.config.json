@@ -1,0 +1,10 @@
+{
+  "linear-algebra": {
+    "title": "Linear Algebra",
+    "description": "Vektoren, Matrizen, Transformationen — die Sprache von ML und Computer Graphics."
+  },
+  "n8n": {
+    "title": "n8n",
+    "description": "Webhook-basierte Workflows authentifizieren und ausführen."
+  }
+}

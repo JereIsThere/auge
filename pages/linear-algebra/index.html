@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Linear Algebra — Vektoren, Matrizen und Transformationen. auge.">
+<title>Linear Algebra · auge</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="topic">
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
+<main id="main" class="topic-page">
+<a href="/" class="back" aria-label="Zurück zur Übersicht">← zurück</a>
+<header class="topic-header">
+<h1>Linear Algebra</h1>
+<nav class="topic-nav" aria-label="Level">
+<a href="#beginner">beginner</a><a href="#intermediate">intermediate</a><a href="#advanced">advanced</a>
+</nav>
+</header>
+
+<article class="markdown-body topic-readme">
+<p>Die Sprache hinter Machine Learning, Computer Graphics und Physik-Simulationen.
+Vektoren und Matrizen beschreiben Transformationen — wer sie versteht, sieht, was neuronale Netze wirklich tun.</p>
+</article>
+
+<section class="level" id="beginner" aria-labelledby="level-beginner-h">
+<h2 id="level-beginner-h" class="level-heading">Beginner</h2>
+<div class="markdown-body">
+<h1>Linear Algebra für Beginner 🟢</h1>
+<p>Vektoren, Matrizen und grundlegende Operationen — das Werkzeugset.</p>
+
+<h2>Konzepte</h2>
+<table>
+<thead><tr><th>Begriff</th><th>Was</th></tr></thead>
+<tbody>
+<tr><td>Vektor</td><td>Geordnete Liste von Zahlen — Richtung + Länge im Raum</td></tr>
+<tr><td>Skalar</td><td>Einzelne Zahl; streckt oder staucht einen Vektor</td></tr>
+<tr><td>Matrix</td><td>Rechteckiges Zahlenschema — kodiert eine Transformation</td></tr>
+<tr><td>Transponierung</td><td>Zeilen ↔ Spalten tauschen (<code>Aᵀ</code>)</td></tr>
+<tr><td>Skalarprodukt</td><td><code>a · b = Σ aᵢbᵢ</code> — misst "Gleichgerichtetheit"</td></tr>
+<tr><td>Matrix-Multiplikation</td><td>Transformationen hintereinander anwenden</td></tr>
+<tr><td>Einheitsmatrix <code>I</code></td><td>Tut nichts — das "1" der Matrizen</td></tr>
+<tr><td>Lineare Kombination</td><td><code>c₁v₁ + c₂v₂ + …</code> — Basis aller linearen Operationen</td></tr>
+</tbody>
+</table>
+
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">3Blue1Brown — Essence of Linear Algebra</a></strong> ⭐ Visuelle Intuition, unverzichtbar</li>
+<li><strong><a href="https://www.khanacademy.org/math/linear-algebra">Khan Academy — Linear Algebra</a></strong> Strukturierter Einstieg mit Übungen</li>
+<li><strong><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/">MIT 18.06SC — Gilbert Strang</a></strong> Die Klassiker-Vorlesung, kostenlos</li>
+<li><strong><a href="https://www.deeplearning.ai/courses/mathematics-for-machine-learning/">Deep Learning AI — Math for ML</a></strong> LA aus ML-Perspektive</li>
+</ol>
+
+<h2>💡 Erste Schritte in NumPy</h2>
+<pre><code>import numpy as np
+
+v = np.array([1, 2, 3])          # Vektor
+A = np.array([[1,2],[3,4]])       # Matrix
+print(A @ v[:2])                  # Matrix-Vektor-Multiplikation
+print(np.dot(v, v))               # Skalarprodukt = 14
+print(A.T)                        # Transponierung</code></pre>
+
+<h2>🎯 Checkliste</h2>
+<ul>
+<li>Ich kann Vektoren addieren und mit Skalaren multiplizieren</li>
+<li>Ich verstehe das Skalarprodukt geometrisch</li>
+<li>Ich kann zwei Matrizen multiplizieren (per Hand für 2×2)</li>
+<li>Ich kenne den Unterschied zwischen Zeilen- und Spaltenvektor</li>
+<li>Ich habe mindestens 3 Videos aus der 3Blue1Brown-Serie gesehen</li>
+</ul>
+</div>
+</section>
+
+<section class="level" id="intermediate" aria-labelledby="level-intermediate-h">
+<h2 id="level-intermediate-h" class="level-heading">Intermediate</h2>
+<div class="markdown-body">
+<h1>Linear Algebra Intermediate 🟡</h1>
+<p>Lineare Transformationen, Determinanten, Eigenwerte — die tiefere Struktur.</p>
+
+<h2>Konzepte</h2>
+<table>
+<thead><tr><th>Begriff</th><th>Was</th></tr></thead>
+<tbody>
+<tr><td>Lineare Abbildung</td><td>Matrizen <em>sind</em> Transformationen des Raumes</td></tr>
+<tr><td>Rang (<code>rank</code>)</td><td>Dimension des Bildraumes — wie viel "Information" bleibt</td></tr>
+<tr><td>Nullraum / Kern</td><td>Alle Vektoren, die auf <strong>0</strong> abgebildet werden</td></tr>
+<tr><td>Determinante</td><td>Wie stark eine Matrix Flächen/Volumina streckt; 0 = nicht invertierbar</td></tr>
+<tr><td>Invertierbarkeit</td><td><code>A⁻¹A = I</code> — existiert nur wenn det(A) ≠ 0</td></tr>
+<tr><td>Eigenwert λ</td><td><code>Av = λv</code> — Skalar, der die Wirkung auf Eigenvektor beschreibt</td></tr>
+<tr><td>Eigenvektor</td><td>Wird von A nur gestreckt, nicht gedreht</td></tr>
+<tr><td>Gaußsches Eliminationsverfahren</td><td>Löst lineare Gleichungssysteme durch Zeilenoperationen</td></tr>
+</tbody>
+</table>
+
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT 18.06SC — Vier Unterräume</a></strong> ⭐ Strangs "Big Picture"</li>
+<li><strong><a href="https://www.youtube.com/watch?v=PFDu9oVAE-g">3Blue1Brown — Eigenvectors &amp; Eigenvalues</a></strong> Visuelle Erklärung</li>
+<li><strong><a href="https://www.coursera.org/learn/linear-algebra-machine-learning">Coursera — Imperial College LA for ML</a></strong> Anwendungsorientiert</li>
+<li><strong><a href="https://mathinsight.org/linear_algebra_overview">Math Insight — Linear Algebra</a></strong> Kompakte Referenz mit Interaktionen</li>
+</ol>
+
+<h2>💡 Eigenwerte mit NumPy</h2>
+<pre><code>import numpy as np
+
+A = np.array([[2, 1], [1, 2]])
+eigenvalues, eigenvectors = np.linalg.eig(A)
+print(eigenvalues)    # [3. 1.]
+print(eigenvectors)   # Spalten sind Eigenvektoren
+
+# Gleichungssystem Ax = b
+b = np.array([1, 2])
+x = np.linalg.solve(A, b)
+print(x)</code></pre>
+
+<h2>🎯 Checkliste</h2>
+<ul>
+<li>Ich verstehe, dass jede Matrix eine geometrische Transformation ist</li>
+<li>Ich kann die Determinante einer 2×2-Matrix berechnen</li>
+<li>Ich kann Eigenwerte per Hand für einfache Matrizen finden (<code>det(A - λI) = 0</code>)</li>
+<li>Ich kenne den Zusammenhang zwischen Determinante und Invertierbarkeit</li>
+<li>Ich kann ein 3×3-Gleichungssystem mit Gauß lösen</li>
+</ul>
+</div>
+</section>
+
+<section class="level" id="advanced" aria-labelledby="level-advanced-h">
+<h2 id="level-advanced-h" class="level-heading">Advanced</h2>
+<div class="markdown-body">
+<h1>Linear Algebra Advanced 🔴</h1>
+<p>Singulärwertzerlegung, PCA, numerische Methoden — das Fundament von Data Science und Deep Learning.</p>
+
+<h2>Konzepte</h2>
+<table>
+<thead><tr><th>Begriff</th><th>Was</th></tr></thead>
+<tbody>
+<tr><td>Singulärwertzerlegung (SVD)</td><td><code>A = UΣVᵀ</code> — universelle Zerlegung jeder Matrix</td></tr>
+<tr><td>PCA</td><td>SVD auf zentrierten Daten — findet Hauptvariationsrichtungen</td></tr>
+<tr><td>QR-Zerlegung</td><td><code>A = QR</code> — Q orthogonal, R obere Dreiecksmatrix; stabiler als LU</td></tr>
+<tr><td>Cholesky-Zerlegung</td><td>Für positiv definite Matrizen: <code>A = LLᵀ</code></td></tr>
+<tr><td>Positiv definit</td><td><code>xᵀAx > 0</code> für alle x ≠ 0 — wichtig für Optimierung</td></tr>
+<tr><td>Konditionszahl</td><td>σ_max / σ_min — misst numerische Stabilität</td></tr>
+<tr><td>Abstrakte Vektorräume</td><td>Axiomatische Verallgemeinerung: Polynome, Funktionen sind auch Vektoren</td></tr>
+<tr><td>Orthogonale Projektion</td><td>Nächster Punkt im Unterraum — Kern von Regression und Fourier</td></tr>
+</tbody>
+</table>
+
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.amazon.de/Numerical-Linear-Algebra-Lloyd-Trefethen/dp/0898713617">Trefethen &amp; Bau — Numerical Linear Algebra</a></strong> ⭐ Standardwerk für numerische Methoden</li>
+<li><strong><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning Book — Chapter 2</a></strong> LA in ML-Kontext, kostenlos online</li>
+<li><strong><a href="https://cs231n.stanford.edu/vecDerivs.pdf">Stanford CS231n — Vector &amp; Matrix Calculus</a></strong> SVD und Gradients für Netze</li>
+<li><strong><a href="https://www.youtube.com/watch?v=nbBvuuNVfco">3Blue1Brown — SVD visually explained</a></strong> Intuition für die Zerlegung</li>
+<li><strong><a href="https://axler.net/LADR4e.pdf">Axler — Linear Algebra Done Right (free PDF)</a></strong> Abstrakte, determinantenfreie Theorie</li>
+</ol>
+
+<h2>💡 SVD und PCA</h2>
+<pre><code>import numpy as np
+
+# SVD
+A = np.random.randn(100, 20)
+U, sigma, Vt = np.linalg.svd(A, full_matrices=False)
+
+# PCA via SVD (auf zentrierten Daten)
+X = A - A.mean(axis=0)
+_, _, Vt = np.linalg.svd(X, full_matrices=False)
+k = 5  # Top-k Hauptkomponenten
+X_reduced = X @ Vt[:k].T   # (100, 5)</code></pre>
+
+<h2>🎯 Checkliste</h2>
+<ul>
+<li>Ich kann SVD geometrisch erklären (Rotation–Streckung–Rotation)</li>
+<li>Ich verstehe wie PCA auf SVD basiert</li>
+<li>Ich kenne den Unterschied zwischen Frobenius- und Spektralnorm</li>
+<li>Ich kann erklären warum QR stabiler ist als direkte Inversion</li>
+<li>Ich verstehe orthogonale Projektionen und Least-Squares</li>
+</ul>
+</div>
+</section>
+
+</main>
+</body>
+</html>
