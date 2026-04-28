@@ -15,6 +15,23 @@
     "order": 2,
     "tags": ["drehorgel", "pari-attack", "getriebe", "3d-druck", "mechanik"]
   },
+  "login": {
+    "title": "Login",
+    "category": "admin",
+    "hidden": true
+  },
+  "admin": {
+    "title": "Admin",
+    "description": "Admin-Dashboard — OrientDB, Logs.",
+    "category": "admin",
+    "hidden": true
+  },
+  "n8n": {
+    "title": "n8n Workflows",
+    "description": "Workflow-Trigger — Fashion Agent, Custom Webhooks.",
+    "category": "admin",
+    "hidden": true
+  },
   "art-advanced": {
     "category": "kunst"
   },

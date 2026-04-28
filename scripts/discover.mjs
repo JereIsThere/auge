@@ -137,6 +137,7 @@ function applyConfig(meta, config) {
     category: c.category ?? meta.category ?? 'misc',
     tags: c.tags,
     order: c.order,
+    hidden: c.hidden ?? false,
   };
 }
 

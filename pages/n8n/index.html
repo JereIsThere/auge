@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>n8n Workflows · auge</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="tool-page n8n-page">
+  <a href="#main" class="skip-link">Zum Inhalt springen</a>
+  <main id="main" class="n8n-main">
+
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <a href="/" class="back">← start</a>
+        <h1>n8n <span class="h1-sub">Workflows</span></h1>
+      </div>
+      <div class="admin-header-right">
+        <a href="/admin/" class="nav-pill">← admin</a>
+        <button id="btn-logout" class="nav-pill nav-pill-danger">Logout</button>
+      </div>
+    </header>
+
+    <!-- ── Webhook Config ── -->
+    <section class="n8n-section">
+      <h2 class="section-heading">
+        <span class="section-badge">Config</span>
+        Webhook-Endpunkt
+      </h2>
+      <div class="webhook-row">
+        <label class="cfg-label" for="cfg-base-url">n8n Base-URL</label>
+        <input id="cfg-base-url" type="url" class="cfg-input cfg-url"
+          placeholder="https://n8n.example.com" value="" />
+      </div>
+    </section>
+
+    <!-- ── Fashion Agent (img2img via Gemini + Vertex AI) ── -->
+    <section class="n8n-section" id="section-fashion">
+      <h2 class="section-heading">
+        <span class="section-badge">Workflow</span>
+        Fashion Agent
+        <span class="badge-path">/fashion-agent</span>
+      </h2>
+      <p class="section-desc">
+        Schuh-/Sock-Bild hochladen → Gemini Vision analysiert → Vertex AI Imagen generiert
+        dramatisches Produktbild.
+      </p>
+
+      <div class="fashion-layout">
+        <!-- Eingabe -->
+        <div class="fashion-input">
+          <div class="upload-area" id="upload-area" role="button" tabindex="0"
+            aria-label="Bild hochladen oder hierher ziehen">
+            <input type="file" id="file-input" accept="image/*" aria-hidden="true" />
+            <div class="upload-icon" aria-hidden="true">⬆</div>
+            <span class="upload-label">Bild hier ablegen oder klicken</span>
+            <span class="upload-hint">JPG / PNG / WEBP · max 10 MB</span>
+          </div>
+
+          <div class="preview-wrap" id="preview-wrap" hidden>
+            <img id="preview-img" alt="Vorschau" />
+            <button class="btn-clear" id="btn-clear" aria-label="Bild entfernen">✕</button>
+          </div>
+
+          <div class="prompt-override">
+            <label class="cfg-label" for="prompt-override">
+              System-Prompt überschreiben <span class="optional">(optional)</span>
+            </label>
+            <textarea id="prompt-override" class="cfg-input cfg-textarea" rows="3"
+              placeholder="Leer lassen für Standard-Fashion-Prompt…"></textarea>
+          </div>
+
+          <div class="extra-params" id="extra-params">
+            <label class="cfg-label" for="aspect-ratio">Aspect Ratio</label>
+            <select id="aspect-ratio" class="cfg-input cfg-select">
+              <option value="1:1">1:1 (Quadrat)</option>
+              <option value="4:3">4:3</option>
+              <option value="16:9">16:9</option>
+              <option value="9:16">9:16 (Portrait)</option>
+              <option value="3:4">3:4</option>
+            </select>
+          </div>
+
+          <div class="run-row">
+            <button id="btn-run-fashion" class="btn-run" disabled>
+              <span id="run-text">Generieren</span>
+              <span id="run-spinner" class="spinner" hidden aria-hidden="true"></span>
+            </button>
+            <span id="run-status" class="run-status" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <!-- Ausgabe -->
+        <div class="fashion-output">
+          <div class="output-header">
+            <span class="output-label">Ergebnis</span>
+            <button id="btn-download" class="btn-dl" hidden aria-label="Bild herunterladen">
+              ↓ Speichern
+            </button>
+          </div>
+          <div class="output-area" id="output-area">
+            <span class="output-placeholder" id="output-placeholder">
+              Ergebnis erscheint hier
+            </span>
+            <img id="output-img" alt="Generiertes Bild" hidden />
+          </div>
+          <div id="gemini-prompt-out" class="gemini-prompt" hidden>
+            <span class="gemini-label">Gemini-Prompt</span>
+            <p id="gemini-prompt-text"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Custom Webhook ── -->
+    <section class="n8n-section" id="section-custom">
+      <h2 class="section-heading">
+        <span class="section-badge">Custom</span>
+        Freier Webhook-Trigger
+      </h2>
+      <div class="custom-form">
+        <label class="cfg-row-h">
+          <span class="cfg-label">Pfad</span>
+          <input id="custom-path" type="text" class="cfg-input" placeholder="/webhook/mein-workflow" />
+        </label>
+        <label class="cfg-row-h">
+          <span class="cfg-label">Methode</span>
+          <select id="custom-method" class="cfg-input cfg-select-sm">
+            <option>POST</option>
+            <option>GET</option>
+          </select>
+        </label>
+      </div>
+      <label class="cfg-label" for="custom-body">Body (JSON)</label>
+      <textarea id="custom-body" class="cfg-input cfg-textarea" rows="4"
+        placeholder='{ "key": "value" }'>{}</textarea>
+      <div class="action-row">
+        <button id="btn-custom" class="btn-action">Trigger</button>
+      </div>
+      <pre id="custom-result" class="custom-result" hidden></pre>
+    </section>
+
+    <!-- ── Log ── -->
+    <section class="n8n-section">
+      <h2 class="section-heading">Log</h2>
+      <div id="log-output" class="log-output" aria-live="polite"></div>
+    </section>
+
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>Login · auge</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="login-page">
+  <a href="#main" class="skip-link">Zum Inhalt springen</a>
+  <main id="main" class="login-main">
+
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="login-title">AUGE</span>
+        <span class="login-sub">admin</span>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field-group">
+          <label for="password" class="field-label">Passwort</label>
+          <input
+            id="password"
+            type="password"
+            class="field-input"
+            autocomplete="current-password"
+            autofocus
+            required
+          />
+        </div>
+
+        <div id="login-error" class="login-error" aria-live="polite" hidden></div>
+
+        <button type="submit" class="btn-login" id="btn-login">
+          <span id="btn-text">Einloggen</span>
+          <span id="btn-spinner" class="spinner" hidden aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <a href="/" class="login-back">← zurück zur Startseite</a>
+    </div>
+
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

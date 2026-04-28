@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>Admin · auge</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="tool-page admin-page">
+  <a href="#main" class="skip-link">Zum Inhalt springen</a>
+  <main id="main" class="admin-main">
+
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <a href="/" class="back">← start</a>
+        <h1>Admin</h1>
+      </div>
+      <div class="admin-header-right">
+        <a href="/n8n/" class="nav-pill">n8n →</a>
+        <button id="btn-logout" class="nav-pill nav-pill-danger">Logout</button>
+      </div>
+    </header>
+
+    <!-- ── OrientDB Connection ── -->
+    <section class="admin-section" id="section-orientdb">
+      <h2 class="section-heading">
+        <span class="section-badge">OrientDB</span>
+        Datenbank-Verbindung
+        <span id="db-status-dot" class="status-dot" aria-hidden="true"></span>
+        <span id="db-status-label" class="status-label">nicht verbunden</span>
+      </h2>
+
+      <div class="config-grid">
+        <label class="cfg-row">
+          <span class="cfg-label">Host</span>
+          <input id="cfg-host" type="text" class="cfg-input" value="localhost" placeholder="localhost" />
+        </label>
+        <label class="cfg-row">
+          <span class="cfg-label">Port</span>
+          <input id="cfg-port" type="number" class="cfg-input" value="2480" placeholder="2480" />
+        </label>
+        <label class="cfg-row">
+          <span class="cfg-label">Datenbank</span>
+          <input id="cfg-db" type="text" class="cfg-input" value="" placeholder="mydb" />
+        </label>
+        <label class="cfg-row">
+          <span class="cfg-label">Benutzer</span>
+          <input id="cfg-user" type="text" class="cfg-input" value="admin" placeholder="admin" />
+        </label>
+        <label class="cfg-row">
+          <span class="cfg-label">Passwort</span>
+          <input id="cfg-pass" type="password" class="cfg-input" value="" placeholder="••••••" />
+        </label>
+      </div>
+
+      <div class="action-row">
+        <button id="btn-connect" class="btn-action">Verbinden</button>
+        <button id="btn-disconnect" class="btn-action btn-secondary" disabled>Trennen</button>
+      </div>
+
+      <!-- Query -->
+      <div class="query-panel" id="query-panel">
+        <h3 class="panel-heading">SQL-Query</h3>
+        <div class="query-input-row">
+          <textarea id="query-input" class="query-textarea" rows="3" placeholder="SELECT * FROM V LIMIT 10"></textarea>
+          <button id="btn-run" class="btn-action">Ausführen</button>
+        </div>
+        <div id="query-result" class="query-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ── Log ── -->
+    <section class="admin-section" id="section-log">
+      <h2 class="section-heading">Log</h2>
+      <div id="log-output" class="log-output" aria-live="polite"></div>
+    </section>
+
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

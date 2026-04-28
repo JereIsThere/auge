@@ -1,0 +1,152 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(107,0,204,0.12) 0%, transparent 55%),
+    var(--bg);
+}
+
+.login-main {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  width: min(380px, 100%);
+  background: rgba(107,0,204,0.06);
+  border: 1px solid rgba(107,0,204,0.3);
+  border-radius: 0.9rem;
+  padding: 2.4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: 0 8px 32px rgba(107,0,204,0.15);
+}
+
+.login-logo {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.login-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  color: #fff;
+  text-shadow: 0 0 20px var(--cyan);
+}
+
+.login-sub {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  color: rgba(200,192,216,0.35);
+  text-transform: uppercase;
+}
+
+/* Form */
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: rgba(200,192,216,0.55);
+  text-transform: uppercase;
+}
+
+.field-input {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(107,0,204,0.4);
+  border-radius: 0.4rem;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.field-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 2px rgba(0,212,200,0.15);
+}
+
+.login-error {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #ff6b6b;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255,107,107,0.08);
+  border: 1px solid rgba(255,107,107,0.25);
+  border-radius: 0.35rem;
+}
+
+.btn-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem;
+  background: rgba(107,0,204,0.25);
+  border: 1.5px solid var(--purple);
+  border-radius: 0.4rem;
+  color: rgba(200,192,216,0.9);
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.25em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-login:hover {
+  background: rgba(107,0,204,0.45);
+  border-color: var(--cyan);
+  color: #fff;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0,212,200,0.3);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.login-back {
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(200,192,216,0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.login-back:hover { color: var(--cyan); }

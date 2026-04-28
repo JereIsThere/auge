@@ -13,6 +13,7 @@ interface TopicMeta {
   category: string;
   tags?: string[];
   order?: number;
+  hidden?: boolean;
 }
 
 const escape = (s: string) =>
@@ -60,7 +61,7 @@ function renderCard(p: TopicMeta, index: number): string {
 
 const stack = document.querySelector<HTMLDivElement>('#links-stack');
 if (stack) {
-  const all = pages as unknown as TopicMeta[];
+  const all = (pages as unknown as TopicMeta[]).filter(p => !p.hidden);
   const categories = [...new Set(all.map(p => p.category))].sort();
   const single = categories.length === 1;
 
