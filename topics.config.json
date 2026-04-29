@@ -18,6 +18,12 @@
   "art-advanced": {
     "category": "kunst"
   },
+  "projekte": {
+    "title": "Projekte",
+    "description": "Aktive Projekte, Status und offene Todos.",
+    "category": "meta",
+    "order": 0
+  },
   "seite-eins": {
     "category": "demo"
   },
