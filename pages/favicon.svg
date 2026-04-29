@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Hintergrund: dunkles Indigo, leicht abgerundet -->
+  <rect width="32" height="32" rx="6" ry="6" fill="#06000E"/>
+
+  <!-- Subtiler purple Glow hinter dem Auge -->
+  <circle cx="16" cy="16" r="12" fill="#6B00CC" opacity="0.18"/>
+
+  <!-- Iris (cyan Ring) -->
+  <circle cx="16" cy="16" r="9" fill="#00D4C8"/>
+
+  <!-- Pupille (dunkel) -->
+  <circle cx="16" cy="16" r="4" fill="#06000E"/>
+
+  <!-- Gold Highlight oben-links (das „auge sieht alles"-Detail) -->
+  <circle cx="13.6" cy="13.6" r="1.3" fill="#F0C000"/>
+
+  <!-- Mini-Glanzpunkt oben-rechts auf der Iris für Lebendigkeit -->
+  <circle cx="19.5" cy="12.5" r="0.7" fill="#FFFFFF" opacity="0.6"/>
+</svg>
