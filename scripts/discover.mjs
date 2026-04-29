@@ -9,7 +9,7 @@
 
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readdirSync, statSync, existsSync, writeFileSync, readFileSync, rmSync } from 'fs';
+import { readdirSync, statSync, existsSync, writeFileSync, readFileSync, rmSync, mkdirSync } from 'fs';
 import { marked } from 'marked';
 
 marked.setOptions({ gfm: true, breaks: false });
@@ -165,7 +165,7 @@ export function discoverAndGenerate() {
       const availableLevels = levelData.filter(l => l.content !== null).map(l => l.name);
 
       const outDir = resolve(pagesDir, slug);
-      if (!isDir(outDir)) continue; // top-level scaffold muss existieren
+      if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
       writeFileSync(resolve(outDir, 'index.html'), renderTopicPage(title, readmeMd, levelData));
       generatedSlugs.add(slug);
 
