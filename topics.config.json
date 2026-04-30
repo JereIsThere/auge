@@ -15,6 +15,14 @@
     "order": 2,
     "tags": ["drehorgel", "pari-attack", "getriebe", "3d-druck", "mechanik"]
   },
+  "generieren": {
+    "title": "Generieren",
+    "description": "Lernseite zu einem Konzept generieren — Thema rein, Pipeline läuft, Markdown raus, hier zu Lernseite gerendert. Erste Stufe: normaler Chat-Workflow + JS-Post-Processing. Träumer→Denker kommt später.",
+    "category": "werkzeuge",
+    "status": "in-progress",
+    "order": 0,
+    "tags": ["lernseite", "generator", "ai", "n8n", "markdown"]
+  },
   "art-advanced": {
     "category": "kunst"
   },
