@@ -64,6 +64,11 @@
             <span class="gen-label">Extra Prompt-Hinweis (optional)</span>
             <textarea id="extra" name="extra" rows="2" placeholder="z.B. Bezug auf React, oder „inklusive Hooks-Beispiel"."></textarea>
           </label>
+          <label class="gen-field">
+            <span class="gen-label">Publish Webhook URL</span>
+            <input id="publishWebhook" name="publishWebhook" type="url" spellcheck="false" placeholder="https://n8n.jeremias-groehl.de/webhook/auge-publish" />
+            <span class="gen-hint">n8n-Endpoint der einen PR im auge-Repo aufmacht.</span>
+          </label>
         </details>
 
         <div class="gen-actions">
@@ -77,11 +82,14 @@
       <article id="result" class="markdown-body gen-result" hidden></article>
 
       <div id="resultActions" class="gen-result-actions" hidden>
+        <button type="button" id="submitPrBtn" class="gen-btn primary">PR einreichen</button>
         <button type="button" id="copyBtn" class="gen-btn">Markdown kopieren</button>
         <button type="button" id="downloadMdBtn" class="gen-btn">.md herunterladen</button>
         <button type="button" id="downloadHtmlBtn" class="gen-btn">.html herunterladen</button>
         <button type="button" id="newBtn" class="gen-btn">Neu</button>
       </div>
+
+      <div id="prResult" class="gen-pr-result" hidden></div>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

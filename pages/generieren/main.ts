@@ -3,10 +3,12 @@
 // gerendert. Träumer→Denker-Pipeline kommt später als eigener Endpoint.
 
 const DEFAULT_WEBHOOK = 'https://n8n.jeremias-groehl.de/webhook/ai-chat';
+const DEFAULT_PUBLISH_WEBHOOK = 'https://n8n.jeremias-groehl.de/webhook/auge-publish';
 const STORE_KEY = 'auge.generieren.v1';
 
 type State = {
   webhookUrl: string;
+  publishWebhookUrl: string;
   topic: string;
   level: string;
   model: string;
@@ -16,12 +18,14 @@ type State = {
 
 const state: State = loadState() ?? {
   webhookUrl: DEFAULT_WEBHOOK,
+  publishWebhookUrl: DEFAULT_PUBLISH_WEBHOOK,
   topic: '',
   level: 'mittel',
   model: 'claude-sonnet-4-6',
   extra: '',
   lastMarkdown: '',
 };
+if (!state.publishWebhookUrl) state.publishWebhookUrl = DEFAULT_PUBLISH_WEBHOOK;
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -32,6 +36,7 @@ const levelEl = $<HTMLSelectElement>('level');
 const modelEl = $<HTMLSelectElement>('model');
 const webhookEl = $<HTMLInputElement>('webhook');
 const extraEl = $<HTMLTextAreaElement>('extra');
+const publishWebhookEl = $<HTMLInputElement>('publishWebhook');
 const submitBtn = $<HTMLButtonElement>('genSubmit');
 const cancelBtn = $<HTMLButtonElement>('genCancel');
 const statusEl = $<HTMLDivElement>('status');
@@ -41,12 +46,15 @@ const copyBtn = $<HTMLButtonElement>('copyBtn');
 const downloadMdBtn = $<HTMLButtonElement>('downloadMdBtn');
 const downloadHtmlBtn = $<HTMLButtonElement>('downloadHtmlBtn');
 const newBtn = $<HTMLButtonElement>('newBtn');
+const submitPrBtn = $<HTMLButtonElement>('submitPrBtn');
+const prResultEl = $<HTMLDivElement>('prResult');
 
 // Hydrate UI from state
 topicEl.value = state.topic;
 levelEl.value = state.level;
 modelEl.value = state.model;
 webhookEl.value = state.webhookUrl;
+publishWebhookEl.value = state.publishWebhookUrl;
 extraEl.value = state.extra;
 
 let abortController: AbortController | null = null;
@@ -65,17 +73,21 @@ newBtn.addEventListener('click', () => {
   resultEl.hidden = true;
   resultEl.innerHTML = '';
   actionsEl.hidden = true;
+  prResultEl.hidden = true;
+  prResultEl.innerHTML = '';
   state.lastMarkdown = '';
   saveState();
   topicEl.focus();
 });
+submitPrBtn.addEventListener('click', submitPR);
 
-[topicEl, levelEl, modelEl, webhookEl, extraEl].forEach((el) =>
+[topicEl, levelEl, modelEl, webhookEl, publishWebhookEl, extraEl].forEach((el) =>
   el.addEventListener('change', () => {
     state.topic = topicEl.value.trim();
     state.level = levelEl.value;
     state.model = modelEl.value;
     state.webhookUrl = webhookEl.value.trim() || DEFAULT_WEBHOOK;
+    state.publishWebhookUrl = publishWebhookEl.value.trim() || DEFAULT_PUBLISH_WEBHOOK;
     state.extra = extraEl.value.trim();
     saveState();
   }),
@@ -128,6 +140,82 @@ async function generate() {
     cancelBtn.hidden = true;
     abortController = null;
   }
+}
+
+async function submitPR() {
+  if (!state.lastMarkdown) {
+    setPrResult('Erstmal generieren, dann einreichen.', 'error');
+    return;
+  }
+
+  const titleFromMd = state.lastMarkdown.match(/^#\s+(.+)$/m)?.[1].trim();
+  const title = titleFromMd || state.topic.trim() || 'Lernseite';
+  const suggestedSlug = slugify(title);
+
+  const slug = (window.prompt(
+    'Slug für die neue Page (wird zu pages/<slug>/):',
+    suggestedSlug,
+  ) || '').trim();
+
+  if (!slug) return;
+
+  const publishUrl = state.publishWebhookUrl || DEFAULT_PUBLISH_WEBHOOK;
+  const htmlBody = renderMarkdown(state.lastMarkdown);
+
+  submitPrBtn.disabled = true;
+  setPrResult(`PR wird angelegt …`, 'busy');
+
+  try {
+    const res = await fetch(publishUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        slug,
+        title,
+        htmlBody,
+        markdown: state.lastMarkdown,
+        description: extractDescription(state.lastMarkdown).slice(0, 160),
+      }),
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status}${errText ? ' · ' + errText.slice(0, 200) : ''}`);
+    }
+    const data = await res.json();
+    if (!data.ok || !data.prUrl) {
+      throw new Error(data.error || 'kein prUrl in Antwort');
+    }
+    setPrResult(
+      `<strong>PR offen.</strong> <a href="${escapeHtml(data.prUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(data.prUrl)}</a>` +
+        `<span class="meta">branch <code>${escapeHtml(data.branch)}</code> · path <code>${escapeHtml(data.path)}</code></span>` +
+        `<span class="meta">Mergen + danach <code>npm run deploy</code> → live.</span>`,
+      'ok',
+    );
+  } catch (err) {
+    setPrResult(`Fehler: ${(err as Error).message ?? err}`, 'error');
+  } finally {
+    submitPrBtn.disabled = false;
+  }
+}
+
+function extractDescription(md: string): string {
+  const noFences = md.replace(/```[\s\S]*?```/g, '');
+  const lines = noFences.split(/\r?\n/);
+  for (const raw of lines) {
+    const t = raw.trim();
+    if (!t) continue;
+    if (/^#{1,6}\s/.test(t)) continue;
+    if (/^>/.test(t)) return t.replace(/^>+\s*/, '');
+    if (/^[-*]\s/.test(t)) continue;
+    return t;
+  }
+  return md.slice(0, 200);
+}
+
+function setPrResult(html: string, kind: '' | 'busy' | 'ok' | 'error' = '') {
+  prResultEl.className = `gen-pr-result ${kind}`.trim();
+  prResultEl.innerHTML = html;
+  prResultEl.hidden = false;
 }
 
 async function fetchLernsite(opts: {
