@@ -7,6 +7,14 @@ interface Page { slug: string; kind: Kind; title: string; status: Status; catego
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+const stripEmoji = (s: string) =>
+  s.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
+
+const displayTitle = (p: Page) =>
+  p.title === p.slug
+    ? p.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    : stripEmoji(p.title);
+
 function render(): void {
   const el = document.getElementById('sidebar');
   if (!el) return;
@@ -42,7 +50,7 @@ ${items.map(p => {
     return `<li class="sb-item${a ? ' is-active' : ''}">
 <a href="/${esc(p.slug)}/" class="sb-link${a ? ' is-current' : ''}">
 <span class="sb-dot" aria-hidden="true">${a ? '▸' : '·'}</span>
-<span class="sb-lbl">${esc(p.title || p.slug)}</span>${wip}
+<span class="sb-lbl">${esc(displayTitle(p))}</span>${wip}
 </a>
 </li>`;
   }).join('')}
@@ -58,7 +66,7 @@ ${items.map(p => {
 ${shown.map(p => `<li class="sb-item sb-item-dim">
 <span class="sb-link sb-link-dim">
 <span class="sb-dot" aria-hidden="true">·</span>
-<span class="sb-lbl">${esc(p.title || p.slug)}</span>
+<span class="sb-lbl">${esc(displayTitle(p))}</span>
 </span>
 </li>`).join('')}
 ${soon.length > 7 ? `<li class="sb-item"><span class="sb-more">+${soon.length - 7} weitere</span></li>` : ''}
@@ -135,7 +143,7 @@ function renderCmdList(q: string): void {
   listEl.innerHTML = items.map((p, i) =>
     `<li class="cmd-item${i === cmdIdx ? ' is-sel' : ''}" role="option" aria-selected="${i === cmdIdx}" data-href="/${esc(p.slug)}/">
   <span class="cmd-cat">${esc(p.category)}</span>
-  <span class="cmd-title">${esc(p.title || p.slug)}</span>
+  <span class="cmd-title">${esc(displayTitle(p))}</span>
   <span class="cmd-arr" aria-hidden="true">→</span>
 </li>`).join('');
 

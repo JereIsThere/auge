@@ -80,6 +80,25 @@
       </div>
     </div>
 
+    <div id="cmd" class="cmd-overlay" hidden role="dialog" aria-modal="true" aria-label="Schnellsuche">
+      <div class="cmd-box">
+        <div class="cmd-input-row">
+          <span class="cmd-icon" aria-hidden="true">◈</span>
+          <input id="cmd-q" class="cmd-q" type="search"
+            placeholder="Topic suchen…" autocomplete="off" spellcheck="false"
+            aria-label="Topic suchen" role="combobox"
+            aria-controls="cmd-list" aria-autocomplete="list">
+          <button id="cmd-close" class="cmd-esc" aria-label="Schließen">ESC</button>
+        </div>
+        <ul id="cmd-list" class="cmd-list" role="listbox" aria-label="Suchergebnisse"></ul>
+        <div class="cmd-footer">
+          <span>↑↓ navigieren</span>
+          <span>↵ öffnen</span>
+          <span>ESC schließen</span>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
