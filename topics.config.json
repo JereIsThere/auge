@@ -1,4 +1,12 @@
 {
+  "generieren": {
+    "title": "Generieren",
+    "description": "Lernseite zu einem Konzept generieren — Thema rein, Pipeline läuft, Markdown raus, hier zu Lernseite gerendert. Erste Stufe: normaler Chat-Workflow + JS-Post-Processing. Träumer→Denker kommt später.",
+    "category": "werkzeuge",
+    "status": "in-progress",
+    "order": 0,
+    "tags": ["lernseite", "generator", "ai", "n8n", "markdown"]
+  },
   "gear-generator": {
     "title": "Zahnrad-Generator",
     "description": "Interaktiver SVG-Zahnrad-Generator für 3D-Druck — Evolventenverzahnung, Gegenzahnrad, Export.",
@@ -15,13 +23,11 @@
     "order": 2,
     "tags": ["drehorgel", "pari-attack", "getriebe", "3d-druck", "mechanik"]
   },
-  "generieren": {
-    "title": "Generieren",
-    "description": "Lernseite zu einem Konzept generieren — Thema rein, Pipeline läuft, Markdown raus, hier zu Lernseite gerendert. Erste Stufe: normaler Chat-Workflow + JS-Post-Processing. Träumer→Denker kommt später.",
+  "n8n": {
+    "title": "n8n",
+    "description": "Webhook-basierte Workflows authentifizieren und ausführen.",
     "category": "werkzeuge",
-    "status": "in-progress",
-    "order": 0,
-    "tags": ["lernseite", "generator", "ai", "n8n", "markdown"]
+    "order": 3
   },
   "art-advanced": {
     "category": "kunst"
@@ -32,10 +38,8 @@
     "category": "meta",
     "order": 0
   },
-  "seite-eins": {
-    "category": "demo"
-  },
-  "seite-zwei": {
-    "category": "demo"
+  "linear-algebra": {
+    "title": "Linear Algebra",
+    "description": "Vektoren, Matrizen, Transformationen — die Sprache von ML und Computer Graphics."
   }
 }

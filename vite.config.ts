@@ -15,7 +15,7 @@ const pageEntries = topics
 
 export default defineConfig({
   root: 'pages',
-  publicDir: resolve(__dirname, 'public'),
+  publicDir: false,
   server: {
     allowedHosts: ['auge.jeremias-groehl.de'],
   },

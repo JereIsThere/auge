@@ -1,59 +1,59 @@
 # Pending Work
 
-Stand: 2026-04-27.
+Stand: 2026-05-03.
 
 ## Erledigt
 
-✅ **Submodule-Renderer gebaut** — `scripts/discover.mjs` rendert die 4 Topics (`regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`) automatisch zu top-level `pages/<topic>/index.html` (gitignored). Läuft als prebuild/predev Hook und im Dev-Server bei MD-Änderungen.
+✅ **Submodule-Renderer** — `scripts/discover.mjs` rendert Submodule-Topics zu `pages/<slug>/index.html`.
 
-✅ **Home-Cards** zeigen jetzt alle 26 Pages mit Topic-Metadata (title, description, level-badges).
+✅ **Home-Cards** mit Topic-Metadata (title, description, level-badges, status-badges, Kategorie-Gruppierung).
 
-✅ **Sub-Page-Typografie** — `.markdown-body` mit Styles für h1-h4, Code-Blocks, Tabellen, Blockquotes, Listen, Inline-Code, Links.
+✅ **Sub-Page-Typografie** — `.markdown-body`-Styles vollständig.
 
-✅ **`topics/`-Restruktur** — die 19 leeren Coming-Soon-Scaffolds aus `pages/` extrahiert in eigenen `topics/`-Ordner (jeweils nur ein leerer Ordner mit `.gitkeep`, keine `beginner/intermediate/advanced/`-Subordner). `pages/` ist jetzt schlank.
+✅ **`topics/`-Restruktur** — Coming-Soon-Scaffolds in eigenem Ordner.
 
-✅ **Status + Kategorie-Support** — Cards haben Status-Badges (todo/in-progress/finished/archived). Home gruppiert dynamisch nach Kategorie (sobald >1 vorhanden). Schema dokumentiert in [docs/topics-config-schema.md](topics-config-schema.md).
+✅ **Status + Kategorie-Support** — `topics.config.json` angelegt, Schema dokumentiert.
 
-✅ **Antworten auf (a)/(b)/(c)** umgesetzt:
-- (a) Coming-Soon-Karten gelockt sichtbar
-- (b) Stale Top-Level-Duplikate liegen gelassen (Generator ignoriert sie)
-- (c) Eigener Task → [docs/todos/art-advanced-unification.md](todos/art-advanced-unification.md)
+✅ **17 neue Topics** — Submodule auf `traeumer-kauzruf` aktualisiert; discover.mjs macht README.md optional.
+
+✅ **Linear Algebra** — vollständige hand-geschriebene Topic-Page.
+
+✅ **n8n** — Workflow-Dashboard (Auth, Webhook-Trigger, Payload, Response).
+
+✅ **`topics.config.json`** — angelegt mit Titel/Description-Overrides für `linear-algebra` und `n8n`.
+
+✅ **vite.config.ts-Bugs gefixt** — `publicDir`-Pfad-Bug entfernt (`false` gesetzt), `rollupOptions.output.dir`-Konflikt mit `outDir` entfernt. Build landet jetzt korrekt in `dist/`, deploy-Script stimmt.
+
+✅ **`pages/README.md` entfernt** — war veraltete Kopie des Submodule-README.
+
+✅ **Stale Branches** — `copilot-tries`, `gemini-suggestions` (lokal) und `origin/claude-edits` existieren nicht mehr.
 
 ## Noch offen
 
-### `topics.config.json` schreiben
-
-Sobald die Datei mit echten Kategorie/Status-Daten kommt: ins Repo-Root legen, `npm run discover` triggert die neue Gruppierung. Schema: [docs/topics-config-schema.md](topics-config-schema.md).
-
 ### `art-advanced` Konsolidierung
 
-Siehe [docs/todos/art-advanced-unification.md](todos/art-advanced-unification.md). Wartet auf Submodule-Maintainer.
+Zwei parallele Varianten: `pages/art-advanced/` (standalone) und `pages/claude-learnings/art-advanced/` (Submodule). Wartet auf Submodule-Maintainer.
+→ Details: [docs/todos/art-advanced-unification.md](todos/art-advanced-unification.md)
 
-### Aufräum-Kandidaten (Rückfrage nötig)
+### Stale Top-Level-Duplikate (Rückfrage nötig)
 
-- `pages/README.md` — ist eine Kopie des Submodule-README, nach Renderer-Build redundant.
-- `pages/regex/README.md`, `pages/latex/README.md`, `pages/data-structures-algorithms/README.md`, `pages/tensorflow-keras/README.md` (+ deren `beginner/intermediate/advanced/`-Inhalte) — Pre-Submodule-Stale-Forks. Submodule ist jetzt Single Source of Truth, diese Dateien werden nirgends mehr gelesen. Vom Nutzer als „nichts löschen, nur migrieren" markiert — bleibt liegen, bis explizite Freigabe.
-- `seite-eins`, `seite-zwei` — Boilerplate-Demos.
-- `scripts/generate.py` — generiert `data.json` für `seite-eins`. Wird im README erwähnt aber nicht im Build-Workflow getriggert.
+`pages/regex/`, `pages/latex/`, `pages/data-structures-algorithms/`, `pages/tensorflow-keras/` enthalten Pre-Submodule-README + Resources-Dateien, die nirgends mehr gelesen werden. Submodule ist Single Source of Truth.
+→ Auf explizite Freigabe warten bevor gelöscht.
 
-### Sonstiges aus früheren Notizen
+### `seite-eins` / `generate.py`
 
-- Deploy-Script-Inkonsistenz: vite.config.ts schreibt nach `../public_html`, `package.json`'s deploy macht rsync aus `dist/`.
-- `public/` ist konfiguriert aber leer — entweder rausnehmen aus vite.config.ts oder nutzen.
-- Stale Branches: `copilot-tries`, `gemini-suggestions` (lokal), `origin/claude-edits` (remote).
+`pages/seite-eins/main.ts` importiert `data.json`, das von `scripts/generate.py` generiert wird — aber `generate.py` ist nicht im Build-Workflow. Build schlägt fehl wenn `data.json` fehlt.
+→ Entweder `generate.py` als `prebuild`-Hook eintragen oder `seite-eins` als Boilerplate entfernen.
 
-## Kleinkram, das beim nächsten Touch erledigt werden sollte
+### `seite-eins`, `seite-zwei`
 
-- **Deploy-Script-Inkonsistenz**: `vite.config.ts` schreibt nach `../public_html`, aber `package.json`'s `deploy`-Script `rsync`'t aus `dist/`. Eines von beiden ist falsch.
-- **Empty `public/` directory**: Vite ist auf `publicDir: 'public'` konfiguriert, aber `public/` ist leer (das alte `public/style.css` ist nach `pages/style.css` migriert). Entweder `publicDir` aus dem Config rausnehmen oder nutzen.
-- **`scripts/generate.py`**: existiert, generiert `seite-eins/data.json`. Wird im README erwähnt aber nicht im Build-Workflow getriggert. Klären ob noch relevant oder Reste.
-- **`pages/README.md`**: ist eine Kopie des Submodule-README — verwirrend. Nach dem Renderer-Build redundant.
-- **Stale Branches**: `copilot-tries`, `gemini-suggestions` (lokal) und `origin/claude-edits` existieren. Nach dem nächsten Merge-Pass aufräumen.
+Boilerplate-Demos ohne inhaltlichen Wert. Können entfernt werden wenn nicht mehr gebraucht.
 
-## Was kürzlich erledigt wurde (Referenz)
+### `watercolor-mixing` / `linear-algebra`
 
-- Inline-JS aus Home in `pages/main.ts` extrahiert + auf rAF/reduced-motion/dpr umgebaut
-- Custom-Cursor pointer-fine-gated, Skip-Link + Focus-Styles
-- art-advanced Inline-CSS (~280 Zeilen) ausgelagert nach `pages/art-advanced/style.css`, Google Fonts via preconnect
-- Meta/SEO/a11y-Basics auf Home + seite-eins/seite-zwei
-- Diese Doku-Files
+- `watercolor-mixing` — Coming-Soon-Marker, kein Submodule-Inhalt.
+- `linear-algebra` — hand-geschrieben; wenn das Submodule irgendwann LA-Inhalt bekommt, Seite auf Submodule-Flow umstellen.
+
+### topics.config.json ausbauen
+
+Alle Topics mit sinnvollen Kategorien versehen (z.B. `math`, `computer-science`, `tools`, `creative`) damit die Home nach Kategorien gruppiert wird.
