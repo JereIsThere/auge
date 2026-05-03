@@ -19,7 +19,11 @@ interface TopicMeta {
 const escape = (s: string) =>
   s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-const LEVEL_ABBR: Record<string, string> = { beginner: 'B', intermediate: 'I', advanced: 'A' };
+const stripEmoji = (s: string) =>
+  s.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
+
+const displayTitle = (p: TopicMeta) =>
+  stripEmoji(p.title || p.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
 
 const stack = document.getElementById('links-stack');
 if (stack) {
@@ -33,19 +37,34 @@ if (stack) {
 
     const liveHtml = live.map(p => {
       const lvls = (p.levels ?? []).map(l =>
-        `<span class="tl-lvl tl-${l}" title="${escape(l)}">${LEVEL_ABBR[l] ?? l[0].toUpperCase()}</span>`
+        `<span class="lvl lvl-${escape(l)}" title="${escape(l)}">${l[0].toUpperCase()}</span>`
       ).join('');
-      return `<li><a href="/${escape(p.slug)}/" class="tl-link">
-<span class="tl-name">${escape(p.title || p.slug)}</span>${lvls ? `<span class="tl-badges">${lvls}</span>` : ''}<span class="tl-arr" aria-hidden="true">→</span></a></li>`;
+      const statusLabel = p.status === 'in-progress' ? 'aktiv'
+        : p.status === 'finished' ? '' : p.status ?? '';
+      const statusHtml = statusLabel
+        ? `<span class="card-status status-${escape(p.status)}">${escape(statusLabel)}</span>`
+        : '';
+      return `<a href="/${escape(p.slug)}/" class="card">
+  <span class="card-name">${escape(displayTitle(p))}</span>
+  ${p.description ? `<span class="card-desc">${escape(p.description)}</span>` : ''}
+  <div class="card-meta">
+    ${lvls ? `<div class="card-levels">${lvls}</div>` : ''}
+    ${statusHtml}
+  </div>
+</a>`;
     }).join('');
 
-    const soonHtml = soon.slice(0, 5).map(p =>
-      `<li><span class="tl-dim">${escape(p.title || p.slug)}</span></li>`
+    const soonHtml = soon.slice(0, 3).map(p =>
+      `<div class="card card-locked" aria-hidden="true">
+  <span class="card-name">${escape(displayTitle(p))}</span>
+  ${p.description ? `<span class="card-desc">${escape(p.description)}</span>` : ''}
+  <div class="card-meta"><span class="card-status status-todo">geplant</span></div>
+</div>`
     ).join('');
 
-    return `<section class="tl-cat">
-<h2 class="tl-cat-hd">${escape(cat)}</h2>
-<ul class="tl-list">${liveHtml}${soonHtml}</ul>
+    return `<section class="cat-section">
+<h2 class="cat-heading">${escape(cat.toUpperCase())}</h2>
+<div class="cat-grid">${liveHtml}${soonHtml}</div>
 </section>`;
   }).join('');
 }
