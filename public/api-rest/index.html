@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>APIs &amp; REST — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>APIs &amp; REST</h1>
+  <p class="lede">Authentication, Pagination, Versioning, und API-Design-Prinzipien.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>APIs &amp; REST Intermediate 🟡</h1>
+<p>Authentication, Pagination, Versioning, und API-Design-Prinzipien.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JWT</td>
+<td>Stateless Token-Auth</td>
+</tr>
+<tr>
+<td>OAuth 2.0</td>
+<td>Delegierte Autorisierung</td>
+</tr>
+<tr>
+<td>Pagination</td>
+<td>Große Datensätze aufteilen</td>
+</tr>
+<tr>
+<td>Rate Limiting</td>
+<td>Anfragen begrenzen</td>
+</tr>
+<tr>
+<td>API Versioning</td>
+<td><code>/v1/</code>, <code>/v2/</code> oder Header</td>
+</tr>
+<tr>
+<td>CORS</td>
+<td>Cross-Origin Requests erlauben</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design">REST API Design Best Practices (Microsoft)</a></strong> ⭐</li>
+<li><strong><a href="https://jwt.io/introduction">JWT.io – JWT erklärt</a></strong></li>
+<li><strong><a href="https://www.oauth.com/">OAuth 2.0 Simplified</a></strong></li>
+<li><strong><a href="https://swagger.io/docs/">Swagger / OpenAPI Docs</a></strong> API dokumentieren</li>
+</ol>
+<h2>💡 JWT Auth Flow</h2>
+<pre><code class="language-python">import jwt
+
+# Token erstellen
+token = jwt.encode({&quot;user_id&quot;: 1}, &quot;secret&quot;, algorithm=&quot;HS256&quot;)
+
+# Token validieren
+decoded = jwt.decode(token, &quot;secret&quot;, algorithms=[&quot;HS256&quot;])
+</code></pre>
+<h2>Pagination-Pattern</h2>
+<pre><code class="language-python"># Cursor-based (empfohlen für große Datasets)
+GET /api/users?cursor=abc123&amp;limit=20
+
+# Offset-based (einfacher, aber langsamer)
+GET /api/users?page=2&amp;per_page=20
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann JWT-Auth implementieren</li>
+<li><input disabled="" type="checkbox"> Ich verstehe OAuth 2.0 Flow</li>
+<li><input disabled="" type="checkbox"> Ich implementiere sinnvolle Pagination</li>
+<li><input disabled="" type="checkbox"> Ich versioniere meine API</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>APIs &amp; REST Advanced 🔴</h1>
+<p>GraphQL, gRPC, WebSockets, und API-Skalierung.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GraphQL</td>
+<td>Flexible Query-Sprache statt fester Endpoints</td>
+</tr>
+<tr>
+<td>gRPC</td>
+<td>High-Performance RPC über Protocol Buffers</td>
+</tr>
+<tr>
+<td>WebSockets</td>
+<td>Bidirektionale Echtzeit-Verbindung</td>
+</tr>
+<tr>
+<td>HATEOAS</td>
+<td>Hypermedia-driven REST</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Routing, Auth, Rate-Limiting zentral</td>
+</tr>
+<tr>
+<td>OpenAPI 3.0</td>
+<td>API-Spec als Vertrag</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://graphql.org/learn/">GraphQL Official Docs</a></strong> ⭐</li>
+<li><strong><a href="https://grpc.io/docs/languages/python/quickstart/">gRPC.io – Quickstart</a></strong></li>
+<li><strong><a href="https://stripe.com/docs/api">Stripe API Docs</a></strong> — Best-Practice Beispiel</li>
+<li><strong><a href="https://github.com/shieldfy/API-Security-Checklist">API Security Checklist (GitHub)</a></strong></li>
+</ol>
+<h2>💡 GraphQL vs REST</h2>
+<pre><code class="language-graphql"># GraphQL: Client bestimmt was er bekommt
+query {
+  user(id: 1) {
+    name
+    email
+    posts { title }
+  }
+}
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich habe eine GraphQL API gebaut</li>
+<li><input disabled="" type="checkbox"> Ich verstehe wann gRPC sinnvoll ist</li>
+<li><input disabled="" type="checkbox"> Ich kenne API Security Best Practices</li>
+<li><input disabled="" type="checkbox"> Ich kann APIs mit OpenAPI dokumentieren</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/api-rest" target="_blank" rel="noopener">claude-learnings/api-rest</a>
+  </footer>
+</main>
+</body>
+</html>
