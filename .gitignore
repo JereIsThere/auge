@@ -21,7 +21,10 @@ pages/regex/index.html
 pages/latex/index.html
 pages/data-structures-algorithms/index.html
 pages/tensorflow-keras/index.html
+pages/agent-tooling/index.html
 pages/api-rest/index.html
+pages/jinja-templates/index.html
+pages/oauth-2/index.html
 pages/compiler-design/index.html
 pages/computer-networks/index.html
 pages/computer-vision/index.html
