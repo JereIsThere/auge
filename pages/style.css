@@ -1018,15 +1018,15 @@ body:not(.home) #app p {
 /* ── Domain Accordion ────────────────────────────────────────── */
 
 .domain-item {
-  border: 1px solid rgba(107,0,204,0.2);
+  border: 1px solid color-mix(in srgb, var(--dc, #6b00cc) 20%, transparent);
   border-radius: 8px;
   margin-bottom: 1rem;
-  background: rgba(107,0,204,0.03);
+  background: color-mix(in srgb, var(--dc, #6b00cc) 3%, transparent);
   overflow: hidden;
   transition: border-color .2s;
 }
 .domain-item[open] {
-  border-color: rgba(107,0,204,0.38);
+  border-color: color-mix(in srgb, var(--dc, #6b00cc) 38%, transparent);
 }
 
 .domain-item summary {
@@ -1074,8 +1074,23 @@ body:not(.home) #app p {
 .domain-tools {
   margin-top: 1.5rem;
 }
-.domain-tools .card {
-  max-width: 320px;
+
+.domain-emoji {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-emoji {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.domain-groups .card {
+  border-color: color-mix(in srgb, var(--gc, #6b00cc) 22%, transparent);
+}
+.domain-groups .card:hover {
+  border-color: color-mix(in srgb, var(--gc, #6b00cc) 55%, transparent);
 }
 
 @media (max-width: 600px) {

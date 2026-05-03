@@ -53,6 +53,17 @@ function loadSchema() {
   }
 }
 
+function loadStyles() {
+  const stylesPath = resolve(submoduleDir, 'styles.json');
+  if (!existsSync(stylesPath)) return null;
+  try {
+    return JSON.parse(readFileSync(stylesPath, 'utf8'));
+  } catch (err) {
+    console.warn(`[discover] WARN: styles.json kaputt — ignoriere. (${err.message})`);
+    return null;
+  }
+}
+
 const titleFromMarkdown = (md, fallback) => {
   const m = md.match(/^#\s+(.+)$/m);
   return m ? m[1].trim() : fallback;
@@ -178,6 +189,7 @@ function applyConfig(meta, config, schemaCategory = null, schemaOrder = null) {
 export function discoverAndGenerate() {
   const config = loadConfig();
   const schema = loadSchema();
+  const styles = loadStyles();
   const topics = [];
   const generatedSlugs = new Set();
 
@@ -294,14 +306,22 @@ export function discoverAndGenerate() {
   const domains = [];
   if (schema?.domains) {
     for (const domain of schema.domains) {
+      const ds = styles?.domains?.[domain.id] ?? {};
       const groups = (domain.groups ?? []).flatMap(gid => {
         const gMeta = allCatDefs.get(gid);
         if (!gMeta || !liveCats.has(gid)) return [];
+        const gs = styles?.groups?.[gid] ?? {};
         const liveCount = topics.filter(t => t.category === gid && t.kind !== 'comingsoon' && t.kind !== 'category').length;
-        return [{ id: gid, label: gMeta.title, description: gMeta.description, liveCount }];
+        const entry = { id: gid, label: gMeta.title, description: gMeta.description, liveCount };
+        if (gs.color?.primary) entry.color = gs.color.primary;
+        if (gs.icon?.emoji)    entry.emoji = gs.icon.emoji;
+        return [entry];
       });
       if (groups.length > 0) {
-        domains.push({ id: domain.id, label: domain.label, description: domain.description ?? '', groups });
+        const entry = { id: domain.id, label: domain.label, description: domain.description ?? '', groups };
+        if (ds.color?.primary) entry.color = ds.color.primary;
+        if (ds.icon?.emoji)    entry.emoji = ds.icon.emoji;
+        domains.push(entry);
       }
     }
   }

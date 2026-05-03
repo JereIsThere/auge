@@ -9,8 +9,8 @@ interface TopicMeta {
   slug: string; kind: Kind; title: string; description: string;
   levels?: string[]; status: Status; category: string; order?: number;
 }
-interface DomainGroup { id: string; label: string; description: string; liveCount: number; }
-interface Domain { id: string; label: string; description: string; groups: DomainGroup[]; }
+interface DomainGroup { id: string; label: string; description: string; liveCount: number; color?: string; emoji?: string; }
+interface Domain { id: string; label: string; description: string; groups: DomainGroup[]; color?: string; emoji?: string; }
 
 const escape = (s: string) =>
   s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -22,8 +22,9 @@ if (stack) {
     .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   const live     = all.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
 
-  const groupCard = (id: string, label: string, desc: string, count: number) =>
-    `<a href="/${escape(id)}/" class="card">
+  const groupCard = (id: string, label: string, desc: string, count: number, color?: string, emoji?: string) =>
+    `<a href="/${escape(id)}/" class="card"${color ? ` style="--gc:${color}"` : ''}>
+  ${emoji ? `<span class="card-emoji" aria-hidden="true">${emoji}</span>` : ''}
   <span class="card-name">${escape(label)}</span>
   ${desc ? `<span class="card-desc">${escape(desc)}</span>` : ''}
   <span class="card-count">${count} ${count === 1 ? 'Topic' : 'Topics'}</span>
@@ -35,12 +36,13 @@ if (stack) {
     // Domain accordion + werkzeuge below
     const werkzeuge = catCards.find(c => c.slug === 'werkzeuge');
     const accordionHtml = domainList.map((d, i) =>
-      `<details class="domain-item"${i === 0 ? ' open' : ''}>
+      `<details class="domain-item"${d.color ? ` style="--dc:${d.color}"` : ''}${i === 0 ? ' open' : ''}>
   <summary class="domain-hd">
+    ${d.emoji ? `<span class="domain-emoji" aria-hidden="true">${d.emoji}</span>` : ''}
     <span class="domain-name">${escape(d.label)}</span>
     <span class="domain-arr" aria-hidden="true">▸</span>
   </summary>
-  <div class="domain-groups">${d.groups.map(g => groupCard(g.id, g.label, g.description, g.liveCount)).join('')}</div>
+  <div class="domain-groups">${d.groups.map(g => groupCard(g.id, g.label, g.description, g.liveCount, g.color, g.emoji)).join('')}</div>
 </details>`
     ).join('');
 
