@@ -5,6 +5,7 @@
 //   pages/<slug>/index.html   → gerenderte oder hand-geschriebene Page (kind: topic | page)
 //   topics/<slug>/            → leerer Marker-Ordner für geplanten Inhalt (kind: comingsoon)
 //   pages/claude-learnings/   → Submodule, Single Source für Topic-Inhalte
+//   pages/claude-learnings/schema.json → Gruppen & Labels (Quelle der Wahrheit für Kategorien)
 //   topics.config.json        → optionale Metadaten-Overrides (Schema: docs/topics-config-schema.md)
 
 import { resolve, dirname } from 'path';
@@ -38,6 +39,17 @@ function loadConfig() {
   } catch (err) {
     console.warn(`[discover] WARN: topics.config.json ist kaputt — ignoriere. (${err.message})`);
     return {};
+  }
+}
+
+function loadSchema() {
+  const schemaPath = resolve(submoduleDir, 'schema.json');
+  if (!existsSync(schemaPath)) return null;
+  try {
+    return JSON.parse(readFileSync(schemaPath, 'utf8'));
+  } catch (err) {
+    console.warn(`[discover] WARN: schema.json kaputt — ignoriere. (${err.message})`);
+    return null;
   }
 }
 
@@ -150,32 +162,41 @@ function defaultStatus(kind) {
   return kind === 'comingsoon' ? 'todo' : 'finished';
 }
 
-function applyConfig(meta, config) {
+function applyConfig(meta, config, schemaCategory = null, schemaOrder = null) {
   const c = config[meta.slug];
-  if (!c) {
-    return {
-      ...meta,
-      status: meta.status ?? defaultStatus(meta.kind),
-      category: meta.category ?? 'misc',
-    };
-  }
   return {
     ...meta,
-    title: c.title ?? meta.title,
-    description: c.description ?? meta.description,
-    status: c.status ?? meta.status ?? defaultStatus(meta.kind),
-    category: c.category ?? meta.category ?? 'misc',
-    tags: c.tags,
-    order: c.order,
+    title:       c?.title       ?? meta.title,
+    description: c?.description ?? meta.description,
+    status:      c?.status      ?? meta.status ?? defaultStatus(meta.kind),
+    category:    c?.category    ?? schemaCategory ?? meta.category ?? 'misc',
+    tags:        c?.tags,
+    order:       c?.order       ?? schemaOrder ?? meta.order,
   };
 }
 
 export function discoverAndGenerate() {
   const config = loadConfig();
+  const schema = loadSchema();
   const topics = [];
   const generatedSlugs = new Set();
 
-  // Pre-populate category slugs so they're never picked up as standalone pages
+  // Build topic→group and group→meta maps from schema
+  const topicToGroup = new Map();   // slug → group object
+  const topicOrder   = new Map();   // slug → index within group
+  const groupMeta    = new Map();   // group.id → { label, description, order }
+  if (schema?.groups) {
+    schema.groups.forEach((g, groupIdx) => {
+      groupMeta.set(g.id, { label: g.label, description: g.description, order: groupIdx });
+      g.topics.forEach((slug, topicIdx) => {
+        topicToGroup.set(slug, g);
+        topicOrder.set(slug, topicIdx);
+      });
+    });
+  }
+
+  // Pre-populate category slugs (schema groups + _categories) to skip in standalone-page scan
+  for (const id of groupMeta.keys()) generatedSlugs.add(id);
   const catConfig = config['_categories'] ?? {};
   for (const catSlug of Object.keys(catConfig)) generatedSlugs.add(catSlug);
 
@@ -189,7 +210,12 @@ export function discoverAndGenerate() {
       if (slug === ART_ADVANCED_EXEMPT) continue;
 
       const readmeMd = existsSync(readmePath) ? readFileSync(readmePath, 'utf8') : null;
-      const title = readmeMd ? titleFromMarkdown(readmeMd, slug) : slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const schemaMeta = schema?.topics?.[slug];
+      const schemaGroup = topicToGroup.get(slug);
+
+      // Schema label wins over README h1
+      const title = schemaMeta?.label
+        ?? (readmeMd ? titleFromMarkdown(readmeMd, slug) : slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
       const description = readmeMd ? descriptionFromMarkdown(readmeMd) : '';
 
       const levelData = LEVELS.map(level => ({
@@ -204,7 +230,12 @@ export function discoverAndGenerate() {
       writeFileSync(resolve(outDir, 'index.html'), renderTopicPage(title, readmeMd, levelData));
       generatedSlugs.add(slug);
 
-      topics.push(applyConfig({ slug, kind: 'topic', title, description, levels: availableLevels }, config));
+      topics.push(applyConfig(
+        { slug, kind: 'topic', title, description, levels: availableLevels },
+        config,
+        schemaGroup?.id ?? null,
+        topicOrder.get(slug) ?? null,
+      ));
     }
   }
 
@@ -216,47 +247,89 @@ export function discoverAndGenerate() {
     const dir = resolve(pagesDir, slug);
     if (!isDir(dir)) continue;
     if (!existsSync(resolve(dir, 'index.html'))) continue;
-    topics.push(applyConfig({ slug, kind: 'page', title: slug, description: '' }, config));
+    const schemaGroup = topicToGroup.get(slug);
+    topics.push(applyConfig(
+      { slug, kind: 'page', title: slug, description: '' },
+      config,
+      schemaGroup?.id ?? null,
+      topicOrder.get(slug) ?? null,
+    ));
   }
 
-  // 2b) Category pages — one per non-hidden category that has live entries
+  // 2b) Category pages — schema groups + _categories
   const liveCats = new Set(
     topics.filter(t => !t.category.startsWith('_')).map(t => t.category)
   );
+
+  // Collect all category definitions: schema groups first, then _categories overrides/additions
+  const allCatDefs = new Map();
+  if (schema?.groups) {
+    schema.groups.forEach((g, i) => {
+      allCatDefs.set(g.id, { title: g.label, description: g.description, order: i });
+    });
+  }
   for (const [catSlug, meta] of Object.entries(catConfig)) {
+    if (!allCatDefs.has(catSlug)) {
+      allCatDefs.set(catSlug, {
+        title: meta.title ?? catSlug.charAt(0).toUpperCase() + catSlug.slice(1),
+        description: meta.description ?? '',
+        order: meta.order ?? 99,
+      });
+    }
+  }
+
+  for (const [catSlug, cat] of allCatDefs) {
     if (!liveCats.has(catSlug)) continue;
-    const title = meta.title ?? catSlug.charAt(0).toUpperCase() + catSlug.slice(1);
-    const desc  = meta.description ?? '';
     const outDir = resolve(pagesDir, catSlug);
     if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
-    writeFileSync(resolve(outDir, 'index.html'), renderCategoryPage(catSlug, title, desc));
+    writeFileSync(resolve(outDir, 'index.html'), renderCategoryPage(catSlug, cat.title, cat.description));
+    generatedSlugs.add(catSlug);
     topics.push({
-      slug: catSlug, kind: 'category', title, description: desc,
-      category: '_cat', status: 'finished', order: meta.order ?? 99,
+      slug: catSlug, kind: 'category', title: cat.title, description: cat.description,
+      category: '_cat', status: 'finished', order: cat.order,
     });
   }
 
-  // 3) Coming-Soon: alle Marker-Ordner unter topics/
+  // 3) Coming-Soon: Marker-Ordner unter topics/
   if (isDir(topicsDir)) {
     for (const slug of readdirSync(topicsDir).sort()) {
       const dir = resolve(topicsDir, slug);
       if (!isDir(dir)) continue;
-      // Falls jemand zufällig denselben Slug auch in pages/ angelegt hat: pages gewinnt
       if (topics.some(t => t.slug === slug)) continue;
-      topics.push(applyConfig({ slug, kind: 'comingsoon', title: slug, description: '' }, config));
+      const schemaGroup = topicToGroup.get(slug);
+      topics.push(applyConfig(
+        { slug, kind: 'comingsoon', title: slug, description: '' },
+        config,
+        schemaGroup?.id ?? null,
+        topicOrder.get(slug) ?? null,
+      ));
+    }
+  }
+
+  // 3b) Schema topics without any folder yet → coming-soon
+  if (schema?.topics) {
+    for (const [slug, meta] of Object.entries(schema.topics)) {
+      if (topics.some(t => t.slug === slug)) continue;
+      const schemaGroup = topicToGroup.get(slug);
+      topics.push(applyConfig(
+        { slug, kind: 'comingsoon', title: meta.label ?? slug, description: '' },
+        config,
+        schemaGroup?.id ?? null,
+        topicOrder.get(slug) ?? null,
+      ));
     }
   }
 
   // Warnung: Config enthält Slugs, zu denen kein Ordner existiert
   const knownSlugs = new Set(topics.map(t => t.slug));
   for (const cfgSlug of Object.keys(config)) {
-    if (cfgSlug.startsWith('_')) continue; // reserviert für meta-felder
+    if (cfgSlug.startsWith('_')) continue;
     if (!knownSlugs.has(cfgSlug)) {
       console.warn(`[discover] WARN: topics.config.json hat Eintrag "${cfgSlug}", aber kein Ordner unter pages/ oder topics/`);
     }
   }
 
-  // Sortierung: nach Kategorie alphabetisch, innerhalb nach order (asc) > kind (topic > page > comingsoon) > slug
+  // Sortierung: Kategorie alphabetisch, dann order, dann kind, dann slug
   const kindOrder = { topic: 0, page: 1, category: 2, comingsoon: 3 };
   topics.sort((a, b) => {
     if (a.category !== b.category) return a.category.localeCompare(b.category);
@@ -281,6 +354,6 @@ if (process.argv[1] && process.argv[1].endsWith('discover.mjs')) {
   const t = discoverAndGenerate();
   const cats = [...new Set(t.map(x => x.category))].sort();
   const counts = (k) => t.filter(x => x.kind === k).length;
-  console.log(`[discover] ${t.length} pages — ${counts('topic')} topic, ${counts('page')} page, ${counts('comingsoon')} coming-soon`);
+  console.log(`[discover] ${t.length} pages — ${counts('topic')} topic, ${counts('page')} page, ${counts('category')} category, ${counts('comingsoon')} coming-soon`);
   console.log(`[discover] categories: ${cats.join(', ')}`);
 }
