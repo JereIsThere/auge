@@ -20,7 +20,7 @@ export default defineConfig({
     allowedHosts: ['auge.jeremias-groehl.de'],
   },
   build: {
-    outDir: '/var/www/auge',
+    outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
     rollupOptions: {
       input: {

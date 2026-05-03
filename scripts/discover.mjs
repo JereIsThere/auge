@@ -220,9 +220,9 @@ export function discoverAndGenerate() {
 }
 
 export function wipeOutBuildDir() {
-  const buildPath = '/var/www/auge';
-  if (existsSync(buildPath)) {
-    rmSync(buildPath, { recursive: true, force: true });
+  const distPath = resolve(ROOT, 'dist');
+  if (existsSync(distPath)) {
+    rmSync(distPath, { recursive: true, force: true });
   }
 }
 
