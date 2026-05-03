@@ -1,7 +1,7 @@
 [submodule "pages/claude-learnings"]
 	path = pages/claude-learnings
 	url = https://github.com/JereIsThere/claude-learnings
-	branch = gemini-main
+	branch = traeumer-bot-identity
 [submodule "pages/projekte"]
 	path = pages/projekte
 	url = https://github.com/JereIsThere/projekte.git
