@@ -15,58 +15,70 @@
 
     <div id="cur" aria-hidden="true"></div>
     <div id="cur-dot" aria-hidden="true"></div>
-
     <canvas id="cyr-canvas" aria-hidden="true"></canvas>
     <div class="grain" aria-hidden="true"></div>
     <div class="vignette" aria-hidden="true"></div>
 
-    <!-- Corner ornaments -->
-    <svg class="oc tl" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
-      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
-      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
-      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
-    </svg>
-    <svg class="oc tr" viewBox="0 0 56 56" fill="none" style="transform:scaleX(-1)" aria-hidden="true">
-      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
-      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
-      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
-      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
-    </svg>
-    <svg class="oc bl" viewBox="0 0 56 56" fill="none" style="transform:scaleY(-1)" aria-hidden="true">
-      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
-      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
-      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
-      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
-    </svg>
-    <svg class="oc br" viewBox="0 0 56 56" fill="none" style="transform:scale(-1)" aria-hidden="true">
-      <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
-      <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
-      <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
-      <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
-    </svg>
+    <div id="sb-overlay" class="sb-overlay" aria-hidden="true"></div>
 
-    <main class="stage" id="main">
-      <div class="orn" aria-hidden="true">
-        <div class="orn-line"></div>
-        <span class="orn-sym">◈ &nbsp; ✦ &nbsp; ◈</span>
-        <div class="orn-line"></div>
+    <div class="app-shell">
+      <aside id="sidebar" class="sidebar" aria-label="Navigation"></aside>
+
+      <div class="main-wrap">
+        <div class="mob-hd" aria-hidden="true">
+          <button id="sb-toggle" class="sb-toggle" aria-label="Navigation öffnen" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <span class="mob-brand">AUGE</span>
+        </div>
+
+        <main class="stage" id="main">
+          <!-- Corner ornaments -->
+          <svg class="oc tl" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+            <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+            <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+            <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+          </svg>
+          <svg class="oc tr" viewBox="0 0 56 56" fill="none" style="transform:scaleX(-1)" aria-hidden="true">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+            <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+            <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+            <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+          </svg>
+          <svg class="oc bl" viewBox="0 0 56 56" fill="none" style="transform:scaleY(-1)" aria-hidden="true">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+            <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+            <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+            <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+          </svg>
+          <svg class="oc br" viewBox="0 0 56 56" fill="none" style="transform:scale(-1)" aria-hidden="true">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#6b00cc" stroke-width="1.5" opacity=".7"/>
+            <path d="M11 11 L11 19 M11 11 L19 11" stroke="#d4a200" stroke-width="1" opacity=".6"/>
+            <circle cx="4" cy="4" r="2.5" fill="#d4a200" opacity=".8"/>
+            <circle cx="11" cy="11" r="1.5" fill="#6b00cc" opacity=".6"/>
+          </svg>
+
+          <div class="orn" aria-hidden="true">
+            <div class="orn-line"></div>
+            <span class="orn-sym">◈ &nbsp; ✦ &nbsp; ◈</span>
+            <div class="orn-line"></div>
+          </div>
+
+          <div class="title-wrap">
+            <h1 class="main-title" data-text="AUGE">AUGE</h1>
+          </div>
+          <span class="sub-cyr" aria-hidden="true">ОКО ВИДИТ ВСЁ</span>
+          <span class="sub-de">das auge sieht alles</span>
+
+          <div class="orn-b" aria-hidden="true">
+            <div class="orn-line"></div>
+            <span style="color:#d4a200;font-size:.8rem">✦</span>
+            <div class="orn-line"></div>
+          </div>
+        </main>
       </div>
-
-      <div class="title-wrap">
-        <h1 class="main-title" data-text="AUGE">AUGE</h1>
-      </div>
-      <span class="sub-cyr" aria-hidden="true">ОКО ВИДИТ ВСЁ</span>
-      <span class="sub-de">das auge sieht alles</span>
-
-      <nav class="links-stack" id="links-stack" aria-label="Seiten"></nav>
-
-      <div class="orn-b" aria-hidden="true">
-        <div class="orn-line"></div>
-        <span style="color:#d4a200;font-size:.8rem">✦</span>
-        <div class="orn-line"></div>
-      </div>
-    </main>
+    </div>
 
     <script type="module" src="./main.ts"></script>
   </body>
