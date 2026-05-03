@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Statistik — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>Statistik</h1>
+  <p class="lede">Deskriptive Statistik, Wahrscheinlichkeit, und erste Verteilungen.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>Statistik für Beginner 🟢</h1>
+<p>Deskriptive Statistik, Wahrscheinlichkeit, und erste Verteilungen.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Begriff</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mean/Median/Mode</td>
+<td>Lagemaße einer Verteilung</td>
+</tr>
+<tr>
+<td>Varianz / Stddev</td>
+<td>Streuungsmaße</td>
+</tr>
+<tr>
+<td>Wahrscheinlichkeit</td>
+<td>P(A) zwischen 0 und 1</td>
+</tr>
+<tr>
+<td>Normalverteilung</td>
+<td>Glockenkurve, überall in der Natur</td>
+</tr>
+<tr>
+<td>p-Wert</td>
+<td>Wahrscheinlichkeit unter H₀</td>
+</tr>
+<tr>
+<td>Konfidenzintervall</td>
+<td>Bereich um den Schätzer</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.youtube.com/@statquest">StatQuest with Josh Starmer (YouTube)</a></strong> ⭐ Beste Statistik-Videos überhaupt</li>
+<li><strong><a href="https://www.khanacademy.org/math/statistics-probability">Khan Academy – Statistics</a></strong> Interaktiv, kostenlos</li>
+<li><strong><a href="https://greenteapress.com/thinkstats2/">Think Stats (Buch, kostenlos)</a></strong> Python-basiert</li>
+<li><strong><a href="https://seeing-theory.brown.edu/">Seeing Theory (Visual)</a></strong> ⭐ Visualisierte Statistik</li>
+</ol>
+<h2>💡 Grundstatistik in Python</h2>
+<pre><code class="language-python">import numpy as np
+import scipy.stats as stats
+
+data = [2, 4, 4, 4, 5, 5, 7, 9]
+
+print(f&quot;Mean:   {np.mean(data):.2f}&quot;)      # 5.0
+print(f&quot;Median: {np.median(data):.2f}&quot;)    # 4.5
+print(f&quot;Std:    {np.std(data):.2f}&quot;)       # 1.85
+print(f&quot;Var:    {np.var(data):.2f}&quot;)       # 3.43
+
+# Normalverteilung
+x = np.linspace(-4, 4, 100)
+pdf = stats.norm.pdf(x, loc=0, scale=1)  # μ=0, σ=1
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann Mean, Median, Stddev erklären und berechnen</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Normalverteilung</li>
+<li><input disabled="" type="checkbox"> Ich kenne den Unterschied Wahrscheinlichkeit vs. Häufigkeit</li>
+<li><input disabled="" type="checkbox"> Ich habe StatQuest-Videos angeschaut</li>
+</ul>
+<h2>Weiter: <a href="../intermediate/resources.md">Intermediate</a></h2>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Statistik Intermediate 🟡</h1>
+<p>Hypothesis Testing, Bayes, Regression, und A/B Testing.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hypothesis Testing</td>
+<td>H₀ vs. H₁, Fehler Typ I/II</td>
+</tr>
+<tr>
+<td>t-Test</td>
+<td>Mittelwerte vergleichen</td>
+</tr>
+<tr>
+<td>Chi²-Test</td>
+<td>Kategoriale Variablen</td>
+</tr>
+<tr>
+<td>Bayes Theorem</td>
+<td>P(A|B) = P(B|A)·P(A) / P(B)</td>
+</tr>
+<tr>
+<td>Lineare Regression</td>
+<td>Linearer Zusammenhang modellieren</td>
+</tr>
+<tr>
+<td>Korrelation vs. Kausalität</td>
+<td>Einer der häufigsten Fehler</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.youtube.com/@statquest">StatQuest – Hypothesis Testing</a></strong> ⭐</li>
+<li><strong><a href="https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers">Bayesian Methods for Hackers (GitHub, kostenlos)</a></strong> ⭐</li>
+<li><strong><a href="https://www.statlearning.com/">An Introduction to Statistical Learning (Buch, kostenlos)</a></strong> Goldstandard</li>
+<li><strong><a href="https://www.evanmiller.org/ab-testing/">Evan Miller – A/B Testing</a></strong> Praxis</li>
+</ol>
+<h2>💡 Einfacher t-Test</h2>
+<pre><code class="language-python">from scipy import stats
+
+control = [102, 98, 105, 97, 103]
+treatment = [110, 108, 112, 109, 115]
+
+t_stat, p_value = stats.ttest_ind(control, treatment)
+print(f&quot;p-value: {p_value:.4f}&quot;)
+
+if p_value &lt; 0.05:
+    print(&quot;Signifikant! Unterschied ist nicht zufällig.&quot;)
+else:
+    print(&quot;Nicht signifikant. H₀ beibehalten.&quot;)
+</code></pre>
+<h2>Bayes-Intuition</h2>
+<pre><code>Prior:    Was ich vorher glaube
+Likelihood: Was die Daten sagen
+Posterior: Updated Überzeugung nach Daten
+
+P(H|D) ∝ P(D|H) · P(H)
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe p-Werte richtig (nicht als &quot;Wahrscheinlichkeit dass H₀ wahr&quot;)</li>
+<li><input disabled="" type="checkbox"> Ich kann einen t-Test durchführen und interpretieren</li>
+<li><input disabled="" type="checkbox"> Ich kenne Bayes Theorem und kann es anwenden</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Korrelation ≠ Kausalität</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Statistik Advanced 🔴</h1>
+<p>Causal Inference, Bayesian Networks, und ML-Statistik.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Causal Inference</td>
+<td>Kausale statt korrelative Schlüsse</td>
+</tr>
+<tr>
+<td>DAGs</td>
+<td>Directed Acyclic Graphs für Kausalmodelle</td>
+</tr>
+<tr>
+<td>Bootstrapping</td>
+<td>Konfidenzintervalle ohne Annahmen</td>
+</tr>
+<tr>
+<td>MCMC</td>
+<td>Bayesian Posterior samplen</td>
+</tr>
+<tr>
+<td>Survival Analysis</td>
+<td>Zeit-bis-Ereignis Modelle</td>
+</tr>
+<tr>
+<td>Multiple Testing</td>
+<td>Bonferroni, FDR-Korrektur</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="http://bayes.cs.ucla.edu/WHY/">The Book of Why – Judea Pearl</a></strong> ⭐ Causal Inference Bibel</li>
+<li><strong><a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking – Richard McElreath</a></strong> ⭐ Bayesian Data Analysis</li>
+<li><strong><a href="https://www.pymc.io/welcome.html">PyMC – Probabilistic Programming</a></strong> Bayes in Python</li>
+<li><strong><a href="https://mixtape.scunning.com/">Causal Inference: The Mixtape</a></strong> Kostenlos online</li>
+</ol>
+<h2>💡 Bootstrapping</h2>
+<pre><code class="language-python">import numpy as np
+
+data = [2.3, 3.1, 2.7, 4.0, 3.5, 2.9]
+
+# 10.000 Bootstrap-Stichproben
+bootstrap_means = []
+for _ in range(10_000):
+    sample = np.random.choice(data, size=len(data), replace=True)
+    bootstrap_means.append(np.mean(sample))
+
+ci_low  = np.percentile(bootstrap_means, 2.5)
+ci_high = np.percentile(bootstrap_means, 97.5)
+print(f&quot;95% CI: [{ci_low:.2f}, {ci_high:.2f}]&quot;)
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe Causal Inference und DAGs</li>
+<li><input disabled="" type="checkbox"> Ich kann Bootstrapping implementieren</li>
+<li><input disabled="" type="checkbox"> Ich kenne MCMC auf konzeptioneller Ebene</li>
+<li><input disabled="" type="checkbox"> Ich weiß wann Multiple-Testing Korrekturen nötig sind</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/statistics" target="_blank" rel="noopener">claude-learnings/statistics</a>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,170 @@
+[
+  {
+    "slug": "discrete-math",
+    "title": "Diskrete Mathematik",
+    "desc": "Graphentheorie, Rekurrenzrelationen, und Beweise.",
+    "icon": "🔢",
+    "accent": "#a855f7",
+    "section": "Mathe & Theorie"
+  },
+  {
+    "slug": "statistics",
+    "title": "Statistik",
+    "desc": "Deskriptive Statistik, Wahrscheinlichkeit, und erste Verteilungen.",
+    "icon": "📊",
+    "accent": "#c084fc",
+    "section": "Mathe & Theorie"
+  },
+  {
+    "slug": "computer-vision",
+    "title": "Computer Vision",
+    "desc": "Object Detection, Transfer Learning, und Daten-Augmentation.",
+    "icon": "👁️",
+    "accent": "#22d3ee",
+    "section": "Daten & ML"
+  },
+  {
+    "slug": "nlp",
+    "title": "NLP",
+    "desc": "Word Embeddings, Sequenzmodelle, und Text-Klassifikation.",
+    "icon": "🗣️",
+    "accent": "#14b8a6",
+    "section": "Daten & ML"
+  },
+  {
+    "slug": "pandas-data-wrangling",
+    "title": "Pandas",
+    "desc": "DataFrames laden, inspizieren, filtern, und transformieren.",
+    "icon": "🐼",
+    "accent": "#0891b2",
+    "section": "Daten & ML"
+  },
+  {
+    "slug": "tensorflow-keras",
+    "title": "TensorFlow & Keras (Python) 🤖",
+    "desc": "Machine Learning fundamentals and neural networks. Perfect preparation for ML courses!",
+    "icon": "🤖",
+    "accent": "#06b6d4",
+    "section": "Daten & ML"
+  },
+  {
+    "slug": "compiler-design",
+    "title": "Compiler Design",
+    "desc": "Semantic Analysis, Code Generation, und Virtual Machines.",
+    "icon": "🛠️",
+    "accent": "#16a34a",
+    "section": "Algorithmen & Sprachen"
+  },
+  {
+    "slug": "data-structures-algorithms",
+    "title": "Data Structures & Algorithms 🏗️",
+    "desc": "Fundamentals of efficient programming. Master arrays, trees, graphs, sorting, and complexity analysis.",
+    "icon": "🏗️",
+    "accent": "#84cc16",
+    "section": "Algorithmen & Sprachen"
+  },
+  {
+    "slug": "design-patterns",
+    "title": "Design Patterns",
+    "desc": "Strategy, Decorator, Adapter, Command und SOLID-Prinzipien.",
+    "icon": "🎯",
+    "accent": "#4ade80",
+    "section": "Algorithmen & Sprachen"
+  },
+  {
+    "slug": "functional-programming",
+    "title": "Functional Programming",
+    "desc": "Pure Functions, Immutability, und Higher-Order Functions.",
+    "icon": "λ",
+    "accent": "#a3e635",
+    "section": "Algorithmen & Sprachen"
+  },
+  {
+    "slug": "regex",
+    "title": "Regular Expressions (RegEx) 🔍",
+    "desc": "Master the art of pattern matching and text processing. Regular Expressions are used everywhere — from data validation to text search and complex transformations.",
+    "icon": "🔍",
+    "accent": "#65a30d",
+    "section": "Algorithmen & Sprachen"
+  },
+  {
+    "slug": "computer-networks",
+    "title": "Computer Networks",
+    "desc": "Was passiert wenn du eine URL eintippst? HTTP, TCP, DNS.",
+    "icon": "🌐",
+    "accent": "#fb923c",
+    "section": "Systeme & Netzwerk"
+  },
+  {
+    "slug": "databases",
+    "title": "Databases",
+    "desc": "Indexe, JOINs, Transaktionen, und Query-Optimierung.",
+    "icon": "🗄️",
+    "accent": "#f97316",
+    "section": "Systeme & Netzwerk"
+  },
+  {
+    "slug": "docker-containers",
+    "title": "Docker",
+    "desc": "Multi-stage Builds, Networking, Volumes, und docker-compose tiefer.",
+    "icon": "🐳",
+    "accent": "#fbbf24",
+    "section": "Systeme & Netzwerk"
+  },
+  {
+    "slug": "operating-systems",
+    "title": "Operating Systems",
+    "desc": "Deadlocks, Speicherverwaltung, Dateisysteme.",
+    "icon": "💾",
+    "accent": "#f59e0b",
+    "section": "Systeme & Netzwerk"
+  },
+  {
+    "slug": "api-rest",
+    "title": "APIs & REST",
+    "desc": "Authentication, Pagination, Versioning, und API-Design-Prinzipien.",
+    "icon": "🔌",
+    "accent": "#f43f5e",
+    "section": "Web & Sicherheit"
+  },
+  {
+    "slug": "security-cryptography",
+    "title": "Security & Cryptography",
+    "desc": "Asymmetrische Kryptographie, Zertifikate, und häufige Angriffe.",
+    "icon": "🔒",
+    "accent": "#dc2626",
+    "section": "Web & Sicherheit"
+  },
+  {
+    "slug": "system-design",
+    "title": "System Design",
+    "desc": "Wie baut man Systeme die skalieren? Grundkonzepte.",
+    "icon": "🏛️",
+    "accent": "#e11d48",
+    "section": "Web & Sicherheit"
+  },
+  {
+    "slug": "web-performance",
+    "title": "Web Performance",
+    "desc": "Warum ist meine Seite langsam? Grundlegende Optimierungen.",
+    "icon": "⚡",
+    "accent": "#ef4444",
+    "section": "Web & Sicherheit"
+  },
+  {
+    "slug": "git-version-control",
+    "title": "Git",
+    "desc": "Commits, Branches, und der grundlegende Workflow.",
+    "icon": "🌿",
+    "accent": "#4f8cff",
+    "section": "Tools"
+  },
+  {
+    "slug": "latex",
+    "title": "LaTeX 📝",
+    "desc": "Professional document preparation and typesetting. Create beautiful research papers, theses, and technical documents.",
+    "icon": "📝",
+    "accent": "#6366f1",
+    "section": "Tools"
+  }
+]

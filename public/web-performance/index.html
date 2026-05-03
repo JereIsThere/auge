@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Web Performance — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>Web Performance</h1>
+  <p class="lede">Warum ist meine Seite langsam? Grundlegende Optimierungen.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>Web Performance Beginner 🟢</h1>
+<p>Warum ist meine Seite langsam? Grundlegende Optimierungen.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Begriff</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core Web Vitals</td>
+<td>LCP, FID, CLS — Googles Metriken</td>
+</tr>
+<tr>
+<td>LCP</td>
+<td>Largest Contentful Paint — wie schnell sieht man Inhalt</td>
+</tr>
+<tr>
+<td>CLS</td>
+<td>Cumulative Layout Shift — springt Layout?</td>
+</tr>
+<tr>
+<td>TTI</td>
+<td>Time to Interactive</td>
+</tr>
+<tr>
+<td>Minification</td>
+<td>JS/CSS komprimieren</td>
+</tr>
+<tr>
+<td>Caching</td>
+<td>Browser/Server Caching</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://web.dev/learn/performance">web.dev – Learn Performance</a></strong> ⭐ Google, kostenlos</li>
+<li><strong><a href="https://pagespeed.web.dev/">PageSpeed Insights</a></strong> ⭐ URL eingeben, Analyse kriegen</li>
+<li><strong><a href="https://developer.chrome.com/docs/lighthouse/">Lighthouse (Chrome DevTools)</a></strong> Audit im Browser</li>
+<li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/Performance">MDN – Performance</a></strong></li>
+</ol>
+<h2>💡 Quick Wins</h2>
+<pre><code class="language-html">&lt;!-- Bilder lazy loaden --&gt;
+&lt;img src=&quot;hero.jpg&quot; loading=&quot;lazy&quot; alt=&quot;...&quot;&gt;
+
+&lt;!-- Kritisches CSS inline --&gt;
+&lt;style&gt;body{margin:0} .hero{...}&lt;/style&gt;
+
+&lt;!-- Fonts preloaden --&gt;
+&lt;link rel=&quot;preload&quot; href=&quot;font.woff2&quot; as=&quot;font&quot; crossorigin&gt;
+
+&lt;!-- Scripts am Ende / defer --&gt;
+&lt;script src=&quot;app.js&quot; defer&gt;&lt;/script&gt;
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich habe Lighthouse auf meiner Seite ausgeführt</li>
+<li><input disabled="" type="checkbox"> Ich nutze lazy loading für Bilder</li>
+<li><input disabled="" type="checkbox"> Ich kenne Core Web Vitals</li>
+<li><input disabled="" type="checkbox"> Ich komprimiere JS und CSS</li>
+</ul>
+<h2>Weiter: <a href="../intermediate/resources.md">Intermediate</a></h2>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Web Performance Intermediate 🟡</h1>
+<p>Caching-Strategien, Code Splitting, und Rendering-Optimierung.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Browser Cache</td>
+<td>HTTP Cache-Control Header</td>
+</tr>
+<tr>
+<td>Service Worker</td>
+<td>Offline-Fähigkeit + Cache-Kontrolle</td>
+</tr>
+<tr>
+<td>Code Splitting</td>
+<td>JS nur laden wenn gebraucht</td>
+</tr>
+<tr>
+<td>Tree Shaking</td>
+<td>Ungenutzten Code entfernen</td>
+</tr>
+<tr>
+<td>Critical Rendering Path</td>
+<td>Was muss geladen sein für 1. Paint</td>
+</tr>
+<tr>
+<td>Resource Hints</td>
+<td>preload, prefetch, preconnect</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://web.dev/reliable/">web.dev – Network Reliability</a></strong> ⭐ Service Worker Guide</li>
+<li><strong><a href="https://github.com/webpack-contrib/webpack-bundle-analyzer">Bundle Analyzer (webpack-bundle-analyzer)</a></strong></li>
+<li><strong><a href="https://www.smashingmagazine.com/category/performance/">Smashing Magazine – Performance</a></strong></li>
+<li><strong><a href="https://jakearchibald.com/">Jake Archibald – Service Workers</a></strong></li>
+</ol>
+<h2>💡 Cache-Control Header</h2>
+<pre><code>Cache-Control: max-age=31536000, immutable
+# → Ein Jahr cachen, nie revalidieren (für gehashte Assets)
+
+Cache-Control: no-cache
+# → Immer revalidieren (für HTML)
+
+Cache-Control: no-store
+# → Nie cachen (sensitive Daten)
+</code></pre>
+<h2>Critical Rendering Path</h2>
+<pre><code>HTML parsen → DOM
+CSS parsen  → CSSOM
+DOM + CSSOM → Render Tree → Layout → Paint
+                ↑
+         Hier blockiert render-blocking CSS/JS!
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich setze korrekte Cache-Control Header</li>
+<li><input disabled="" type="checkbox"> Ich nutze Code Splitting (React.lazy / dynamic import)</li>
+<li><input disabled="" type="checkbox"> Ich kenne den Critical Rendering Path</li>
+<li><input disabled="" type="checkbox"> Ich habe einen Bundle-Analyzer eingesetzt</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Web Performance Advanced 🔴</h1>
+<p>V8-Internals, WASM, Edge Computing, und Real User Monitoring.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebAssembly (WASM)</td>
+<td>Native Speed im Browser</td>
+</tr>
+<tr>
+<td>Edge Computing</td>
+<td>Code näher zum User ausführen</td>
+</tr>
+<tr>
+<td>HTTP/3 + QUIC</td>
+<td>Next-gen Protokoll</td>
+</tr>
+<tr>
+<td>RUM</td>
+<td>Real User Monitoring (echte Nutzer messen)</td>
+</tr>
+<tr>
+<td>V8 Optimization</td>
+<td>Wie JavaScript-Engine optimiert</td>
+</tr>
+<tr>
+<td>Memory Leaks</td>
+<td>Finden und beheben</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://webassembly.org/">WebAssembly.org</a></strong> ⭐</li>
+<li><strong><a href="https://v8.dev/blog">V8 Blog</a></strong> ⭐ JS-Engine Internals</li>
+<li><strong><a href="https://web.dev/articles/performance-observer">web.dev – Measure Performance with PerformanceObserver</a></strong></li>
+<li><strong><a href="https://developers.cloudflare.com/workers/">Cloudflare Workers Docs</a></strong> Edge Computing</li>
+</ol>
+<h2>💡 Performance Observer API</h2>
+<pre><code class="language-javascript">// Echte User-Metriken messen
+const observer = new PerformanceObserver((list) =&gt; {
+  list.getEntries().forEach(entry =&gt; {
+    if (entry.entryType === &#39;largest-contentful-paint&#39;) {
+      console.log(&#39;LCP:&#39;, entry.startTime);
+      // An Analytics senden
+    }
+  });
+});
+observer.observe({ type: &#39;largest-contentful-paint&#39;, buffered: true });
+</code></pre>
+<h2>Memory Leak finden</h2>
+<pre><code class="language-javascript">// Chrome DevTools → Memory → Heap Snapshot
+// Vorher/Nachher vergleichen nach User-Aktion
+// Wachsende Arrays, Event Listener die nicht entfernt werden,
+// Closures die DOM-Referenzen halten → häufigste Ursachen
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich habe WebAssembly ausprobiert</li>
+<li><input disabled="" type="checkbox"> Ich messe echte User-Metriken (RUM)</li>
+<li><input disabled="" type="checkbox"> Ich kann Memory Leaks in Chrome DevTools finden</li>
+<li><input disabled="" type="checkbox"> Ich kenne Edge Computing und wann es Sinn macht</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/web-performance" target="_blank" rel="noopener">claude-learnings/web-performance</a>
+  </footer>
+</main>
+</body>
+</html>

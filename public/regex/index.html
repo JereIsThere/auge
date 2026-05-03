@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Regular Expressions (RegEx) 🔍 — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+    <h1>Regular Expressions (RegEx) 🔍</h1>
+<p>Master the art of pattern matching and text processing. Regular Expressions are used everywhere — from data validation to text search and complex transformations.</p>
+<h2>Why Learn RegEx?</h2>
+<ul>
+<li><strong>Universal Skill</strong>: Used in virtually every programming language</li>
+<li><strong>High Skill Ceiling</strong>: From simple patterns to complex lookaheads and state machines</li>
+<li><strong>Practical Power</strong>: Solve text processing problems 100x faster</li>
+<li><strong>Interview Question</strong>: Frequently asked in technical interviews</li>
+</ul>
+<h2>Learning Path</h2>
+<h3>Level Progression</h3>
+<pre><code>Beginner      → Basic patterns, quantifiers, character classes
+              → Interactive practice on regex101.com / regexr.com
+
+Intermediate  → Groups, backreferences, lookahead/lookbehind
+              → Real-world use cases and optimization
+
+Advanced      → Performance tuning, engine internals, edge cases
+              → Language-specific implementations (Python, JS, etc.)
+</code></pre>
+<h2>Get Started</h2>
+<p>Pick your starting point:</p>
+<ul>
+<li><strong>🟢 <a href="./beginner/resources.md">Beginner Resources</a></strong> - No experience needed</li>
+<li><strong>🟡 <a href="./intermediate/resources.md">Intermediate Resources</a></strong> - Comfortable with basics</li>
+<li><strong>🔴 <a href="./advanced/resources.md">Advanced Resources</a></strong> - Want to master edge cases</li>
+</ul>
+<h2>Quick Tips</h2>
+<ol>
+<li><strong>Use Interactive Tools</strong>: <a href="https://regex101.com">regex101.com</a> or <a href="https://regexr.com">regexr.com</a> for instant feedback</li>
+<li><strong>Test Your Patterns</strong>: Always test patterns against multiple inputs</li>
+<li><strong>Read Others&#39; Patterns</strong>: Learn from how experienced developers write RegEx</li>
+<li><strong>Performance Matters</strong>: Advanced patterns can be slow — understand catastrophic backtracking</li>
+<li><strong>Documentation is Your Friend</strong>: Keep regex cheat sheets handy during learning</li>
+</ol>
+<h2>Resources Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Focus Areas</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Beginner</strong></td>
+<td>Metacharacters, quantifiers, basics</td>
+<td>regex101.com, interactive tutorials</td>
+</tr>
+<tr>
+<td><strong>Intermediate</strong></td>
+<td>Groups, lookahead, real-world usage</td>
+<td>Practical exercises, documentation</td>
+</tr>
+<tr>
+<td><strong>Advanced</strong></td>
+<td>Performance, engines, complex patterns</td>
+<td>Performance analysis, edge cases</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Next</strong>: Start with <a href="./beginner/resources.md">Beginner Resources</a></p>
+
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>RegEx for Beginners 🟢</h1>
+<p>Start here if you&#39;re new to regular expressions. These resources focus on fundamentals and provide interactive practice.</p>
+<h2>Essential Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What It Does</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.</code></td>
+<td>Matches any character (except newline)</td>
+<td><code>a.c</code> matches &quot;abc&quot;, &quot;aXc&quot;</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>0 or more repetitions</td>
+<td><code>ab*c</code> matches &quot;ac&quot;, &quot;abc&quot;, &quot;abbc&quot;</td>
+</tr>
+<tr>
+<td><code>+</code></td>
+<td>1 or more repetitions</td>
+<td><code>ab+c</code> matches &quot;abc&quot;, &quot;abbc&quot; (not &quot;ac&quot;)</td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td>0 or 1 repetition</td>
+<td><code>ab?c</code> matches &quot;ac&quot;, &quot;abc&quot;</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>Character class</td>
+<td><code>[abc]</code> matches &quot;a&quot; or &quot;b&quot; or &quot;c&quot;</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>Start of string</td>
+<td><code>^hello</code> matches &quot;hello world&quot; but not &quot;say hello&quot;</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>End of string</td>
+<td><code>world$</code> matches &quot;hello world&quot; but not &quot;world peace&quot;</td>
+</tr>
+<tr>
+<td><code>\d</code></td>
+<td>Any digit</td>
+<td><code>\d{3}</code> matches &quot;123&quot;, &quot;456&quot;</td>
+</tr>
+<tr>
+<td><code>\w</code></td>
+<td>Word character (letter, digit, _)</td>
+<td><code>\w+</code> matches &quot;hello_123&quot;</td>
+</tr>
+<tr>
+<td><code>\s</code></td>
+<td>Whitespace</td>
+<td><code>hello\sworld</code> matches &quot;hello world&quot;</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources (in order)</h2>
+<h3>Interactive Learning (Start Here!)</h3>
+<ol>
+<li><p><strong><a href="https://regex101.com/">regex101.com</a></strong> ⭐ TOP CHOICE</p>
+<ul>
+<li>Interactive pattern tester with live explanation</li>
+<li>Choose your programming language (Python, JavaScript, PHP, etc.)</li>
+<li>Great for experimenting immediately</li>
+<li><strong>How to use</strong>: Paste a regex pattern, test against sample text, see what matches</li>
+</ul>
+</li>
+<li><p><strong><a href="https://regexr.com/">regexr.com</a></strong></p>
+<ul>
+<li>Visual regex pattern builder</li>
+<li>Shows matches highlighted on sample text</li>
+<li>Good for visual learners</li>
+<li><strong>How to use</strong>: Type patterns and see results in real-time</li>
+</ul>
+</li>
+</ol>
+<h3>Video Tutorials</h3>
+<ol start="3">
+<li><strong><a href="https://www.youtube.com/watch?v=ZfQFUJhPqMM">freeCodeCamp RegEx Course (YouTube)</a></strong><ul>
+<li>Comprehensive 1-hour beginner course</li>
+<li>Covers fundamentals clearly</li>
+<li>Watch sections on: metacharacters, quantifiers, character classes</li>
+</ul>
+</li>
+</ol>
+<h3>Written Documentation</h3>
+<ol start="4">
+<li><p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">MDN Web Docs - RegExp</a></strong></p>
+<ul>
+<li>Excellent reference with examples</li>
+<li>Clear explanations of each component</li>
+<li><strong>Focus on</strong>: &quot;Writing a regular expression pattern&quot; section</li>
+</ul>
+</li>
+<li><p><strong><a href="https://docs.python.org/3/library/re.html">Python re module docs</a></strong></p>
+<ul>
+<li>Python-specific regex reference</li>
+<li>Useful if you use Python primarily</li>
+<li>Bookmark this for quick lookups</li>
+</ul>
+</li>
+</ol>
+<h3>Cheat Sheets</h3>
+<ol start="6">
+<li><strong><a href="https://github.com/ziishaned/learn-regex">Regex Cheat Sheet (GitHub)</a></strong><ul>
+<li>Excellent comprehensive cheat sheet</li>
+<li>Easy to reference while coding</li>
+<li><strong>Save this link!</strong></li>
+</ul>
+</li>
+</ol>
+<h2>💡 Practice Exercises</h2>
+<p>Work through these from easiest to hardest:</p>
+<h3>Easy</h3>
+<ul>
+<li>Match email addresses: Pattern should match <code>name@example.com</code></li>
+<li>Match phone numbers: Pattern for <code>123-456-7890</code></li>
+<li>Match URLs: Pattern for <code>https://example.com</code></li>
+</ul>
+<h3>Medium</h3>
+<ul>
+<li>Match HTML tags: Pattern for <code>&lt;div&gt;</code>, <code>&lt;span class=&quot;test&quot;&gt;</code>, etc.</li>
+<li>Extract digits from text: Get all numbers from a string</li>
+<li>Match date formats: Pattern for <code>DD-MM-YYYY</code> format</li>
+</ul>
+<p><strong>👉 Test your patterns on <a href="https://regex101.com/">regex101.com</a> as you practice!</strong></p>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> folder for:</p>
+<ul>
+<li><code>email_validation.py</code> - Email pattern in Python</li>
+<li><code>phone_number.py</code> - Phone number patterns</li>
+<li><code>url_extractor.py</code> - Extract URLs from text</li>
+</ul>
+<h2>🎯 Beginner Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I understand <code>.</code>, <code>*</code>, <code>+</code>, <code>?</code> quantifiers</li>
+<li><input disabled="" type="checkbox"> I can use character classes <code>[]</code> and ranges <code>[a-z]</code></li>
+<li><input disabled="" type="checkbox"> I know <code>^</code> and <code>$</code> anchors</li>
+<li><input disabled="" type="checkbox"> I&#39;ve used <code>\d</code>, <code>\w</code>, <code>\s</code> escape sequences</li>
+<li><input disabled="" type="checkbox"> I can write a basic email validation pattern</li>
+<li><input disabled="" type="checkbox"> I&#39;ve tested patterns on regex101.com</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Once you&#39;re comfortable with these basics, move to <strong><a href="../intermediate/resources.md">Intermediate RegEx</a></strong> to learn:</p>
+<ul>
+<li>Groups <code>()</code> and capturing</li>
+<li>Backreferences <code>\1</code>, <code>\2</code></li>
+<li>Lookahead and lookbehind assertions</li>
+</ul>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>RegEx for Intermediate 🟡</h1>
+<p>Ready to level up? Learn groups, backreferences, and lookahead/lookbehind assertions.</p>
+<h2>Key Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Syntax</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Capturing Group</td>
+<td><code>(pattern)</code></td>
+<td>Group patterns and extract matches</td>
+</tr>
+<tr>
+<td>Non-capturing Group</td>
+<td><code>(?:pattern)</code></td>
+<td>Group without capturing</td>
+</tr>
+<tr>
+<td>Backreference</td>
+<td><code>\1</code>, <code>\2</code></td>
+<td>Refer to captured groups</td>
+</tr>
+<tr>
+<td>Lookahead (positive)</td>
+<td><code>(?=pattern)</code></td>
+<td>Assert pattern follows (doesn&#39;t consume)</td>
+</tr>
+<tr>
+<td>Lookahead (negative)</td>
+<td><code>(?!pattern)</code></td>
+<td>Assert pattern doesn&#39;t follow</td>
+</tr>
+<tr>
+<td>Lookbehind (positive)</td>
+<td><code>(?&lt;=pattern)</code></td>
+<td>Assert pattern precedes</td>
+</tr>
+<tr>
+<td>Lookbehind (negative)</td>
+<td><code>(?&lt;!pattern)</code></td>
+<td>Assert pattern doesn&#39;t precede</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://regex101.com/">regex101.com - Groups &amp; Backreferences</a></strong> ⭐</p>
+<ul>
+<li>Set language to &quot;Python&quot; or your preferred language</li>
+<li>Paste examples from below and experiment</li>
+<li>Notice the &quot;Group&quot; section showing captured groups</li>
+</ul>
+</li>
+<li><p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges">MDN - Groups and Ranges</a></strong></p>
+<ul>
+<li>Detailed explanation of capturing vs non-capturing groups</li>
+<li>Good JavaScript focus but concepts apply everywhere</li>
+</ul>
+</li>
+<li><p><strong><a href="https://medium.com/javascript-in-plain-english/lookahead-and-lookbehind-in-regular-expressions-32e3ca13b2a3">Lookahead &amp; Lookbehind Guide (Medium Article)</a></strong></p>
+<ul>
+<li>Clear explanation with practical examples</li>
+<li>JavaScript-focused but universal concepts</li>
+</ul>
+</li>
+<li><p><strong><a href="https://regexone.com/">RegexOne - Interactive Lessons</a></strong> ⭐</p>
+<ul>
+<li>Progressive lessons with immediate feedback</li>
+<li>Covers groups and backreferences</li>
+<li>Excellent for practicing incrementally</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Common Patterns (Intermediate)</h2>
+<h3>HTML/XML Tag Matching</h3>
+<pre><code>&lt;(\w+)&gt;.*?&lt;/\1&gt;
+</code></pre>
+<p>Matches paired tags. <code>\1</code> refers to captured tag name.</p>
+<h3>Duplicate Word Detection</h3>
+<pre><code>\b(\w+)\s+\1\b
+</code></pre>
+<p>Finds repeated words like &quot;the the&quot;</p>
+<h3>Remove Whitespace Around Text</h3>
+<pre><code>Pattern: \s+
+Replacement: (single space)
+</code></pre>
+<p>Use in split/replace operations</p>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> for:</p>
+<ul>
+<li><code>capture_groups.py</code> - Using groups to extract data</li>
+<li><code>backreferences.py</code> - Using <code>\1</code>, <code>\2</code> to match repeated patterns</li>
+<li><code>lookahead_lookbehind.py</code> - Advanced assertions</li>
+</ul>
+<h2>🎯 Intermediate Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I understand capturing groups <code>()</code></li>
+<li><input disabled="" type="checkbox"> I can use backreferences <code>\1</code>, <code>\2</code></li>
+<li><input disabled="" type="checkbox"> I&#39;ve written a pattern with lookahead <code>(?=...)</code></li>
+<li><input disabled="" type="checkbox"> I understand the difference between lookahead and lookbehind</li>
+<li><input disabled="" type="checkbox"> I can extract multiple values from a string using groups</li>
+<li><input disabled="" type="checkbox"> I know when to use non-capturing groups <code>(?:...)</code></li>
+</ul>
+<h2>Next Steps</h2>
+<p>Ready for <strong><a href="../advanced/resources.md">Advanced RegEx</a></strong>?</p>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>RegEx for Advanced 🔴</h1>
+<p>Master performance optimization, engine internals, and edge cases.</p>
+<h2>Advanced Topics</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>What You&#39;ll Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Catastrophic Backtracking</td>
+<td>Why some patterns are slow, how to fix them</td>
+</tr>
+<tr>
+<td>Atomic Groups &amp; Possessive Quantifiers</td>
+<td>Advanced performance techniques</td>
+</tr>
+<tr>
+<td>Recursion &amp; Named Groups</td>
+<td>Complex pattern matching</td>
+</tr>
+<tr>
+<td>PCRE vs Standard Regex</td>
+<td>Differences between implementations</td>
+</tr>
+<tr>
+<td>Performance Analysis</td>
+<td>Benchmarking and optimization</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://www.regular-expressions.info/catastrophic.html">Catastrophic Backtracking Explained</a></strong> ⭐</p>
+<ul>
+<li>Essential for understanding performance issues</li>
+<li>Real-world examples of failing patterns</li>
+<li>Solutions and how to write efficient regex</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.regular-expressions.info/">regular-expressions.info</a></strong></p>
+<ul>
+<li>Comprehensive reference for all things regex</li>
+<li>Deep dives on engines, features, and optimization</li>
+<li>Bookmark this site!</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/watch?v=mHJ8dZp1UWk">Regex Engine Internals (YouTube - NullByte)</a></strong></p>
+<ul>
+<li>Visual explanation of how regex engines work</li>
+<li>Helps understand why certain patterns are slow</li>
+</ul>
+</li>
+<li><p><strong><a href="https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS">OWASP - ReDoS (Regular Expression Denial of Service)</a></strong></p>
+<ul>
+<li>Security implications of regex patterns</li>
+<li>Why regex matters in security</li>
+</ul>
+</li>
+<li><p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Named_groups">Named Capture Groups (MDN)</a></strong></p>
+<ul>
+<li>More readable group references</li>
+<li>Python/JavaScript specific</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Performance Anti-Patterns to Avoid</h2>
+<h3>Bad: Catastrophic Backtracking</h3>
+<pre><code class="language-regex">(a+)+b
+</code></pre>
+<p>This will hang on strings like &quot;aaaaaaaaaaaaaaaaaaaaac&quot;</p>
+<h3>Better: Atomic grouping / Possessive quantifiers</h3>
+<pre><code class="language-regex">(?&gt;a+)b
+(a++)b
+</code></pre>
+<p>Different syntax by language, but same idea</p>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> for:</p>
+<ul>
+<li><code>performance_comparison.py</code> - Benchmarking fast vs slow patterns</li>
+<li><code>lookahead_optimization.py</code> - Efficient lookahead usage</li>
+</ul>
+<h2>🎯 Advanced Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I understand catastrophic backtracking</li>
+<li><input disabled="" type="checkbox"> I can identify performance issues in patterns</li>
+<li><input disabled="" type="checkbox"> I know how to use atomic groups or possessive quantifiers</li>
+<li><input disabled="" type="checkbox"> I understand the differences between regex engines</li>
+<li><input disabled="" type="checkbox"> I&#39;ve optimized a slow regex pattern</li>
+<li><input disabled="" type="checkbox"> I&#39;m aware of ReDoS security implications</li>
+</ul>
+<h2>Resources by Language</h2>
+<ul>
+<li><strong>Python</strong>: <code>re</code> module uses NFA engine, supports lookahead but not lookbehind with variable length</li>
+<li><strong>JavaScript</strong>: Modern engines support most features, be careful with performance</li>
+<li><strong>PCRE (Perl)</strong>: Most complete, used in PHP and other languages</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/regex" target="_blank" rel="noopener">claude-learnings/regex</a>
+  </footer>
+</main>
+</body>
+</html>

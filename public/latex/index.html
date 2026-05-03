@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LaTeX 📝 — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+    <h1>LaTeX 📝</h1>
+<p>Professional document preparation and typesetting. Create beautiful research papers, theses, and technical documents.</p>
+<p><strong>Note</strong>: All resources here are <strong>online-focused</strong> — use Overleaf or TeXLive Online, no local installation required!</p>
+<h2>Why Learn LaTeX?</h2>
+<ul>
+<li><strong>Professional Quality</strong>: Used in academia and publishing worldwide</li>
+<li><strong>Math &amp; Science</strong>: Unmatched for mathematical equations and scientific notation</li>
+<li><strong>Consistency</strong>: Separates content from formatting</li>
+<li><strong>Reproducibility</strong>: Documents are version-controlable and portable</li>
+<li><strong>Cs Skill</strong>: Your CS classmates will expect you to know this!</li>
+</ul>
+<h2>Learning Path</h2>
+<h3>Level Progression</h3>
+<pre><code>Beginner      → Document structure, basic commands, Overleaf basics
+              → Write a simple article or resume
+
+Intermediate  → Custom commands, packages, bibliography management
+              → Multi-page documents, figures, tables
+
+Advanced      → Custom packages, TikZ graphics, templates
+              → Complex scientific documents, automating publishing
+</code></pre>
+<h2>Get Started</h2>
+<ul>
+<li><strong>🟢 <a href="./beginner/resources.md">Beginner Resources</a></strong> - Start here</li>
+<li><strong>🟡 <a href="./intermediate/resources.md">Intermediate Resources</a></strong></li>
+<li><strong>🔴 <a href="./advanced/resources.md">Advanced Resources</a></strong></li>
+</ul>
+<h2>Quick Tips</h2>
+<ol>
+<li><strong>Use Overleaf</strong>: <a href="https://www.overleaf.com">overleaf.com</a> is the easiest way to start</li>
+<li><strong>Start with Templates</strong>: Don&#39;t build from scratch — use Overleaf&#39;s templates</li>
+<li><strong>Learn by Doing</strong>: Type along with tutorials</li>
+<li><strong>Read Examples</strong>: Study other people&#39;s .tex files</li>
+<li><strong>Google is Your Friend</strong>: LaTeX has massive community support</li>
+</ol>
+<h2>Common Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Difficulty</th>
+<th>Time to Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resume</td>
+<td>Beginner</td>
+<td>1-2 hours</td>
+</tr>
+<tr>
+<td>Simple Report</td>
+<td>Beginner</td>
+<td>2-3 hours</td>
+</tr>
+<tr>
+<td>Research Paper</td>
+<td>Intermediate</td>
+<td>5-8 hours</td>
+</tr>
+<tr>
+<td>Thesis</td>
+<td>Intermediate-Advanced</td>
+<td>20+ hours</td>
+</tr>
+<tr>
+<td>Custom Package</td>
+<td>Advanced</td>
+<td>40+ hours</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Next</strong>: <a href="./beginner/resources.md">Get started with Beginner Resources</a></p>
+
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>LaTeX for Beginners 🟢</h1>
+<p>Start writing professional documents in LaTeX today! No installation needed — everything is online.</p>
+<h2>Essential Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What It Does</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>\documentclass</code></td>
+<td>Defines document type</td>
+<td><code>\documentclass{article}</code></td>
+</tr>
+<tr>
+<td><code>\usepackage</code></td>
+<td>Imports functionality</td>
+<td><code>\usepackage{amsmath}</code></td>
+</tr>
+<tr>
+<td><code>\begin{} \end{}</code></td>
+<td>Environments</td>
+<td><code>\begin{document}...\end{document}</code></td>
+</tr>
+<tr>
+<td><code>\section</code></td>
+<td>Creates heading</td>
+<td><code>\section{Introduction}</code></td>
+</tr>
+<tr>
+<td><code>\textbf</code></td>
+<td>Bold text</td>
+<td><code>\textbf{important}</code></td>
+</tr>
+<tr>
+<td><code>\textit</code></td>
+<td>Italic text</td>
+<td><code>\textit{emphasize}</code></td>
+</tr>
+<tr>
+<td><code>\emph</code></td>
+<td>Emphasis (usually italic)</td>
+<td><code>\emph{key point}</code></td>
+</tr>
+<tr>
+<td><code>$...$</code></td>
+<td>Inline math</td>
+<td><code>$E = mc^2$</code></td>
+</tr>
+<tr>
+<td><code>$$...$$</code></td>
+<td>Display math</td>
+<td><code>$$\int_0^\infty e^{-x} dx = 1$$</code></td>
+</tr>
+<tr>
+<td><code>\\</code></td>
+<td>Line break</td>
+<td>Text \ New line</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources (Online-Only!)</h2>
+<h3>Start Here: Interactive Tutorials</h3>
+<ol>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes">Overleaf Learn LaTeX in 30 Minutes</a></strong> ⭐ TOP CHOICE</p>
+<ul>
+<li>Official Overleaf tutorial</li>
+<li>Interactive examples you can edit live</li>
+<li>Perfect entry point</li>
+<li><strong>Time</strong>: 30-45 minutes</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/30_second_intro">Overleaf - 30 Second Intro</a></strong></p>
+<ul>
+<li>Ultra-quick overview</li>
+<li>Gives you the feel immediately</li>
+</ul>
+</li>
+</ol>
+<h3>Videos &amp; Courses</h3>
+<ol start="3">
+<li><p><strong><a href="https://www.youtube.com/channel/UCQyEcl48ZdDAKNqRtzk8UMw">Overleaf Video Tutorials (YouTube)</a></strong></p>
+<ul>
+<li>Official Overleaf channel</li>
+<li>Short, focused videos</li>
+<li>Topics: basics, math, graphics, presentations</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/watch?v=VhmkLrOjLsw&list=PLHXZ9OQGMqxcWYwmWw91VijVtjWYVvvHv">LaTeX Course for Beginners (YouTube - Dr. Trefor Bazett)</a></strong></p>
+<ul>
+<li>Comprehensive beginner course</li>
+<li>~10 videos, 1-2 hours total</li>
+<li>Clear and well-paced</li>
+</ul>
+</li>
+</ol>
+<h3>Hands-On Learning</h3>
+<ol start="5">
+<li><strong><a href="https://www.overleaf.com/latex/templates">Overleaf Templates Library</a></strong><ul>
+<li>Hundreds of ready-made templates</li>
+<li>Pick one, customize, learn by doing</li>
+<li><strong>Recommended for beginners</strong>: Resume, Article, Letter templates</li>
+</ul>
+</li>
+</ol>
+<h3>Reference</h3>
+<ol start="6">
+<li><strong><a href="https://www.overleaf.com/learn">Overleaf Documentation</a></strong><ul>
+<li>Comprehensive reference</li>
+<li>Search for any command</li>
+<li>Has examples for everything</li>
+</ul>
+</li>
+</ol>
+<h2>🚀 Getting Started (5 Minutes)</h2>
+<ol>
+<li>Go to <a href="https://www.overleaf.com">overleaf.com</a></li>
+<li>Sign up (free account is fine)</li>
+<li>Click &quot;New Project&quot;</li>
+<li>Choose &quot;Blank Project&quot; or pick a template</li>
+<li>Start typing!</li>
+</ol>
+<h3>Your First LaTeX Document</h3>
+<p>Copy this into Overleaf and see it compile:</p>
+<pre><code class="language-latex">\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{My First LaTeX Document}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Hello, \textbf{LaTeX}!
+
+\section{Math Example}
+Here&#39;s an equation:
+$$E = mc^2$$
+
+\end{document}
+</code></pre>
+<h2>💡 Common Tasks (Beginner)</h2>
+<h3>Task: Write a Simple Report</h3>
+<ul>
+<li>Use <code>article</code> or <code>report</code> class</li>
+<li>Sections: <code>\section{}</code></li>
+<li>Subsections: <code>\subsection{}</code></li>
+<li>Follow the template structure</li>
+</ul>
+<h3>Task: Add Math</h3>
+<ul>
+<li>Inline math: <code>$x^2 + y^2 = z^2$</code></li>
+<li>Display math: <code>$$\frac{a}{b}$$</code></li>
+<li>Use <code>amsmath</code> package for advanced math</li>
+</ul>
+<h3>Task: Create a Table</h3>
+<pre><code class="language-latex">\begin{tabular}{|l|c|r|}
+\hline
+Left &amp; Center &amp; Right \\
+\hline
+\end{tabular}
+</code></pre>
+<h3>Task: Add an Image</h3>
+<pre><code class="language-latex">\includegraphics[width=0.5\textwidth]{image.png}
+</code></pre>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> for complete LaTeX documents:</p>
+<ul>
+<li><code>simple_article.tex</code> - Basic article structure</li>
+<li><code>resume.tex</code> - Professional resume template</li>
+<li><code>math_demo.tex</code> - Mathematical equations examples</li>
+</ul>
+<h2>🎯 Beginner Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I&#39;ve created a LaTeX document on Overleaf</li>
+<li><input disabled="" type="checkbox"> I understand document structure (<code>\documentclass</code>, <code>\begin{document}</code>)</li>
+<li><input disabled="" type="checkbox"> I can create sections and subsections</li>
+<li><input disabled="" type="checkbox"> I can write bold and italic text</li>
+<li><input disabled="" type="checkbox"> I can write simple mathematical equations</li>
+<li><input disabled="" type="checkbox"> I&#39;ve compiled and seen the PDF output</li>
+</ul>
+<h2>Common Mistakes to Avoid</h2>
+<p>❌ <strong>Don&#39;t</strong>: Use special characters without escaping (<code>$</code>, <code>%</code>, <code>&amp;</code>, <code>#</code>)
+✓ <strong>Do</strong>: Escape them with backslash: <code>\$</code>, <code>\%</code>, <code>\&amp;</code>, <code>\#</code></p>
+<p>❌ <strong>Don&#39;t</strong>: Worry about formatting — let LaTeX do it
+✓ <strong>Do</strong>: Focus on structure, LaTeX handles the rest</p>
+<p>❌ <strong>Don&#39;t</strong>: Use 10 different font sizes
+✓ <strong>Do</strong>: Use semantic commands like <code>\section</code>, <code>\textbf</code></p>
+<h2>Next Steps</h2>
+<p>Once comfortable, move to <strong><a href="../intermediate/resources.md">Intermediate LaTeX</a></strong> to learn:</p>
+<ul>
+<li>Custom commands and macros</li>
+<li>Bibliography and citations</li>
+<li>Multi-file projects</li>
+<li>Figures and captions</li>
+</ul>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>LaTeX for Intermediate 🟡</h1>
+<p>Level up with custom commands, bibliography management, and professional document structure.</p>
+<h2>Key Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>\newcommand</code></td>
+<td>Create custom commands</td>
+<td><code>\newcommand{\mycmd}{text}</code></td>
+</tr>
+<tr>
+<td><code>\usepackage</code></td>
+<td>Import packages</td>
+<td><code>\usepackage{graphicx}</code></td>
+</tr>
+<tr>
+<td>BibTeX</td>
+<td>Manage citations</td>
+<td><code>\cite{key}</code>, <code>\bibliography{refs}</code></td>
+</tr>
+<tr>
+<td><code>\includegraphics</code></td>
+<td>Insert images</td>
+<td><code>\includegraphics[width=5cm]{fig.png}</code></td>
+</tr>
+<tr>
+<td><code>\caption</code></td>
+<td>Figure captions</td>
+<td><code>\caption{Figure description}</code></td>
+</tr>
+<tr>
+<td><code>\label</code> &amp; <code>\ref</code></td>
+<td>Cross-references</td>
+<td><code>\label{fig:1}</code> then <code>\ref{fig:1}</code></td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Commands">Overleaf - Custom Commands</a></strong></p>
+<ul>
+<li>How to create reusable commands</li>
+<li>DRY principle for LaTeX</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Bibliography_management_with_bibtex">Overleaf - Bibliography Management</a></strong></p>
+<ul>
+<li>Using BibTeX for citations</li>
+<li>Essential for academic papers</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Inserting_Images">Overleaf - Figures and Captions</a></strong></p>
+<ul>
+<li>How to include and caption images</li>
+<li>Positioning and sizing</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Tables">Overleaf - Creating Tables</a></strong></p>
+<ul>
+<li>Advanced table creation</li>
+<li>Multi-column and multi-row cells</li>
+</ul>
+</li>
+<li><p><strong><a href="http://www.bibtex.org/">BibTeX Entry Types Guide</a></strong></p>
+<ul>
+<li>Reference for all citation types</li>
+<li>Bookmark for lookup</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Common Projects</h2>
+<ul>
+<li>Multi-chapter reports or theses</li>
+<li>Research papers with citations</li>
+<li>Documents with figures and tables</li>
+<li>Custom document templates</li>
+</ul>
+<h2>🎯 Intermediate Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I can create custom commands with <code>\newcommand</code></li>
+<li><input disabled="" type="checkbox"> I understand BibTeX and can manage citations</li>
+<li><input disabled="" type="checkbox"> I can include and caption images</li>
+<li><input disabled="" type="checkbox"> I can create and format tables</li>
+<li><input disabled="" type="checkbox"> I can use <code>\label</code> and <code>\ref</code> for cross-references</li>
+<li><input disabled="" type="checkbox"> I&#39;ve created a multi-section document</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Ready for <strong><a href="../advanced/resources.md">Advanced LaTeX</a></strong>?</p>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>LaTeX for Advanced 🔴</h1>
+<p>Master custom packages, TikZ graphics, and complex document automation.</p>
+<h2>Advanced Topics</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>What You&#39;ll Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TikZ Graphics</td>
+<td>Create diagrams and illustrations</td>
+</tr>
+<tr>
+<td>Custom Packages</td>
+<td>Build reusable LaTeX modules</td>
+</tr>
+<tr>
+<td>PGFPlots</td>
+<td>Advanced scientific plotting</td>
+</tr>
+<tr>
+<td>Document Automation</td>
+<td>Templates and scripting</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/TikZ">Overleaf - TikZ Introduction</a></strong></p>
+<ul>
+<li>Create professional diagrams</li>
+<li>Graphs, flowcharts, circuits</li>
+</ul>
+</li>
+<li><p><strong><a href="https://pgfplots.sourceforge.net/">PGFPlots Manual</a></strong></p>
+<ul>
+<li>Create scientific plots directly in LaTeX</li>
+<li>Professional quality graphics</li>
+</ul>
+</li>
+<li><p><strong><a href="https://ctan.org/pkg/pgf">The TikZ and PGF Packages</a></strong></p>
+<ul>
+<li>Official documentation</li>
+<li>Comprehensive reference</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.overleaf.com/learn/latex/Writing_your_own_package">Writing Custom LaTeX Packages</a></strong></p>
+<ul>
+<li>Create reusable components</li>
+<li>Share across projects</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Advanced Techniques</h2>
+<ul>
+<li>Automating document generation with Python/Lua</li>
+<li>Creating presentation slides with Beamer</li>
+<li>Complex mathematical environments</li>
+<li>Custom theorem and proof formatting</li>
+</ul>
+<h2>🎯 Advanced Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I can create basic TikZ diagrams</li>
+<li><input disabled="" type="checkbox"> I&#39;ve used PGFPlots for scientific data</li>
+<li><input disabled="" type="checkbox"> I understand how packages are structured</li>
+<li><input disabled="" type="checkbox"> I can create custom document templates</li>
+<li><input disabled="" type="checkbox"> I&#39;ve automated repetitive document tasks</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/latex" target="_blank" rel="noopener">claude-learnings/latex</a>
+  </footer>
+</main>
+</body>
+</html>

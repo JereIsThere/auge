@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>System Design — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>System Design</h1>
+  <p class="lede">Wie baut man Systeme die skalieren? Grundkonzepte.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>System Design Beginner 🟢</h1>
+<p>Wie baut man Systeme die skalieren? Grundkonzepte.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Begriff</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Vertical Scaling</td>
+<td>Stärkere Maschine</td>
+</tr>
+<tr>
+<td>Horizontal Scaling</td>
+<td>Mehr Maschinen</td>
+</tr>
+<tr>
+<td>Load Balancer</td>
+<td>Traffic verteilen</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>Häufige Daten schnell abrufen</td>
+</tr>
+<tr>
+<td>CDN</td>
+<td>Statische Inhalte nahe am User</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>Persistente Datenspeicherung</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://github.com/donnemartin/system-design-primer">System Design Primer (GitHub)</a></strong> ⭐ Das Beste kostenlose Kompendium</li>
+<li><strong><a href="https://www.youtube.com/@ByteByteGo">ByteByteGo – System Design (YouTube)</a></strong> ⭐ Sehr visual</li>
+<li><strong><a href="https://dataintensive.net/">Designing Data-Intensive Applications (Kleppmann)</a></strong> Das Standardwerk</li>
+<li><strong><a href="http://highscalability.com/">High Scalability Blog</a></strong> Fallstudien realer Systeme</li>
+</ol>
+<h2>💡 Einfache Web-Architektur</h2>
+<pre><code>User → [CDN] → [Load Balancer] → [App Server 1]
+                               → [App Server 2]
+                                       ↕
+                               [Cache (Redis)]
+                                       ↕
+                               [Primary DB] → [Replica DB]
+</code></pre>
+<h2>Wann brauche ich was?</h2>
+<ul>
+<li><strong>Cache</strong>: Gleiche Daten oft gelesen, selten geschrieben</li>
+<li><strong>CDN</strong>: Statische Dateien (Bilder, JS, CSS)</li>
+<li><strong>Load Balancer</strong>: Ab 2 Servern nötig</li>
+<li><strong>Read Replica</strong>: Lese-Last zu hoch für eine DB</li>
+</ul>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kenne den Unterschied horizontal vs. vertical Scaling</li>
+<li><input disabled="" type="checkbox"> Ich kann eine einfache 3-Tier-Architektur erklären</li>
+<li><input disabled="" type="checkbox"> Ich verstehe wofür Caching genutzt wird</li>
+<li><input disabled="" type="checkbox"> Ich kenne den CAP-Theorem Grundgedanken</li>
+</ul>
+<h2>Weiter: <a href="../intermediate/resources.md">Intermediate</a></h2>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>System Design Intermediate 🟡</h1>
+<p>Message Queues, Microservices, Rate Limiting, und Datenbank-Skalierung.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Message Queue</td>
+<td>Asynchrone Kommunikation (Kafka, RabbitMQ)</td>
+</tr>
+<tr>
+<td>Microservices</td>
+<td>Kleine, unabhängige Services</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Einzelner Eintrittspunkt</td>
+</tr>
+<tr>
+<td>Rate Limiting</td>
+<td>Anfragen pro User/IP begrenzen</td>
+</tr>
+<tr>
+<td>Database Sharding</td>
+<td>Daten auf mehrere DBs aufteilen</td>
+</tr>
+<tr>
+<td>Consistent Hashing</td>
+<td>Sharding ohne massive Redistributionen</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://blog.bytebytego.com/">ByteByteGo Newsletter</a></strong> ⭐ Tiefe Dives mit Diagrammen</li>
+<li><strong><a href="https://martinfowler.com/articles/microservices.html">Martin Fowler – Microservices</a></strong> Originalartikel</li>
+<li><strong><a href="https://kafka.apache.org/intro">Apache Kafka Intro</a></strong> Message Queue Standard</li>
+<li><strong><a href="https://aws.amazon.com/architecture/">AWS Architecture Center</a></strong> Reale Referenz-Architekturen</li>
+</ol>
+<h2>💡 Wann Microservices NICHT?</h2>
+<pre><code>Monolith zuerst. Microservices wenn:
+✓ Team &gt; 8 Personen pro Service
+✓ Unterschiedliche Skalierungsanforderungen
+✓ Unterschiedliche Release-Zyklen
+✓ Klare Domain-Grenzen
+
+Nicht wenn:
+✗ Kleines Team
+✗ Unklar wo die Grenzen sind
+✗ Latenz zwischen Services ist Problem
+</code></pre>
+<h2>Rate Limiting Strategien</h2>
+<ul>
+<li><strong>Token Bucket</strong>: Tokens akkumulieren sich bis max</li>
+<li><strong>Sliding Window</strong>: Requests in letzten N Sekunden zählen</li>
+<li><strong>Fixed Window</strong>: Simple, aber susceptible zu burst</li>
+</ul>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kenne mindestens eine Message Queue (Kafka/RabbitMQ)</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Service Discovery</li>
+<li><input disabled="" type="checkbox"> Ich kann Rate Limiting implementieren</li>
+<li><input disabled="" type="checkbox"> Ich kenne Vor- und Nachteile von Microservices</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>System Design Advanced 🔴</h1>
+<p>Distributed Consensus, Event Sourcing, und Real-World Trade-offs.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Raft / Paxos</td>
+<td>Distributed Consensus Algorithmen</td>
+</tr>
+<tr>
+<td>Event Sourcing</td>
+<td>State als Ereignislog</td>
+</tr>
+<tr>
+<td>Sagas</td>
+<td>Verteilte Transaktionen ohne 2PC</td>
+</tr>
+<tr>
+<td>CRDT</td>
+<td>Conflict-free Replicated Data Types</td>
+</tr>
+<tr>
+<td>Chaos Engineering</td>
+<td>Systeme absichtlich brechen</td>
+</tr>
+<tr>
+<td>SLO/SLA/SLI</td>
+<td>Reliability-Metriken</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://dataintensive.net/">Designing Data-Intensive Applications – Kleppmann</a></strong> ⭐⭐ Pflichtbuch</li>
+<li><strong><a href="https://raft.github.io/">The Raft Consensus Algorithm</a></strong> Mit Visual-Demo!</li>
+<li><strong><a href="https://netflixtechblog.com/">Netflix Tech Blog</a></strong> ⭐ Real-World Fallstudien</li>
+<li><strong><a href="https://principlesofchaos.org/">Chaos Engineering – Principles</a></strong></li>
+</ol>
+<h2>💡 Interview-Framework: System Design</h2>
+<pre><code>1. Requirements klären (5 min)
+   – Funktional: Was soll es tun?
+   – Non-funktional: Scale, Latenz, Availability?
+
+2. Grobe Schätzung (2 min)
+   – DAU, Requests/s, Storage/Tag
+
+3. High-Level Design (10 min)
+   – Komponenten skizzieren
+
+4. Deep Dive (15 min)
+   – Bottlenecks, kritische Pfade
+
+5. Trade-offs (5 min)
+   – Was würde ich anders machen?
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann Raft auf hohem Niveau erklären</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Event Sourcing und CQRS zusammen</li>
+<li><input disabled="" type="checkbox"> Ich kann ein System Design Interview strukturiert durchführen</li>
+<li><input disabled="" type="checkbox"> Ich kenne SLO/SLA/SLI Unterschiede</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/system-design" target="_blank" rel="noopener">claude-learnings/system-design</a>
+  </footer>
+</main>
+</body>
+</html>

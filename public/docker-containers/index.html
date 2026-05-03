@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Docker — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>Docker</h1>
+  <p class="lede">Multi-stage Builds, Networking, Volumes, und docker-compose tiefer.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Docker Intermediate 🟡</h1>
+<p>Multi-stage Builds, Networking, Volumes, und docker-compose tiefer.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Multi-stage Build</td>
+<td>Kleines finales Image</td>
+</tr>
+<tr>
+<td>Docker Networks</td>
+<td>Container miteinander verbinden</td>
+</tr>
+<tr>
+<td>Named Volumes</td>
+<td>Persistente Daten</td>
+</tr>
+<tr>
+<td>Health Checks</td>
+<td>Container-Zustand überwachen</td>
+</tr>
+<tr>
+<td>.dockerignore</td>
+<td>Build-Context verkleinern</td>
+</tr>
+<tr>
+<td>Layer Caching</td>
+<td>Build-Geschwindigkeit optimieren</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">Docker Docs – Best Practices</a></strong> ⭐</li>
+<li><strong><a href="https://docs.docker.com/compose/networking/">Docker Compose – Networking</a></strong></li>
+<li><strong><a href="https://github.com/wagoodman/dive">Dive – Image Layer Analyzer</a></strong> Tool</li>
+<li><strong><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Ivan Velichko – Docker Networking</a></strong></li>
+</ol>
+<h2>💡 Multi-stage Dockerfile</h2>
+<pre><code class="language-dockerfile"># Build Stage (enthält Dev-Tools)
+FROM python:3.12 AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --prefix=/install -r requirements.txt
+
+# Final Stage (nur Runtime)
+FROM python:3.12-slim
+COPY --from=builder /install /usr/local
+COPY . .
+CMD [&quot;python&quot;, &quot;app.py&quot;]
+# Resultat: deutlich kleineres Image!
+</code></pre>
+<h2>docker-compose mit Networking</h2>
+<pre><code class="language-yaml">services:
+  web:
+    build: .
+    ports: [&quot;8000:8000&quot;]
+    depends_on: [db]
+  db:
+    image: postgres:16
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: secret
+
+volumes:
+  pgdata:
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich nutze Multi-stage Builds</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Docker Networking (Bridge, Host, None)</li>
+<li><input disabled="" type="checkbox"> Ich habe Named Volumes konfiguriert</li>
+<li><input disabled="" type="checkbox"> Ich optimiere Layer-Caching in meinen Dockerfiles</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Docker Advanced 🔴</h1>
+<p>Kubernetes, Container Security, und Produktions-Workflows.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kubernetes (K8s)</td>
+<td>Container Orchestrierung</td>
+</tr>
+<tr>
+<td>Helm</td>
+<td>K8s Package Manager</td>
+</tr>
+<tr>
+<td>Container Security</td>
+<td>Rootless, Seccomp, AppArmor</td>
+</tr>
+<tr>
+<td>OCI Standard</td>
+<td>Open Container Initiative</td>
+</tr>
+<tr>
+<td>BuildKit</td>
+<td>Moderner Docker Build-Backend</td>
+</tr>
+<tr>
+<td>Distroless Images</td>
+<td>Minimal-Images ohne Shell</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://kubernetes.io/docs/tutorials/">Kubernetes Docs – Tutorials</a></strong> ⭐</li>
+<li><strong><a href="https://labs.play-with-k8s.com/">Play with Kubernetes</a></strong> Kostenlos ausprobieren</li>
+<li><strong><a href="https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html">Docker Security Cheat Sheet (OWASP)</a></strong></li>
+<li><strong><a href="https://iximiuz.com/">Ivan Velichko – Container Internals</a></strong> ⭐ Tief und gut</li>
+</ol>
+<h2>💡 K8s Grundstruktur</h2>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: app
+          image: my-app:1.0
+          ports:
+            - containerPort: 8000
+</code></pre>
+<h2>Security Best Practices</h2>
+<ul>
+<li>Nie als root laufen (<code>USER 1000</code> im Dockerfile)</li>
+<li>Read-only Filesystem wo möglich</li>
+<li>Capabilities droppen (<code>--cap-drop ALL</code>)</li>
+<li>Distroless Images nutzen (kein bash, kein sh)</li>
+</ul>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann eine App in Kubernetes deployen</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Pods, Deployments, Services</li>
+<li><input disabled="" type="checkbox"> Ich führe Container ohne root aus</li>
+<li><input disabled="" type="checkbox"> Ich kenne Distroless Images</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/docker-containers" target="_blank" rel="noopener">claude-learnings/docker-containers</a>
+  </footer>
+</main>
+</body>
+</html>

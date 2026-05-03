@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Computer Networks — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>Computer Networks</h1>
+  <p class="lede">Was passiert wenn du eine URL eintippst? HTTP, TCP, DNS.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>Computer Networks Beginner 🟢</h1>
+<p>Was passiert wenn du eine URL eintippst? HTTP, TCP, DNS.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Begriff</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IP-Adresse</td>
+<td>Eindeutige Adresse eines Geräts</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>Übersetzt Domain → IP</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>Zuverlässige Verbindung (Handshake)</td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>Schnell, unzuverlässig (Streaming)</td>
+</tr>
+<tr>
+<td>HTTP/S</td>
+<td>Web-Protokoll</td>
+</tr>
+<tr>
+<td>Port</td>
+<td>Kanal (80=HTTP, 443=HTTPS, 22=SSH)</td>
+</tr>
+<tr>
+<td>Packet</td>
+<td>Datenpäckchen im Netzwerk</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://howdns.works/">How DNS Works (Comic)</a></strong> ⭐ Superlustiger Comic</li>
+<li><strong><a href="https://www.cloudflare.com/learning/">Cloudflare Learning Center</a></strong> ⭐ Alle Basics super erklärt</li>
+<li><strong><a href="https://gaia.cs.umass.edu/kurose_ross/">Computer Networks: A Top-Down Approach (Kurose)</a></strong> Klassisches Lehrbuch</li>
+<li><strong><a href="https://www.youtube.com/watch?v=3QhU9jd03a0">Crash Course – Computer Networks (YouTube)</a></strong></li>
+</ol>
+<h2>💡 Was passiert bei google.com?</h2>
+<pre><code>1. Browser → DNS: &quot;Was ist die IP von google.com?&quot;
+2. DNS → Browser: &quot;142.250.74.46&quot;
+3. Browser → Server (TCP Handshake): SYN → SYN-ACK → ACK
+4. Browser → Server (HTTP): GET / HTTP/1.1
+5. Server → Browser: HTTP 200 OK + HTML
+6. Browser rendert die Seite
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann TCP/IP in eigenen Worten erklären</li>
+<li><input disabled="" type="checkbox"> Ich verstehe wie DNS funktioniert</li>
+<li><input disabled="" type="checkbox"> Ich kenne wichtige Ports (80, 443, 22, 5432)</li>
+<li><input disabled="" type="checkbox"> Ich verstehe HTTP Request/Response Zyklus</li>
+</ul>
+<h2>Weiter: <a href="../intermediate/resources.md">Intermediate</a></h2>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Computer Networks Intermediate 🟡</h1>
+<p>TCP tiefer, TLS/HTTPS, Load Balancing, CDNs.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TLS Handshake</td>
+<td>Verschlüsselungs-Aushandlung</td>
+</tr>
+<tr>
+<td>HTTP/2 &amp; HTTP/3</td>
+<td>Multiplexing, QUIC</td>
+</tr>
+<tr>
+<td>Load Balancer</td>
+<td>Traffic verteilen</td>
+</tr>
+<tr>
+<td>CDN</td>
+<td>Inhalte näher zum User</td>
+</tr>
+<tr>
+<td>NAT</td>
+<td>Private IPs → Public IP</td>
+</tr>
+<tr>
+<td>Subnet</td>
+<td>Netzwerksegmentierung</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://wizardzines.com/zines/networking/">Julia Evans – Networking Zines</a></strong> ⭐ Perfekt illustriert</li>
+<li><strong><a href="https://hpbn.co/">High Performance Browser Networking (O&#39;Reilly, kostenlos)</a></strong> ⭐ Goldstandard</li>
+<li><strong><a href="https://blog.cloudflare.com/">Cloudflare Blog</a></strong> Sehr technische, reale Beispiele</li>
+<li><strong><a href="https://gaia.cs.umass.edu/kurose_ross/">Computer Networking: A Top-Down Approach</a></strong> Kapitel 3–5</li>
+</ol>
+<h2>💡 TLS Handshake (vereinfacht)</h2>
+<pre><code>Client → Server: &quot;Welche Cipher Suites supportest du?&quot;
+Server → Client: Zertifikat + Public Key
+Client → Server: Session Key (mit Public Key verschlüsselt)
+Beide:           Kommunizieren mit Session Key (symmetrisch)
+</code></pre>
+<h2>HTTP/2 Vorteile vs HTTP/1.1</h2>
+<ul>
+<li><strong>Multiplexing</strong>: Mehrere Requests über eine Verbindung</li>
+<li><strong>Header Compression</strong>: Weniger Overhead</li>
+<li><strong>Server Push</strong>: Server schickt Ressourcen proaktiv</li>
+</ul>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann TLS Handshake erklären</li>
+<li><input disabled="" type="checkbox"> Ich verstehe HTTP/2 Multiplexing</li>
+<li><input disabled="" type="checkbox"> Ich kenne den Unterschied TCP vs. UDP (wirklich)</li>
+<li><input disabled="" type="checkbox"> Ich verstehe wie Load Balancer arbeiten</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Computer Networks Advanced 🔴</h1>
+<p>BGP, QUIC, Netzwerk-Programmierung, und Distributed Systems Networking.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BGP</td>
+<td>Routing zwischen Autonomen Systemen</td>
+</tr>
+<tr>
+<td>QUIC / HTTP/3</td>
+<td>UDP-basiertes next-gen Protokoll</td>
+</tr>
+<tr>
+<td>WebRTC</td>
+<td>P2P Real-Time Communication</td>
+</tr>
+<tr>
+<td>eBPF</td>
+<td>Kernel-Level Netzwerk-Programmierung</td>
+</tr>
+<tr>
+<td>Service Mesh</td>
+<td>Istio, Envoy für Microservices</td>
+</tr>
+<tr>
+<td>Anycast</td>
+<td>Ein Ziel, viele Server</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="http://www.tcpipguide.com/">The TCP/IP Guide (Online)</a></strong> Komplett kostenlos, extrem detailliert</li>
+<li><strong><a href="https://beej.us/guide/bgnet/">Beej&#39;s Guide to Network Programming</a></strong> ⭐ C Sockets, kostenlos</li>
+<li><strong><a href="https://quicwg.org/">QUIC Working Group (IETF)</a></strong> Offizielles Protokoll-Dokument</li>
+<li><strong><a href="https://jvns.ca/">Julia Evans – How Traceroute Works</a></strong> Tiefe Dives in Netzwerk-Internals</li>
+</ol>
+<h2>💡 Raw Socket in Python</h2>
+<pre><code class="language-python">import socket
+
+# TCP Server
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind((&#39;0.0.0.0&#39;, 8080))
+server.listen(5)
+
+conn, addr = server.accept()
+data = conn.recv(1024)
+conn.send(b&quot;HTTP/1.1 200 OK\r\n\r\nHello!&quot;)
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe BGP auf hohem Niveau</li>
+<li><input disabled="" type="checkbox"> Ich kann einen TCP-Server in C oder Python schreiben</li>
+<li><input disabled="" type="checkbox"> Ich kenne QUIC und dessen Vorteile</li>
+<li><input disabled="" type="checkbox"> Ich verstehe wie ein CDN mit Anycast arbeitet</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/computer-networks" target="_blank" rel="noopener">claude-learnings/computer-networks</a>
+  </footer>
+</main>
+</body>
+</html>

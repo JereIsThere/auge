@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Diskrete Mathematik — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>Diskrete Mathematik</h1>
+  <p class="lede">Graphentheorie, Rekurrenzrelationen, und Beweise.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Diskrete Mathematik Intermediate 🟡</h1>
+<p>Graphentheorie, Rekurrenzrelationen, und Beweise.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Graph</td>
+<td>Knoten + Kanten</td>
+</tr>
+<tr>
+<td>Baum</td>
+<td>Zusammenhängender Graph ohne Zykel</td>
+</tr>
+<tr>
+<td>Eulerpfad</td>
+<td>Jede Kante genau einmal</td>
+</tr>
+<tr>
+<td>Hamiltonpfad</td>
+<td>Jeden Knoten genau einmal</td>
+</tr>
+<tr>
+<td>Rekurrenzrelation</td>
+<td>Folge durch vorherige Glieder definiert</td>
+</tr>
+<tr>
+<td>Induktionsbeweis</td>
+<td>Basis + Induktionsschritt</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.youtube.com/c/saradaherke">Graph Theory (YouTube – Sarada Herke)</a></strong> ⭐</li>
+<li><strong><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/">MIT – Mathematics for CS – Proofs</a></strong></li>
+<li><strong><a href="https://www.mheducation.com/highered/product/discrete-mathematics-its-applications-rosen/">Discrete Mathematics and Its Applications – Rosen</a></strong></li>
+</ol>
+<h2>💡 Graph in Python</h2>
+<pre><code class="language-python"># Adjazenzliste
+graph = {
+    &quot;A&quot;: [&quot;B&quot;, &quot;C&quot;],
+    &quot;B&quot;: [&quot;A&quot;, &quot;D&quot;],
+    &quot;C&quot;: [&quot;A&quot;, &quot;D&quot;],
+    &quot;D&quot;: [&quot;B&quot;, &quot;C&quot;]
+}
+
+# BFS (Breitensuche)
+from collections import deque
+
+def bfs(graph, start):
+    visited = set([start])
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        print(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+</code></pre>
+<h2>Rekurrenzrelationen</h2>
+<pre><code>Fibonacci:  F(n) = F(n-1) + F(n-2),  F(0)=0, F(1)=1
+Merge Sort: T(n) = 2T(n/2) + O(n)   → O(n log n)
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich kann BFS und DFS implementieren</li>
+<li><input disabled="" type="checkbox"> Ich verstehe Eulerpfad vs. Hamiltonpfad</li>
+<li><input disabled="" type="checkbox"> Ich kann einfache Induktionsbeweise führen</li>
+<li><input disabled="" type="checkbox"> Ich kenne Master-Theorem für Rekurrenzrelationen</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Diskrete Mathematik Advanced 🔴</h1>
+<p>NP-Vollständigkeit, Kryptographische Grundlagen, und Formale Sprachen.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P vs. NP</td>
+<td>Das Millennium-Problem</td>
+</tr>
+<tr>
+<td>NP-vollständig</td>
+<td>Schwerste Probleme in NP</td>
+</tr>
+<tr>
+<td>Reduktion</td>
+<td>Problem A auf B reduzieren</td>
+</tr>
+<tr>
+<td>Reguläre Sprachen</td>
+<td>Erkannt von endlichen Automaten</td>
+</tr>
+<tr>
+<td>Kontextfreie Sprachen</td>
+<td>Erkannt von Kellerautomaten</td>
+</tr>
+<tr>
+<td>Turing Machine</td>
+<td>Universelles Berechnungsmodell</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://www.cengage.com/c/introduction-to-the-theory-of-computation-3e-sipser/">Introduction to the Theory of Computation – Sipser</a></strong> ⭐ Standardwerk</li>
+<li><strong><a href="https://www.claymath.org/millennium/p-vs-np/">P vs. NP Problem (Clay Math)</a></strong> Das Problem selbst</li>
+<li><strong><a href="https://www.coursera.org/learn/automata">Automata Theory (Stanford Coursera)</a></strong></li>
+<li><strong><a href="https://ocw.mit.edu/courses/18-404j-theory-of-computation-fall-2020/">MIT – Theory of Computation</a></strong></li>
+</ol>
+<h2>💡 Warum P vs. NP so wichtig ist</h2>
+<pre><code>P:  Probleme die effizient (polynomial) lösbar sind
+NP: Probleme deren Lösung effizient verifizierbar ist
+
+Wenn P = NP:
+  - RSA-Verschlüsselung bricht zusammen (Faktorisierung in P)
+  - Protein-Faltung, Optimierung... alles effizient lösbar
+  - Die meisten Kryptographen glauben: P ≠ NP
+
+NP-vollständige Probleme (jedes kann auf alle anderen reduziert werden):
+  - SAT (Boolean Satisfiability)
+  - Traveling Salesman
+  - Graph Coloring
+  - Rucksack-Problem
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe den Unterschied P, NP, NP-vollständig, NP-schwer</li>
+<li><input disabled="" type="checkbox"> Ich kann eine einfache Reduktion erklären</li>
+<li><input disabled="" type="checkbox"> Ich kenne reguläre Ausdrücke und endliche Automaten (Zusammenhang!)</li>
+<li><input disabled="" type="checkbox"> Ich kann eine Turing Machine konzeptionell beschreiben</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/discrete-math" target="_blank" rel="noopener">claude-learnings/discrete-math</a>
+  </footer>
+</main>
+</body>
+</html>
