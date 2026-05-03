@@ -38,6 +38,11 @@
     "category": "meta",
     "order": 0
   },
+  "ueber": {
+    "title": "Über",
+    "category": "misc",
+    "order": 99
+  },
   "linear-algebra": {
     "title": "Linear Algebra",
     "description": "Vektoren, Matrizen, Transformationen — die Sprache von ML und Computer Graphics."
