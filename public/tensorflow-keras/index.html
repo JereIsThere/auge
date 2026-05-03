@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TensorFlow &amp; Keras (Python) 🤖 — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+    <h1>TensorFlow &amp; Keras (Python) 🤖</h1>
+<p>Machine Learning fundamentals and neural networks. Perfect preparation for ML courses!</p>
+<h2>Why Learn This?</h2>
+<ul>
+<li><strong>AI/ML Foundation</strong>: Essential for modern ML applications</li>
+<li><strong>University Prep</strong>: Prepare for university ML courses (you mentioned!)</li>
+<li><strong>Practical Skill</strong>: Build real neural networks and train models</li>
+<li><strong>Industry Relevant</strong>: TensorFlow/Keras is industry standard</li>
+<li><strong>High Skill Ceiling</strong>: From basic networks to cutting-edge research</li>
+</ul>
+<h2>Learning Path</h2>
+<h3>Level Progression</h3>
+<pre><code>Beginner      → Python basics, NumPy, Pandas fundamentals
+              → TensorFlow setup, first neural network, MNIST
+
+Intermediate  → Convolutional Neural Networks (CNN)
+              → Recurrent Neural Networks (RNN/LSTM)
+              → Model evaluation, training optimization
+
+Advanced      → Custom layers and models
+              → Transfer learning, fine-tuning
+              → Deployment, TensorFlow optimization
+</code></pre>
+<h2>Get Started</h2>
+<ul>
+<li><strong>🟢 <a href="./beginner/resources.md">Beginner Resources</a></strong> - Start here</li>
+<li><strong>🟡 <a href="./intermediate/resources.md">Intermediate Resources</a></strong></li>
+<li><strong>🔴 <a href="./advanced/resources.md">Advanced Resources</a></strong></li>
+</ul>
+<h2>Quick Tips</h2>
+<ol>
+<li><strong>Python First</strong>: Get comfortable with Python before TensorFlow</li>
+<li><strong>Jupyter Notebooks</strong>: Use Colab (free GPU) for experimentation</li>
+<li><strong>Dataset Size Matters</strong>: Start with small datasets (MNIST, CIFAR-10)</li>
+<li><strong>Understand Theory</strong>: Don&#39;t skip the math behind neural networks</li>
+<li><strong>Iterate Quickly</strong>: Experiment with architectures and hyperparameters</li>
+</ol>
+<h2>Prerequisites</h2>
+<ul>
+<li>Python 3.7+ (comfortable with syntax)</li>
+<li>Basic math (linear algebra, calculus)</li>
+<li>NumPy and Pandas basics</li>
+</ul>
+<h2>Common Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Difficulty</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MNIST digit recognition</td>
+<td>Beginner</td>
+<td>Dense neural networks</td>
+</tr>
+<tr>
+<td>CIFAR-10 image classification</td>
+<td>Intermediate</td>
+<td>Convolutional networks</td>
+</tr>
+<tr>
+<td>Time series prediction</td>
+<td>Intermediate</td>
+<td>RNNs / LSTMs</td>
+</tr>
+<tr>
+<td>Text classification</td>
+<td>Intermediate</td>
+<td>Embeddings + LSTM</td>
+</tr>
+<tr>
+<td>Custom model architecture</td>
+<td>Advanced</td>
+<td>Custom layers</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Next</strong>: <a href="./beginner/resources.md">Get started with Beginner Resources</a></p>
+
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>TensorFlow &amp; Keras for Beginners 🟢</h1>
+<p>Start your ML journey! No experience with neural networks needed.</p>
+<h2>Essential Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What It Is</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Neural Network</td>
+<td>Interconnected nodes (neurons)</td>
+<td>Foundation of deep learning</td>
+</tr>
+<tr>
+<td>Layer</td>
+<td>Collection of neurons</td>
+<td>Builds up the network</td>
+</tr>
+<tr>
+<td>Activation Function</td>
+<td>Non-linearity in neurons</td>
+<td>Enables learning complex patterns</td>
+</tr>
+<tr>
+<td>Loss Function</td>
+<td>Measures prediction error</td>
+<td>Guides training</td>
+</tr>
+<tr>
+<td>Optimizer</td>
+<td>Updates weights</td>
+<td>Makes network learn</td>
+</tr>
+<tr>
+<td>Epoch</td>
+<td>Full pass through data</td>
+<td>Training iteration</td>
+</tr>
+<tr>
+<td>Batch</td>
+<td>Subset of training data</td>
+<td>Efficient training</td>
+</tr>
+</tbody></table>
+<h2>Prerequisites</h2>
+<p>Make sure you have these Python fundamentals down:</p>
+<ol>
+<li><strong>Python Syntax</strong>: Variables, loops, functions, lists, dictionaries</li>
+<li><strong>NumPy</strong>: Arrays, matrix operations (5-10 hours to learn basics)</li>
+<li><strong>Pandas</strong>: DataFrames, data loading (5-10 hours to learn basics)</li>
+</ol>
+<h3>Quick Refresher</h3>
+<ul>
+<li><strong>NumPy</strong>: <a href="https://realpython.com/numpy-array-programming/">NumPy for Beginners (Real Python)</a></li>
+<li><strong>Pandas</strong>: <a href="https://mode.com/sql-tutorial/introduction-to-sql/">Pandas Tutorial (Mode Analytics)</a></li>
+</ul>
+<h2>📚 Curated Resources</h2>
+<h3>Setup &amp; Environment</h3>
+<ol>
+<li><p><strong><a href="https://colab.research.google.com/">Google Colab</a></strong> ⭐ TOP CHOICE</p>
+<ul>
+<li>Free cloud notebook environment</li>
+<li>Built-in GPU support (perfect for ML)</li>
+<li>No installation needed</li>
+<li><strong>Use this for learning!</strong></li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.tensorflow.org/install">TensorFlow Installation</a></strong></p>
+<ul>
+<li>If you want to install locally</li>
+<li>Colab is easier for beginners</li>
+</ul>
+</li>
+</ol>
+<h3>Video Courses</h3>
+<ol start="3">
+<li><p><strong><a href="https://www.youtube.com/watch?v=Z9gV5FMnWQ8&list=PLQY2H8rRoyvwLbzbnKJ59NlateRsVGAwcPt">TensorFlow for Beginners (YouTube - TF Official)</a></strong></p>
+<ul>
+<li>Official TensorFlow beginner course</li>
+<li>~2 hours, clear explanations</li>
+<li><strong>Start here!</strong></li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/watch?v=tPYj3fFJGjk">freeCodeCamp - TensorFlow Course (YouTube)</a></strong></p>
+<ul>
+<li>Comprehensive 4-hour course</li>
+<li>Covers basics through intermediate</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.coursera.org/specializations/machine-learning-introduction">Andrew Ng - Machine Learning Specialization (Coursera)</a></strong></p>
+<ul>
+<li>Foundational ML theory</li>
+<li>More theoretical, less practical</li>
+<li>Free to audit</li>
+</ul>
+</li>
+</ol>
+<h3>Interactive Learning</h3>
+<ol start="6">
+<li><p><strong><a href="https://www.kaggle.com/learn/intro-to-deep-learning">Kaggle Learn - TensorFlow</a></strong></p>
+<ul>
+<li>Hands-on micro-courses</li>
+<li>~2-3 hours per topic</li>
+<li>Excellent for learning by doing</li>
+</ul>
+</li>
+<li><p><strong><a href="https://colab.research.google.com/#create=true&folderId=1">Google Colab Notebooks - Examples</a></strong></p>
+<ul>
+<li>Create a new notebook</li>
+<li>Try TensorFlow tutorials</li>
+</ul>
+</li>
+</ol>
+<h3>Documentation</h3>
+<ol start="8">
+<li><p><strong><a href="https://www.tensorflow.org/guide">TensorFlow Official Guide</a></strong> </p>
+<ul>
+<li>Reference for Keras API</li>
+<li>Examples for common tasks</li>
+</ul>
+</li>
+<li><p><strong><a href="https://keras.io/">Keras Documentation</a></strong></p>
+<ul>
+<li>Simpler, more focused</li>
+<li>Great for quick lookups</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Your First Neural Network</h2>
+<pre><code class="language-python">import tensorflow as tf
+from tensorflow import keras
+
+# Load MNIST dataset
+(X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
+
+# Normalize
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+# Build model
+model = keras.Sequential([
+    keras.layers.Dense(128, activation=&#39;relu&#39;, input_shape=(784,)),
+    keras.layers.Dense(64, activation=&#39;relu&#39;),
+    keras.layers.Dense(10, activation=&#39;softmax&#39;)
+])
+
+# Compile
+model.compile(
+    loss=&#39;sparse_categorical_crossentropy&#39;,
+    optimizer=&#39;adam&#39;,
+    metrics=[&#39;accuracy&#39;]
+)
+
+# Train
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+
+# Evaluate
+model.evaluate(X_test, y_test)
+</code></pre>
+<p>This trains a simple neural network on MNIST in ~20 lines of code!</p>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> for:</p>
+<ul>
+<li><code>first_neural_network.py</code> - Your first model</li>
+<li><code>mnist_classifier.py</code> - MNIST digit classification</li>
+<li><code>simple_regression.py</code> - Predicting continuous values</li>
+</ul>
+<h2>🎯 Beginner Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I&#39;m comfortable with Python basics</li>
+<li><input disabled="" type="checkbox"> I understand NumPy arrays and operations</li>
+<li><input disabled="" type="checkbox"> I can load and explore data with Pandas</li>
+<li><input disabled="" type="checkbox"> I can set up TensorFlow/Keras in Google Colab</li>
+<li><input disabled="" type="checkbox"> I&#39;ve trained a neural network on MNIST</li>
+<li><input disabled="" type="checkbox"> I understand the concept of epochs and batches</li>
+<li><input disabled="" type="checkbox"> I can evaluate a model&#39;s performance</li>
+</ul>
+<h2>Common Mistakes to Avoid</h2>
+<p>❌ <strong>Don&#39;t</strong>: Jump to advanced architectures before mastering basics
+✓ <strong>Do</strong>: Master dense networks first, then move to CNN/RNN</p>
+<p>❌ <strong>Don&#39;t</strong>: Use raw data without normalization
+✓ <strong>Do</strong>: Always normalize features to [0,1] or [-1,1] range</p>
+<p>❌ <strong>Don&#39;t</strong>: Train for too many epochs
+✓ <strong>Do</strong>: Watch for overfitting, use validation sets</p>
+<p>❌ <strong>Don&#39;t</strong>: Use large batch sizes without a reason
+✓ <strong>Do</strong>: Start with batch_size=32 or 64</p>
+<h2>Next Steps</h2>
+<p>Once you&#39;ve trained your first model, move to <strong><a href="../intermediate/resources.md">Intermediate</a></strong> to learn:</p>
+<ul>
+<li>Convolutional Neural Networks (CNNs) for image classification</li>
+<li>Recurrent Neural Networks (RNNs/LSTMs) for sequences</li>
+<li>Model evaluation techniques</li>
+<li>Hyperparameter tuning</li>
+</ul>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>TensorFlow &amp; Keras for Intermediate 🟡</h1>
+<p>Master Convolutional and Recurrent neural networks for image and sequence data.</p>
+<h2>Key Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What It Does</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Convolutional Layer</td>
+<td>Extracts local features</td>
+<td>Image data</td>
+</tr>
+<tr>
+<td>Pooling</td>
+<td>Reduces spatial dimensions</td>
+<td>Image compression</td>
+</tr>
+<tr>
+<td>LSTM/GRU</td>
+<td>Remembers sequential context</td>
+<td>Time series, text</td>
+</tr>
+<tr>
+<td>Dropout</td>
+<td>Prevents overfitting</td>
+<td>Regularization</td>
+</tr>
+<tr>
+<td>Batch Normalization</td>
+<td>Stabilizes training</td>
+<td>Deeper networks</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://www.tensorflow.org/tutorials/images/cnn">TensorFlow - Convolutional Neural Networks</a></strong></p>
+<ul>
+<li>Official CNN tutorial</li>
+<li>CIFAR-10 example</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/watch?v=ArPaAX_PhIs">Andrew Ng - CNN Course (YouTube)</a></strong></p>
+<ul>
+<li>Foundational CNN concepts</li>
+<li>Excellent visualizations</li>
+</ul>
+</li>
+<li><p><strong><a href="https://keras.io/examples/timeseries/time_series_classification_from_scratch/">Keras - RNN Beginner Tutorial</a></strong></p>
+<ul>
+<li>Time series with LSTMs</li>
+<li>Real-world example</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.kaggle.com/">Kaggle Competitions</a></strong></p>
+<ul>
+<li>Real datasets and challenges</li>
+<li>Learn from community solutions</li>
+</ul>
+</li>
+<li><p><strong><a href="https://course.fast.ai/">Fast.ai - Deep Learning Course</a></strong></p>
+<ul>
+<li>Top-down learning approach</li>
+<li>Practical focus</li>
+<li>Free and excellent</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Common Architectures</h2>
+<ul>
+<li><strong>AlexNet / VGG</strong>: Image classification foundations</li>
+<li><strong>ResNet</strong>: Residual networks, skip connections</li>
+<li><strong>Inception</strong>: Multi-scale feature extraction</li>
+<li><strong>LSTM Networks</strong>: Sequential data processing</li>
+<li><strong>Sequence-to-Sequence</strong>: Encoder-decoder models</li>
+</ul>
+<h2>Datasets to Practice With</h2>
+<ul>
+<li><strong>CIFAR-10</strong>: 60K tiny images (10 classes)</li>
+<li><strong>ImageNet</strong>: Large-scale image classification</li>
+<li><strong>MNIST Fashion</strong>: Fashion item classification</li>
+<li><strong>IMDB Reviews</strong>: Text classification</li>
+<li><strong>Time Series</strong>: Stock prices, weather data</li>
+</ul>
+<h2>🎯 Intermediate Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I understand convolutions and pooling</li>
+<li><input disabled="" type="checkbox"> I can build a CNN with Keras</li>
+<li><input disabled="" type="checkbox"> I understand LSTMs and when to use them</li>
+<li><input disabled="" type="checkbox"> I can evaluate overfitting vs underfitting</li>
+<li><input disabled="" type="checkbox"> I&#39;ve implemented dropout and batch normalization</li>
+<li><input disabled="" type="checkbox"> I can solve multi-class classification problems</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Ready for <strong><a href="../advanced/resources.md">Advanced</a></strong>?</p>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>TensorFlow &amp; Keras for Advanced 🔴</h1>
+<p>Custom models, transfer learning, and production optimization.</p>
+<h2>Advanced Topics</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>What You&#39;ll Learn</th>
+<th>Applications</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Custom Layers</td>
+<td>Build your own layer types</td>
+<td>Specialized architectures</td>
+</tr>
+<tr>
+<td>Transfer Learning</td>
+<td>Reuse pre-trained models</td>
+<td>Fast training on small datasets</td>
+</tr>
+<tr>
+<td>Fine-tuning</td>
+<td>Adapt pre-trained models</td>
+<td>Domain-specific improvements</td>
+</tr>
+<tr>
+<td>Model Deployment</td>
+<td>TensorFlow Lite, TF Serving</td>
+<td>Production applications</td>
+</tr>
+<tr>
+<td>GAN &amp; Generative Models</td>
+<td>Generate synthetic data</td>
+<td>Creative applications</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://www.tensorflow.org/guide/keras/custom_layers_and_models">TensorFlow - Custom Layers &amp; Models</a></strong></p>
+<ul>
+<li>Official guide to advanced customization</li>
+<li>For building unique architectures</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.tensorflow.org/tutorials/images/transfer_learning">TensorFlow - Transfer Learning</a></strong></p>
+<ul>
+<li>Using pre-trained models (ResNet, MobileNet)</li>
+<li>State-of-the-art with minimal data</li>
+</ul>
+</li>
+<li><p><strong><a href="https://tfhub.dev/">TensorFlow Hub</a></strong></p>
+<ul>
+<li>Repository of pre-trained models</li>
+<li>Ready-to-use building blocks</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.tensorflow.org/lite">TensorFlow Lite for Mobile</a></strong></p>
+<ul>
+<li>Deploy to mobile devices</li>
+<li>Optimize for inference</li>
+</ul>
+</li>
+<li><p><strong><a href="https://paperswithcode.com/">Papers With Code - State-of-the-Art Models</a></strong></p>
+<ul>
+<li>Latest research implementations</li>
+<li>Benchmarks and comparisons</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Advanced Techniques</h2>
+<ul>
+<li><strong>Distributed Training</strong>: Using GPUs/TPUs for scale</li>
+<li><strong>Mixed Precision</strong>: Faster training with reduced precision</li>
+<li><strong>Model Quantization</strong>: Reduce model size</li>
+<li><strong>Knowledge Distillation</strong>: Compress large models</li>
+<li><strong>AutoML</strong>: Automated architecture search</li>
+</ul>
+<h2>🎯 Advanced Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I can define custom layers in Keras</li>
+<li><input disabled="" type="checkbox"> I understand transfer learning and fine-tuning</li>
+<li><input disabled="" type="checkbox"> I can deploy models with TensorFlow Serving</li>
+<li><input disabled="" type="checkbox"> I&#39;ve optimized models for inference speed</li>
+<li><input disabled="" type="checkbox"> I understand distributed training concepts</li>
+<li><input disabled="" type="checkbox"> I can implement GANs or other generative models</li>
+</ul>
+<h2>Career Path</h2>
+<p>After mastering these topics:</p>
+<ul>
+<li><strong>ML Engineer</strong>: Build production ML systems</li>
+<li><strong>Research</strong>: Implement cutting-edge papers</li>
+<li><strong>AI Specialist</strong>: Lead ML projects</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/tensorflow-keras" target="_blank" rel="noopener">claude-learnings/tensorflow-keras</a>
+  </footer>
+</main>
+</body>
+</html>

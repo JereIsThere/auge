@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Data Structures &amp; Algorithms 🏗️ — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+    <h1>Data Structures &amp; Algorithms 🏗️</h1>
+<p>Fundamentals of efficient programming. Master arrays, trees, graphs, sorting, and complexity analysis.</p>
+<h2>Why Learn This?</h2>
+<ul>
+<li><strong>Interview Standard</strong>: Asked in nearly every tech interview</li>
+<li><strong>Optimization Skills</strong>: Write faster, more efficient code</li>
+<li><strong>Problem-Solving</strong>: Approach complex problems systematically</li>
+<li><strong>Understanding</strong>: How software really works under the hood</li>
+</ul>
+<h2>Learning Path</h2>
+<h3>Level Progression</h3>
+<pre><code>Beginner      → Arrays, Linked Lists, Stacks, Queues
+              → Visualization and basic complexity
+
+Intermediate  → Trees, Graphs, Sorting (O(n log n), etc.)
+              → Big-O complexity analysis, common algorithms
+
+Advanced      → Dynamic Programming, Graph algorithms
+              → NP-Complete problems, optimization techniques
+</code></pre>
+<h2>Get Started</h2>
+<ul>
+<li><strong>🟢 <a href="./beginner/resources.md">Beginner Resources</a></strong> - No experience needed</li>
+<li><strong>🟡 <a href="./intermediate/resources.md">Intermediate Resources</a></strong></li>
+<li><strong>🔴 <a href="./advanced/resources.md">Advanced Resources</a></strong></li>
+</ul>
+<h2>Quick Tips</h2>
+<ol>
+<li><strong>Visualize First</strong>: Use <a href="https://visualgo.net/">VisuAlgo.net</a> before diving into code</li>
+<li><strong>Implement Code</strong>: Don&#39;t just watch — code along</li>
+<li><strong>Understand Complexity</strong>: Big-O is more important than implementation details</li>
+<li><strong>Practice Problems</strong>: Use LeetCode or HackerRank</li>
+<li><strong>Trace Through</strong>: Follow algorithms step-by-step on paper</li>
+</ol>
+<h2>Common Data Structures</h2>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>Use Case</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Array</td>
+<td>Fast access, sequential</td>
+<td>O(1) lookup, O(n) insert</td>
+</tr>
+<tr>
+<td>Linked List</td>
+<td>Dynamic size, insertions</td>
+<td>O(n) lookup, O(1) insert</td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>LIFO operations</td>
+<td>O(1) all operations</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>FIFO operations</td>
+<td>O(1) all operations</td>
+</tr>
+<tr>
+<td>Tree</td>
+<td>Hierarchical data</td>
+<td>O(log n) balanced</td>
+</tr>
+<tr>
+<td>Graph</td>
+<td>Networks, relationships</td>
+<td>Varies by algorithm</td>
+</tr>
+<tr>
+<td>Hash Table</td>
+<td>Fast lookups</td>
+<td>O(1) average</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Next</strong>: <a href="./beginner/resources.md">Start with Beginner Resources</a></p>
+
+    
+<section class="level" style="--level-color:#84cc16">
+  <h2>🟢 Beginner</h2>
+  <h1>Data Structures &amp; Algorithms for Beginners 🟢</h1>
+<p>Start with visualization and fundamentals. No prerequisites needed!</p>
+<h2>Essential Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What It Does</th>
+<th>Time Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Array</td>
+<td>Ordered collection, fast access</td>
+<td>O(1) lookup</td>
+</tr>
+<tr>
+<td>Linked List</td>
+<td>Dynamic list, efficient insertion</td>
+<td>O(n) lookup, O(1) insert</td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>Last-In-First-Out (LIFO)</td>
+<td>O(1) push/pop</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>First-In-First-Out (FIFO)</td>
+<td>O(1) enqueue/dequeue</td>
+</tr>
+<tr>
+<td>Tree</td>
+<td>Hierarchical structure</td>
+<td>O(log n) if balanced</td>
+</tr>
+<tr>
+<td>Graph</td>
+<td>Nodes and edges</td>
+<td>Depends on algorithm</td>
+</tr>
+</tbody></table>
+<h2>Big-O Complexity (The Basics)</h2>
+<table>
+<thead>
+<tr>
+<th>Notation</th>
+<th>Time Taken</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>O(1)</td>
+<td>Constant</td>
+<td>Access array element by index</td>
+</tr>
+<tr>
+<td>O(n)</td>
+<td>Linear</td>
+<td>Simple loop through array</td>
+</tr>
+<tr>
+<td>O(n²)</td>
+<td>Quadratic</td>
+<td>Nested loops (bubble sort)</td>
+</tr>
+<tr>
+<td>O(log n)</td>
+<td>Logarithmic</td>
+<td>Binary search</td>
+</tr>
+<tr>
+<td>O(n log n)</td>
+<td>Linear-logarithmic</td>
+<td>Merge sort, quicksort</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<h3>Visualization First!</h3>
+<ol>
+<li><p><strong><a href="https://visualgo.net/">VisuAlgo.net</a></strong> ⭐ TOP CHOICE</p>
+<ul>
+<li>Animate data structures and algorithms</li>
+<li>Watch them execute step-by-step</li>
+<li><strong>Start here</strong>: Arrays, Linked Lists, Stacks, Queues</li>
+<li>Perfect for visual learners</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.cs.usfca.edu/~galles/visualization/">Data Structure Visualizations (Berkeley)</a></strong></p>
+<ul>
+<li>Another excellent visualization tool</li>
+<li>More detailed, more options</li>
+</ul>
+</li>
+</ol>
+<h3>Interactive Learning</h3>
+<ol start="3">
+<li><p><strong><a href="https://leetcode.com/problemset/?difficulty=EASY">LeetCode Easy Problems</a></strong></p>
+<ul>
+<li>Start with Easy level</li>
+<li>Build confidence</li>
+<li>Come back after intermediate level</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.hackerrank.com/domains/data-structures">HackerRank Data Structures</a></strong></p>
+<ul>
+<li>Beginner-friendly</li>
+<li>Free tier has many problems</li>
+</ul>
+</li>
+</ol>
+<h3>Video Tutorials</h3>
+<ol start="5">
+<li><p><strong><a href="https://www.youtube.com/watch?v=BBpAmxU_NQo">freeCodeCamp - Data Structures (YouTube)</a></strong></p>
+<ul>
+<li>8-hour comprehensive course</li>
+<li>Watch first 2-3 hours for basics</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/playlist?list=PLDN4rrl48XKpZmldwWX_YW6GnzVlRvbPu">Abdul Bari - Data Structures (YouTube)</a></strong></p>
+<ul>
+<li>Clear, well-paced</li>
+<li>Focus on first few videos (Arrays, Linked Lists)</li>
+</ul>
+</li>
+</ol>
+<h3>Written Resources</h3>
+<ol start="7">
+<li><strong><a href="https://www.geeksforgeeks.org/data-structures/">GeeksforGeeks - Data Structures</a></strong><ul>
+<li>Quick reference guides</li>
+<li>Code examples in multiple languages</li>
+<li>Use for quick lookups</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Your First Algorithms</h2>
+<h3>Array Traversal</h3>
+<pre><code class="language-python">def print_array(arr):
+    for element in arr:
+        print(element)
+# Time: O(n), Space: O(1)
+</code></pre>
+<h3>Linear Search</h3>
+<pre><code class="language-python">def linear_search(arr, target):
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1
+# Time: O(n), Space: O(1)
+</code></pre>
+<h3>Simple Bubble Sort (Beginner)</h3>
+<pre><code class="language-python">def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] &gt; arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+# Time: O(n²), Space: O(1)
+</code></pre>
+<h2>Code Examples</h2>
+<p>See <a href="./examples/">examples/</a> for:</p>
+<ul>
+<li><code>array_basics.py</code> - Array operations</li>
+<li><code>linked_list.py</code> - Linked List implementation</li>
+<li><code>stack_queue.py</code> - Stack and Queue examples</li>
+</ul>
+<h2>🎯 Beginner Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I can explain what Big-O notation means</li>
+<li><input disabled="" type="checkbox"> I understand the difference between Array and Linked List</li>
+<li><input disabled="" type="checkbox"> I can implement a Stack and Queue</li>
+<li><input disabled="" type="checkbox"> I&#39;ve visualized algorithms on VisuAlgo.net</li>
+<li><input disabled="" type="checkbox"> I can trace through Bubble Sort by hand</li>
+<li><input disabled="" type="checkbox"> I&#39;ve coded at least one simple sorting algorithm</li>
+</ul>
+<h2>Common Mistakes</h2>
+<p>❌ <strong>Don&#39;t</strong>: Skip visualization and jump to code
+✓ <strong>Do</strong>: Visualize first, then code</p>
+<p>❌ <strong>Don&#39;t</strong>: Memorize complexity
+✓ <strong>Do</strong>: Understand why O(n²) is worse than O(n log n)</p>
+<p>❌ <strong>Don&#39;t</strong>: Try advanced algorithms first
+✓ <strong>Do</strong>: Master fundamentals (arrays, lists, stacks)</p>
+<h2>Next Steps</h2>
+<p>Once comfortable, move to <strong><a href="../intermediate/resources.md">Intermediate</a></strong> to learn:</p>
+<ul>
+<li>Trees and Tree Traversal</li>
+<li>Graph Algorithms (BFS, DFS)</li>
+<li>More Sorting Algorithms (Merge Sort, Quick Sort)</li>
+<li>Binary Search</li>
+</ul>
+
+</section>
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>Data Structures &amp; Algorithms for Intermediate 🟡</h1>
+<p>Master trees, graphs, and O(n log n) sorting algorithms.</p>
+<h2>Key Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What You&#39;ll Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Binary Trees</td>
+<td>Node-based hierarchical structure</td>
+</tr>
+<tr>
+<td>Tree Traversal</td>
+<td>In-order, Pre-order, Post-order</td>
+</tr>
+<tr>
+<td>Binary Search Trees</td>
+<td>Sorted binary trees for fast lookup</td>
+</tr>
+<tr>
+<td>Graphs</td>
+<td>Networks, connectivity, paths</td>
+</tr>
+<tr>
+<td>BFS/DFS</td>
+<td>Graph traversal algorithms</td>
+</tr>
+<tr>
+<td>Sorting</td>
+<td>Merge Sort, Quick Sort (O(n log n))</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://visualgo.net/">VisuAlgo.net - Advanced Structures</a></strong></p>
+<ul>
+<li>Visualize Trees, Graphs, Sorting</li>
+<li><strong>Practice</strong>: Binary Search Tree insertion/deletion</li>
+</ul>
+</li>
+<li><p><strong><a href="https://leetcode.com/problemset/?difficulty=MEDIUM">Leetcode Medium Problems</a></strong></p>
+<ul>
+<li>Challenge yourself</li>
+<li>Interview-style questions</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.geeksforgeeks.org/binary-tree-data-structure/">GeeksforGeeks - Tree Algorithms</a></strong></p>
+<ul>
+<li>Comprehensive tree guides</li>
+<li>Multiple traversal methods</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/playlist?list=PLgUwDviBIf0rGEWe64KWrZonluE3_cMzt">Striver&#39;s Graph Series (YouTube)</a></strong></p>
+<ul>
+<li>Excellent graph tutorials</li>
+<li>BFS, DFS, Dijkstra, etc.</li>
+</ul>
+</li>
+<li><p><strong><a href="https://neetcode.io/">NeetCode - Intermediate Problems</a></strong></p>
+<ul>
+<li>Curated leetcode problems</li>
+<li>Organized by topic</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Common Algorithms</h2>
+<ul>
+<li><strong>Merge Sort</strong>: O(n log n) stable sorting</li>
+<li><strong>Quick Sort</strong>: O(n log n) average, in-place</li>
+<li><strong>Binary Search</strong>: O(log n) on sorted arrays</li>
+<li><strong>DFS</strong>: O(V + E) graph traversal</li>
+<li><strong>BFS</strong>: O(V + E) shortest path in unweighted graphs</li>
+</ul>
+<h2>🎯 Intermediate Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I can implement Binary Search Trees</li>
+<li><input disabled="" type="checkbox"> I understand DFS and BFS</li>
+<li><input disabled="" type="checkbox"> I can implement Merge Sort and Quick Sort</li>
+<li><input disabled="" type="checkbox"> I can solve Leetcode Medium trees/graphs problems</li>
+<li><input disabled="" type="checkbox"> I understand when to use which data structure</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Ready for <strong><a href="../advanced/resources.md">Advanced</a></strong>?</p>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>Data Structures &amp; Algorithms for Advanced 🔴</h1>
+<p>Master Dynamic Programming, advanced graph algorithms, and optimization techniques.</p>
+<h2>Advanced Topics</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>What You&#39;ll Learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dynamic Programming</td>
+<td>Overlapping subproblems, memoization</td>
+</tr>
+<tr>
+<td>Advanced Graphs</td>
+<td>Dijkstra, Bellman-Ford, A*</td>
+</tr>
+<tr>
+<td>NP-Complete Problems</td>
+<td>Traveling Salesman, Knapsack</td>
+</tr>
+<tr>
+<td>Segment Trees / Fenwick Trees</td>
+<td>Range query optimization</td>
+</tr>
+<tr>
+<td>Minimum Spanning Trees</td>
+<td>Kruskal, Prim algorithms</td>
+</tr>
+</tbody></table>
+<h2>📚 Curated Resources</h2>
+<ol>
+<li><p><strong><a href="https://leetcode.com/problemset/?difficulty=HARD">LeetCode Premium - Hard Problems</a></strong></p>
+<ul>
+<li>Real interview questions</li>
+<li>Advanced algorithm mastery</li>
+</ul>
+</li>
+<li><p><strong><a href="https://www.youtube.com/playlist?list=PLgUwDviBIf0qUlt5H_kiKYaNSqJ81PMMY">Striver&#39;s DP Series (YouTube)</a></strong></p>
+<ul>
+<li>Comprehensive dynamic programming</li>
+<li>From basics to advanced</li>
+</ul>
+</li>
+<li><p><strong><a href="https://algs4.cs.princeton.edu/">Algorithms by Robert Sedgewick (Princeton)</a></strong></p>
+<ul>
+<li>Authoritative reference</li>
+<li>Advanced algorithms and data structures</li>
+</ul>
+</li>
+<li><p><strong><a href="https://en.wikipedia.org/wiki/Introduction_to_Algorithms">CLRS - Introduction to Algorithms (Book)</a></strong></p>
+<ul>
+<li>The definitive algorithms textbook</li>
+<li>In-depth complexity analysis</li>
+</ul>
+</li>
+</ol>
+<h2>💡 Advanced Concepts</h2>
+<ul>
+<li><strong>Memoization &amp; Tabulation</strong>: Optimize recursive solutions</li>
+<li><strong>Greedy Algorithms</strong>: When optimal substructure applies</li>
+<li><strong>Bit Manipulation</strong>: Optimize space and time</li>
+<li><strong>Approximation Algorithms</strong>: For NP-Hard problems</li>
+</ul>
+<h2>🎯 Advanced Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I understand Dynamic Programming</li>
+<li><input disabled="" type="checkbox"> I can solve Longest Common Subsequence</li>
+<li><input disabled="" type="checkbox"> I understand Dijkstra and BFS for shortest paths</li>
+<li><input disabled="" type="checkbox"> I can solve graph coloring and matching problems</li>
+<li><input disabled="" type="checkbox"> I understand NP-Complete and NP-Hard concepts</li>
+<li><input disabled="" type="checkbox"> I can optimize complex algorithms</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/data-structures-algorithms" target="_blank" rel="noopener">claude-learnings/data-structures-algorithms</a>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NLP — AUGE</title>
+<style>
+:root {
+  --bg: #06000e;
+  --surface: #0e0820;
+  --border: #2a1a4a;
+  --text: #c8c0d8;
+  --text-strong: #fff;
+  --muted: #7a6a9a;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --gold: #d4a200;
+  --code-bg: #15082b;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 6rem;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+}
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.synthetic-header {
+  margin-bottom: 1rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.synthetic-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1rem; padding-bottom: 0; border-bottom: none;
+}
+.synthetic-header .lede {
+  color: var(--muted); font-style: italic; font-size: 1.05rem;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(6,182,212,.5); text-decoration: none;
+  margin-bottom: 3rem; transition: color .2s;
+}
+.back-link:hover { color: var(--cyan); }
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+  letter-spacing: .05em; color: var(--text-strong);
+  text-shadow: 0 0 25px var(--cyan), 0 0 55px rgba(6,182,212,.3);
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+article h2 {
+  font-size: 1.5rem; color: var(--text-strong);
+  margin: 2.5rem 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+article h3 {
+  font-size: 1.15rem; color: var(--gold);
+  margin: 1.8rem 0 .8rem; letter-spacing: .03em;
+}
+article h4 { font-size: 1rem; color: var(--cyan); margin: 1.2rem 0 .5rem; }
+article p { margin-bottom: 1.2rem; }
+article a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted rgba(6,182,212,.4);
+  transition: color .2s, border-color .2s;
+}
+article a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+article ul, article ol { margin: 0 0 1.4rem 1.6rem; }
+article li { margin-bottom: .5rem; }
+article code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: .85em; color: #e6c8ff;
+}
+article pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--purple); border-radius: 6px;
+  padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.5rem;
+}
+article pre code {
+  background: transparent; border: none; padding: 0;
+  color: var(--text); font-size: .85rem; line-height: 1.6;
+}
+article blockquote {
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1.2rem; margin: 1rem 0;
+  color: var(--muted); background: rgba(212,162,0,.05);
+}
+article table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.4rem 0; font-size: .9rem;
+}
+article th, article td {
+  padding: .6rem .9rem; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+article th {
+  color: var(--gold); letter-spacing: .05em;
+  background: rgba(212,162,0,.05);
+}
+article tr:hover td { background: rgba(107,0,204,.05); }
+article hr {
+  border: none; height: 1px; margin: 2.5rem 0;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+article strong { color: var(--text-strong); }
+article em { color: var(--gold); font-style: italic; }
+.level {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 2px solid var(--level-color, var(--border));
+}
+.level > h2:first-child { border-bottom: none; color: var(--level-color); }
+footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer a { color: var(--muted); border-bottom: 1px dotted var(--muted); }
+footer a:hover { color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" class="back-link">← AUGE</a>
+  <article>
+    
+<header class="synthetic-header">
+  <h1>NLP</h1>
+  <p class="lede">Word Embeddings, Sequenzmodelle, und Text-Klassifikation.</p>
+</header>
+    
+    
+<section class="level" style="--level-color:#f59e0b">
+  <h2>🟡 Intermediate</h2>
+  <h1>NLP Intermediate 🟡</h1>
+<p>Word Embeddings, Sequenzmodelle, und Text-Klassifikation.</p>
+<h2>Konzepte</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Word2Vec / GloVe</td>
+<td>Dense Word Embeddings</td>
+</tr>
+<tr>
+<td>TF-IDF</td>
+<td>Term Frequency × Inverse Doc Frequency</td>
+</tr>
+<tr>
+<td>RNN / LSTM</td>
+<td>Sequenzmodelle mit Gedächtnis</td>
+</tr>
+<tr>
+<td>Attention Mechanism</td>
+<td>Wichtige Teile gewichten</td>
+</tr>
+<tr>
+<td>spaCy</td>
+<td>Industriestandard NLP-Library</td>
+</tr>
+<tr>
+<td>Named Entity Recognition</td>
+<td>Personen, Orte, Dinge extrahieren</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://spacy.io/usage/spacy-101">spaCy 101</a></strong> ⭐ Sofort produktiv</li>
+<li><strong><a href="https://nlp.stanford.edu/projects/glove/">Stanford NLP Group – GloVe</a></strong></li>
+<li><strong><a href="https://jalammar.github.io/illustrated-lstm/">The Illustrated LSTM (Jay Alammar)</a></strong> ⭐ Beste Visualisierung</li>
+<li><strong><a href="https://huggingface.co/learn/nlp-course">HuggingFace – NLP Course (Kapitel 1–4)</a></strong></li>
+</ol>
+<h2>💡 Text-Klassifikation mit spaCy</h2>
+<pre><code class="language-python">import spacy
+from spacy.pipeline.textcat import Config
+
+nlp = spacy.blank(&quot;de&quot;)
+
+# Named Entity Recognition
+nlp = spacy.load(&quot;de_core_news_sm&quot;)
+doc = nlp(&quot;Angela Merkel war in Berlin.&quot;)
+
+for ent in doc.ents:
+    print(f&quot;{ent.text:20} → {ent.label_}&quot;)
+# Angela Merkel → PER
+# Berlin        → LOC
+</code></pre>
+<h2>TF-IDF</h2>
+<pre><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
+
+docs = [&quot;Der Hund läuft schnell&quot;, &quot;Die Katze schläft lang&quot;]
+vec = TfidfVectorizer()
+X = vec.fit_transform(docs)
+# X ist eine Sparse Matrix: Dokumente × Terme
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe Word Embeddings intuitiv</li>
+<li><input disabled="" type="checkbox"> Ich kann spaCy für NER nutzen</li>
+<li><input disabled="" type="checkbox"> Ich kenne den Attention Mechanism</li>
+<li><input disabled="" type="checkbox"> Ich habe einen Text-Classifier gebaut</li>
+</ul>
+<h2>Weiter: <a href="../advanced/resources.md">Advanced</a></h2>
+
+</section>
+<section class="level" style="--level-color:#ef4444">
+  <h2>🔴 Advanced</h2>
+  <h1>NLP Advanced 🔴</h1>
+<p>Transformers, Fine-Tuning, RAG, und LLM-Infrastruktur.</p>
+<h2>Themen</h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Was</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Transformer Architecture</td>
+<td>Self-Attention, Multi-Head, Positional Encoding</td>
+</tr>
+<tr>
+<td>Fine-Tuning</td>
+<td>Pre-trained Model auf eigene Daten anpassen</td>
+</tr>
+<tr>
+<td>RAG</td>
+<td>Retrieval-Augmented Generation</td>
+</tr>
+<tr>
+<td>RLHF</td>
+<td>Reinforcement Learning from Human Feedback</td>
+</tr>
+<tr>
+<td>Vector Databases</td>
+<td>Embeddings speichern und suchen</td>
+</tr>
+<tr>
+<td>Quantization</td>
+<td>Modelle kleiner machen für Inference</td>
+</tr>
+</tbody></table>
+<h2>📚 Ressourcen</h2>
+<ol>
+<li><strong><a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer – Jay Alammar</a></strong> ⭐ Muss-Lesen</li>
+<li><strong><a href="https://huggingface.co/docs/transformers/training">HuggingFace – Fine-Tuning Guide</a></strong> ⭐</li>
+<li><strong><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Andrej Karpathy – Let&#39;s build GPT (YouTube)</a></strong> ⭐ GPT von Grund auf</li>
+<li><strong><a href="https://python.langchain.com/">LangChain Docs</a></strong> RAG in der Praxis</li>
+</ol>
+<h2>💡 Fine-Tuning mit HuggingFace</h2>
+<pre><code class="language-python">from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments
+
+model = AutoModelForSequenceClassification.from_pretrained(
+    &quot;bert-base-german-cased&quot;, num_labels=2
+)
+
+training_args = TrainingArguments(
+    output_dir=&quot;./results&quot;,
+    num_train_epochs=3,
+    per_device_train_batch_size=16,
+    evaluation_strategy=&quot;epoch&quot;,
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset,
+)
+trainer.train()
+</code></pre>
+<h2>RAG Pipeline</h2>
+<pre><code>User Query → [Embedding Model] → Vector → [Vector DB Search] 
+→ Relevante Chunks → [LLM] + Query → Antwort
+</code></pre>
+<h2>🎯 Checkliste</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Ich verstehe Self-Attention mathematisch</li>
+<li><input disabled="" type="checkbox"> Ich habe ein Modell auf eigenen Daten fine-getuned</li>
+<li><input disabled="" type="checkbox"> Ich habe eine RAG-Pipeline implementiert</li>
+<li><input disabled="" type="checkbox"> Ich kenne den Unterschied BERT vs. GPT-style Modelle</li>
+</ul>
+
+</section>
+  </article>
+  <footer>
+    Auto-generiert aus
+    <a href="https://github.com/JereIsThere/claude-learnings/tree/main/nlp" target="_blank" rel="noopener">claude-learnings/nlp</a>
+  </footer>
+</main>
+</body>
+</html>
