@@ -89,7 +89,7 @@ function stripFirstH1(md) {
   return md.replace(/^#[^\r\n]*(?:\r?\n)+/, '');
 }
 
-function renderCategoryPage(slug, title, description) {
+function renderCategoryPage(slug, title, description, pageColor = null) {
   return `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -102,7 +102,7 @@ ${description ? `<meta name="description" content="${escapeHtml(description)}">`
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 </head>
-<body class="topic" data-category="${escapeHtml(slug)}">
+<body class="topic" data-category="${escapeHtml(slug)}"${pageColor ? ` style="--pc:${pageColor}"` : ''}>
 <a href="#main" class="skip-link">Zum Inhalt springen</a>
 <main id="main" class="topic-page">
 <a href="/" class="back" aria-label="Zurück zur Startseite">← zurück</a>
@@ -117,7 +117,7 @@ ${description ? `<p class="topic-desc">${escapeHtml(description)}</p>` : ''}
 </html>`;
 }
 
-function renderTopicPage(title, readmeMd, levels) {
+function renderTopicPage(title, readmeMd, levels, pageColor = null) {
   const readmeHtml = readmeMd ? marked.parse(stripFirstH1(readmeMd)) : '';
   const availableLevels = levels.filter(l => l.content !== null);
 
@@ -152,7 +152,7 @@ ${availableLevels.map(l => `<a href="#${l.name}">${escapeHtml(l.name)}</a>`).joi
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 </head>
-<body class="topic">
+<body class="topic"${pageColor ? ` style="--pc:${pageColor}"` : ''}>
 <a href="#main" class="skip-link">Zum Inhalt springen</a>
 <main id="main" class="topic-page">
 <a href="/" class="back" aria-label="Zurück zur Übersicht">← zurück</a>
@@ -237,9 +237,10 @@ export function discoverAndGenerate() {
       }));
       const availableLevels = levelData.filter(l => l.content !== null).map(l => l.name);
 
+      const pageColor = schemaGroup ? (styles?.groups?.[schemaGroup.id]?.color?.primary ?? null) : null;
       const outDir = resolve(pagesDir, slug);
       if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
-      writeFileSync(resolve(outDir, 'index.html'), renderTopicPage(title, readmeMd, levelData));
+      writeFileSync(resolve(outDir, 'index.html'), renderTopicPage(title, readmeMd, levelData, pageColor));
       generatedSlugs.add(slug);
 
       topics.push(applyConfig(
@@ -292,9 +293,10 @@ export function discoverAndGenerate() {
 
   for (const [catSlug, cat] of allCatDefs) {
     if (!liveCats.has(catSlug)) continue;
+    const catPageColor = styles?.groups?.[catSlug]?.color?.primary ?? null;
     const outDir = resolve(pagesDir, catSlug);
     if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
-    writeFileSync(resolve(outDir, 'index.html'), renderCategoryPage(catSlug, cat.title, cat.description));
+    writeFileSync(resolve(outDir, 'index.html'), renderCategoryPage(catSlug, cat.title, cat.description, catPageColor));
     generatedSlugs.add(catSlug);
     topics.push({
       slug: catSlug, kind: 'category', title: cat.title, description: cat.description,

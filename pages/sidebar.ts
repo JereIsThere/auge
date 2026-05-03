@@ -1,8 +1,11 @@
 import rawPages from './pages.json';
+import rawDomains from './domains.json';
 
 type Kind = 'topic' | 'page' | 'comingsoon' | 'category';
 type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
 interface Page { slug: string; kind: Kind; title: string; status: Status; category: string; levels?: string[] }
+interface DomainGroup { id: string; label: string; description: string; liveCount: number; color?: string; emoji?: string; }
+interface Domain { id: string; label: string; description: string; groups: DomainGroup[]; color?: string; emoji?: string; }
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -15,15 +18,32 @@ const displayTitle = (p: Page) =>
     ? p.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
     : stripEmoji(p.title);
 
+// Domain/group lookup maps
+const domainData = rawDomains as Domain[];
+const groupMap = new Map<string, { d: Domain; g: DomainGroup }>();
+for (const d of domainData) {
+  for (const g of d.groups) groupMap.set(g.id, { d, g });
+}
+
 function render(): void {
   const el = document.getElementById('sidebar');
   if (!el) return;
 
-  const pages = rawPages as Page[];
+  const pages   = rawPages as Page[];
   const activeSlug = location.pathname.replace(/^\/+|\/+$/g, '');
-  const live = pages.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
-  const soon = pages.filter(p => p.kind === 'comingsoon');
-  const cats = [...new Set(live.map(p => p.category))].sort();
+  const live    = pages.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
+  const soon    = pages.filter(p => p.kind === 'comingsoon');
+
+  const linkHtml = (p: Page) => {
+    const a   = p.slug === activeSlug;
+    const wip = p.status === 'in-progress' ? ' <span class="sb-wip" aria-label="aktiv">◉</span>' : '';
+    return `<li class="sb-item${a ? ' is-active' : ''}">
+<a href="/${esc(p.slug)}/" class="sb-link${a ? ' is-current' : ''}">
+<span class="sb-dot" aria-hidden="true">${a ? '▸' : '·'}</span>
+<span class="sb-lbl">${esc(displayTitle(p))}</span>${wip}
+</a>
+</li>`;
+  };
 
   let h = `<div class="sb-top">
   <a href="/" class="sb-brand" aria-label="Startseite">
@@ -39,22 +59,35 @@ function render(): void {
 <nav class="sb-nav" id="sb-nav" aria-label="Topics">
 `;
 
-  for (const cat of cats) {
-    const items = live.filter(p => p.category === cat);
+  const usedSlugs = new Set<string>();
+
+  // Domain → Group → Topics
+  for (const d of domainData) {
+    const dGroups: string[] = [];
+    for (const g of d.groups) {
+      const items = live.filter(p => p.category === g.id);
+      if (!items.length) continue;
+      items.forEach(p => usedSlugs.add(p.slug));
+      dGroups.push(`<section class="sb-section" data-cat="${esc(g.id)}"${g.color ? ` style="--gc:${g.color}"` : ''}>
+<span class="sb-section-hd">${g.emoji ? `<span aria-hidden="true">${g.emoji}</span> ` : ''}${esc(g.label)}</span>
+<ul class="sb-list">${items.map(linkHtml).join('')}</ul>
+</section>`);
+    }
+    if (!dGroups.length) continue;
+    h += `<div class="sb-domain" data-domain="${esc(d.id)}"${d.color ? ` style="--dc:${d.color}"` : ''}>
+<span class="sb-domain-hd">${d.emoji ? `<span aria-hidden="true">${d.emoji}</span> ` : ''}${esc(d.label)}</span>
+${dGroups.join('')}</div>`;
+  }
+
+  // Standalone pages not in any domain group
+  const other = live.filter(p => !usedSlugs.has(p.slug));
+  const otherCats = [...new Set(other.map(p => p.category))].sort();
+  for (const cat of otherCats) {
+    const items = other.filter(p => p.category === cat);
+    const label = cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g, ' ');
     h += `<section class="sb-section" data-cat="${esc(cat)}">
-<span class="sb-section-hd">${esc(cat.toUpperCase())}</span>
-<ul class="sb-list">
-${items.map(p => {
-    const a = p.slug === activeSlug;
-    const wip = p.status === 'in-progress' ? ' <span class="sb-wip" aria-label="aktiv">◉</span>' : '';
-    return `<li class="sb-item${a ? ' is-active' : ''}">
-<a href="/${esc(p.slug)}/" class="sb-link${a ? ' is-current' : ''}">
-<span class="sb-dot" aria-hidden="true">${a ? '▸' : '·'}</span>
-<span class="sb-lbl">${esc(displayTitle(p))}</span>${wip}
-</a>
-</li>`;
-  }).join('')}
-</ul>
+<span class="sb-section-hd">${esc(label)}</span>
+<ul class="sb-list">${items.map(linkHtml).join('')}</ul>
 </section>`;
   }
 
@@ -77,7 +110,7 @@ ${soon.length > 7 ? `<li class="sb-item"><span class="sb-more">+${soon.length - 
   h += `</nav>`;
   el.innerHTML = h;
 
-  const qEl = document.getElementById('sb-q') as HTMLInputElement | null;
+  const qEl  = document.getElementById('sb-q') as HTMLInputElement | null;
   const navEl = document.getElementById('sb-nav');
   qEl?.addEventListener('input', () => {
     const v = qEl.value.toLowerCase().trim();
@@ -88,6 +121,10 @@ ${soon.length > 7 ? `<li class="sb-item"><span class="sb-more">+${soon.length - 
     navEl?.querySelectorAll<HTMLElement>('.sb-section').forEach(sec => {
       const any = [...sec.querySelectorAll<HTMLElement>('.sb-item')].some(l => l.style.display !== 'none');
       sec.style.display = any ? '' : 'none';
+    });
+    navEl?.querySelectorAll<HTMLElement>('.sb-domain').forEach(dom => {
+      const any = [...dom.querySelectorAll<HTMLElement>('.sb-section')].some(s => s.style.display !== 'none');
+      dom.style.display = any ? '' : 'none';
     });
   });
 
@@ -109,6 +146,12 @@ function closeSb(): void {
 }
 
 // ── Command Palette ──────────────────────────────────────────────
+
+// Group label lookup for command palette display
+const groupLabelMap = new Map<string, string>();
+for (const d of domainData) {
+  for (const g of d.groups) groupLabelMap.set(g.id, g.label);
+}
 
 let cmdIdx = -1;
 
@@ -140,12 +183,16 @@ function renderCmdList(q: string): void {
     : all;
 
   const items = filtered.slice(0, 14);
-  listEl.innerHTML = items.map((p, i) =>
-    `<li class="cmd-item${i === cmdIdx ? ' is-sel' : ''}" role="option" aria-selected="${i === cmdIdx}" data-href="/${esc(p.slug)}/">
-  <span class="cmd-cat">${esc(p.category)}</span>
+  listEl.innerHTML = items.map((p, i) => {
+    const catLabel = groupLabelMap.get(p.category) ?? p.category.replace(/-/g, ' ');
+    const gInfo = groupMap.get(p.category);
+    const emojiStr = gInfo?.g.emoji ? `<span aria-hidden="true">${gInfo.g.emoji}</span> ` : '';
+    return `<li class="cmd-item${i === cmdIdx ? ' is-sel' : ''}" role="option" aria-selected="${i === cmdIdx}" data-href="/${esc(p.slug)}/">
+  <span class="cmd-cat">${emojiStr}${esc(catLabel)}</span>
   <span class="cmd-title">${esc(displayTitle(p))}</span>
   <span class="cmd-arr" aria-hidden="true">→</span>
-</li>`).join('');
+</li>`;
+  }).join('');
 
   listEl.querySelectorAll<HTMLElement>('.cmd-item').forEach((li, i) => {
     li.addEventListener('mouseenter', () => { cmdIdx = i; highlightCmd(); });
@@ -198,7 +245,6 @@ function initCommandPalette(): void {
   });
 
   document.getElementById('cmd-close')?.addEventListener('click', closeCmd);
-
   document.getElementById('cmd-open-btn')?.addEventListener('click', openCmd);
 
   document.addEventListener('keydown', (e) => {

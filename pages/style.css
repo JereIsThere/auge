@@ -398,6 +398,25 @@ body:not(.home) #app p {
 
 /* ── Topic-Page (generierte Submodule-Pages) ─────────────────── */
 
+@keyframes pc-breathe {
+  0%, 100% { opacity: .65; }
+  50%       { opacity: 1;   }
+}
+
+body.topic::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 95% -5%,  color-mix(in srgb, var(--pc, #6b00cc) 13%, transparent), transparent 65%),
+    radial-gradient(ellipse 45% 35% at -5% 105%, color-mix(in srgb, var(--pc, #6b00cc)  8%, transparent), transparent 55%);
+  animation: pc-breathe 9s ease-in-out infinite;
+}
+
+body.topic > * { position: relative; z-index: 1; }
+
 .topic-page {
   max-width: 760px;
   margin-inline: auto;
@@ -407,7 +426,7 @@ body:not(.home) #app p {
 .topic-header {
   margin-bottom: 2.5rem;
   padding-bottom: 1.6rem;
-  border-bottom: 1px solid rgba(107,0,204,0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--pc, #6b00cc) 40%, transparent);
 }
 .topic-desc {
   font-size: .9rem; color: rgba(200,192,216,0.5);
@@ -857,17 +876,44 @@ body:not(.home) #app p {
   padding: 0.5rem 0 2rem;
 }
 
+/* Domain wrapper — colored left stripe */
+.sb-domain {
+  border-left: 2px solid color-mix(in srgb, var(--dc, #6b00cc) 40%, transparent);
+  margin: .6rem 0 0;
+}
+
+.sb-domain-hd {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .55rem;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--dc, #6b00cc) 70%, var(--fg));
+  padding: .85rem 1.1rem .3rem;
+  user-select: none;
+}
+
 .sb-section {
-  padding: 1rem 0 0.4rem;
+  padding: .6rem 0 .4rem;
 }
 .sb-section-hd {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
   font-family: 'Space Mono', 'Courier New', monospace;
   font-size: 0.56rem;
   letter-spacing: 0.45em;
   color: rgba(0,212,200,0.55);
   padding: 0 1.1rem 0.5rem;
   text-transform: uppercase;
+}
+/* Group headers inside a domain are more subdued — domain header carries the identity */
+.sb-domain .sb-section-hd {
+  color: rgba(200,192,216,0.32);
+  letter-spacing: .3em;
+  padding-left: 1.3rem;
 }
 .sb-section-soon .sb-section-hd { color: rgba(200,192,216,0.18); }
 
@@ -898,6 +944,17 @@ body:not(.home) #app p {
   background: rgba(34,211,238,0.09);
   border-left-color: var(--cyan);
   font-weight: 500;
+}
+/* Inside a domain: links indent one level; hover/active reflect domain color */
+.sb-domain .sb-link { padding-left: 1.5rem; }
+.sb-domain .sb-link:hover {
+  background: color-mix(in srgb, var(--dc, #6b00cc) 10%, transparent);
+  border-left-color: color-mix(in srgb, var(--dc, #6b00cc) 55%, transparent);
+}
+.sb-domain .sb-link.is-current {
+  background: color-mix(in srgb, var(--dc, #6b00cc) 12%, transparent);
+  border-left-color: color-mix(in srgb, var(--dc, #6b00cc) 90%, white);
+  color: color-mix(in srgb, var(--dc, var(--cyan)) 70%, white);
 }
 .sb-link-dim {
   color: rgba(200,192,216,0.2);
