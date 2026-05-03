@@ -1,6 +1,6 @@
 import rawPages from './pages.json';
 
-type Kind = 'topic' | 'page' | 'comingsoon';
+type Kind = 'topic' | 'page' | 'comingsoon' | 'category';
 type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
 interface Page { slug: string; kind: Kind; title: string; status: Status; category: string; levels?: string[] }
 
@@ -21,7 +21,7 @@ function render(): void {
 
   const pages = rawPages as Page[];
   const activeSlug = location.pathname.replace(/^\/+|\/+$/g, '');
-  const live = pages.filter(p => p.kind !== 'comingsoon');
+  const live = pages.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
   const soon = pages.filter(p => p.kind === 'comingsoon');
   const cats = [...new Set(live.map(p => p.category))].sort();
 
@@ -130,7 +130,7 @@ function closeCmd(): void {
 function renderCmdList(q: string): void {
   const listEl = document.getElementById('cmd-list');
   if (!listEl) return;
-  const all = (rawPages as Page[]).filter(p => p.kind !== 'comingsoon');
+  const all = (rawPages as Page[]).filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
   const filtered = q
     ? all.filter(p =>
         (p.title || p.slug).toLowerCase().includes(q) ||

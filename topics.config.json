@@ -1,4 +1,11 @@
 {
+  "_categories": {
+    "werkzeuge": {
+      "title": "Werkzeuge",
+      "description": "Tools, Generatoren und Automatisierungen für den Alltag.",
+      "order": 99
+    }
+  },
   "generieren": {
     "title": "Generieren",
     "description": "Lernseite zu einem Konzept generieren — Thema rein, Pipeline läuft, Markdown raus, hier zu Lernseite gerendert. Erste Stufe: normaler Chat-Workflow + JS-Post-Processing. Träumer→Denker kommt später.",
@@ -29,9 +36,6 @@
     "category": "werkzeuge",
     "order": 3
   },
-  "art-advanced": {
-    "category": "kunst"
-  },
   "projekte": {
     "title": "Projekte",
     "description": "Aktive Projekte, Status und offene Todos.",
@@ -40,7 +44,7 @@
   },
   "ueber": {
     "title": "Über",
-    "category": "misc",
+    "category": "_hidden",
     "order": 99
   },
   "linear-algebra": {

@@ -6,13 +6,25 @@ pages/pages.json
 .env
 .vite
 
+# Auto-generierte Kategorie-Pages (aus schema.json + _categories)
+pages/cs-theory-systems/index.html
+pages/ai-ml-data-science/index.html
+pages/software-engineering/index.html
+pages/web-apis-security/index.html
+pages/devops-tooling/index.html
+pages/creative-documentation/index.html
+pages/werkzeuge/index.html
+
 # Auto-generierte Topic-Pages (vom Vite-Plugin aus dem Submodule erzeugt)
 pages/.claude/
 pages/regex/index.html
 pages/latex/index.html
 pages/data-structures-algorithms/index.html
 pages/tensorflow-keras/index.html
+pages/agent-tooling/index.html
 pages/api-rest/index.html
+pages/jinja-templates/index.html
+pages/oauth-2/index.html
 pages/compiler-design/index.html
 pages/computer-networks/index.html
 pages/computer-vision/index.html

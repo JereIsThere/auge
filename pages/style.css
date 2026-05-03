@@ -340,6 +340,26 @@ body.home .stage {
   background: linear-gradient(90deg, transparent, var(--gold) 60%, transparent);
 }
 
+/* ── Back-Link + Card-Count ──────────────────────────────────── */
+
+.back {
+  display: inline-block;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .7rem; letter-spacing: .2em;
+  color: rgba(200,192,216,0.38);
+  text-decoration: none;
+  margin-bottom: 2rem;
+  transition: color .2s;
+}
+.back:hover { color: var(--cyan); }
+
+.card-count {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .58rem; letter-spacing: .2em;
+  color: rgba(200,192,216,0.28);
+  margin-top: .2rem;
+}
+
 /* ── Unterseiten ────────────────────────────────────────────── */
 
 body:not(.home) main {
@@ -388,6 +408,10 @@ body:not(.home) #app p {
   margin-bottom: 2.5rem;
   padding-bottom: 1.6rem;
   border-bottom: 1px solid rgba(107,0,204,0.3);
+}
+.topic-desc {
+  font-size: .9rem; color: rgba(200,192,216,0.5);
+  margin-top: .6rem; line-height: 1.5;
 }
 .topic-header h1 {
   border-bottom: none; padding-bottom: 0; margin-bottom: 1rem;
@@ -973,6 +997,18 @@ body:not(.home) #app p {
   margin: 0 auto;
   padding-bottom: 1.5rem;
 }
+
+.hero-about {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .6rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: rgba(200,192,216,0.28);
+  text-decoration: none;
+  margin-top: .6rem;
+  transition: color .2s;
+}
+.hero-about:hover { color: var(--cyan); }
 
 .home-topics {
   padding: 0 2.4rem 5rem;

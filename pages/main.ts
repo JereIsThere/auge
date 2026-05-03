@@ -2,7 +2,7 @@ import './sidebar';
 import pages from './pages.json';
 
 type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
-type Kind   = 'topic' | 'page' | 'comingsoon';
+type Kind   = 'topic' | 'page' | 'comingsoon' | 'category';
 
 interface TopicMeta {
   slug: string;
@@ -19,35 +19,23 @@ interface TopicMeta {
 const escape = (s: string) =>
   s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-const LEVEL_ABBR: Record<string, string> = { beginner: 'B', intermediate: 'I', advanced: 'A' };
 
 const stack = document.getElementById('links-stack');
 if (stack) {
-  const all        = pages as unknown as TopicMeta[];
-  const categories = [...new Set(all.map(p => p.category))].sort();
+  const all     = pages as unknown as TopicMeta[];
+  const catCards = all
+    .filter(p => p.kind === 'category')
+    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  const live    = all.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
 
-  stack.innerHTML = categories.map(cat => {
-    const items = all.filter(p => p.category === cat);
-    const live  = items.filter(p => p.kind !== 'comingsoon');
-    const soon  = items.filter(p => p.kind === 'comingsoon');
-
-    const liveHtml = live.map(p => {
-      const lvls = (p.levels ?? []).map(l =>
-        `<span class="tl-lvl tl-${l}" title="${escape(l)}">${LEVEL_ABBR[l] ?? l[0].toUpperCase()}</span>`
-      ).join('');
-      return `<li><a href="/${escape(p.slug)}/" class="tl-link">
-<span class="tl-name">${escape(p.title || p.slug)}</span>${lvls ? `<span class="tl-badges">${lvls}</span>` : ''}<span class="tl-arr" aria-hidden="true">→</span></a></li>`;
-    }).join('');
-
-    const soonHtml = soon.slice(0, 5).map(p =>
-      `<li><span class="tl-dim">${escape(p.title || p.slug)}</span></li>`
-    ).join('');
-
-    return `<section class="tl-cat">
-<h2 class="tl-cat-hd">${escape(cat)}</h2>
-<ul class="tl-list">${liveHtml}${soonHtml}</ul>
-</section>`;
-  }).join('');
+  stack.innerHTML = `<div class="cat-grid">${catCards.map(cat => {
+    const count = live.filter(p => p.category === cat.slug).length;
+    return `<a href="/${escape(cat.slug)}/" class="card">
+  <span class="card-name">${escape(cat.title)}</span>
+  ${cat.description ? `<span class="card-desc">${escape(cat.description)}</span>` : ''}
+  <span class="card-count">${count} ${count === 1 ? 'Topic' : 'Topics'}</span>
+</a>`;
+  }).join('')}</div>`;
 }
 
 // ── Runtime ──────────────────────────────────────────────────
