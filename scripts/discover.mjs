@@ -290,6 +290,23 @@ export function discoverAndGenerate() {
     });
   }
 
+  // 2c) domains.json — domain → groups structure for the landing accordion
+  const domains = [];
+  if (schema?.domains) {
+    for (const domain of schema.domains) {
+      const groups = (domain.groups ?? []).flatMap(gid => {
+        const gMeta = allCatDefs.get(gid);
+        if (!gMeta || !liveCats.has(gid)) return [];
+        const liveCount = topics.filter(t => t.category === gid && t.kind !== 'comingsoon' && t.kind !== 'category').length;
+        return [{ id: gid, label: gMeta.title, description: gMeta.description, liveCount }];
+      });
+      if (groups.length > 0) {
+        domains.push({ id: domain.id, label: domain.label, description: domain.description ?? '', groups });
+      }
+    }
+  }
+  writeFileSync(resolve(pagesDir, 'domains.json'), JSON.stringify(domains, null, 2));
+
   // 3) Coming-Soon: Marker-Ordner unter topics/
   if (isDir(topicsDir)) {
     for (const slug of readdirSync(topicsDir).sort()) {

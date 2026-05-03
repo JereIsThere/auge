@@ -1,6 +1,7 @@
 node_modules
 dist
 pages/pages.json
+pages/domains.json
 .DS_Store
 *.log
 .env

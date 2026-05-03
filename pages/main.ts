@@ -1,41 +1,61 @@
 import './sidebar';
 import pages from './pages.json';
+import domains from './domains.json';
 
 type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
 type Kind   = 'topic' | 'page' | 'comingsoon' | 'category';
 
 interface TopicMeta {
-  slug: string;
-  kind: Kind;
-  title: string;
-  description: string;
-  levels?: string[];
-  status: Status;
-  category: string;
-  tags?: string[];
-  order?: number;
+  slug: string; kind: Kind; title: string; description: string;
+  levels?: string[]; status: Status; category: string; order?: number;
 }
+interface DomainGroup { id: string; label: string; description: string; liveCount: number; }
+interface Domain { id: string; label: string; description: string; groups: DomainGroup[]; }
 
 const escape = (s: string) =>
   s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-
 const stack = document.getElementById('links-stack');
 if (stack) {
-  const all     = pages as unknown as TopicMeta[];
-  const catCards = all
-    .filter(p => p.kind === 'category')
+  const all      = pages as unknown as TopicMeta[];
+  const catCards = (all.filter(p => p.kind === 'category') as TopicMeta[])
     .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
-  const live    = all.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
+  const live     = all.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
 
-  stack.innerHTML = `<div class="cat-grid">${catCards.map(cat => {
-    const count = live.filter(p => p.category === cat.slug).length;
-    return `<a href="/${escape(cat.slug)}/" class="card">
-  <span class="card-name">${escape(cat.title)}</span>
-  ${cat.description ? `<span class="card-desc">${escape(cat.description)}</span>` : ''}
+  const groupCard = (id: string, label: string, desc: string, count: number) =>
+    `<a href="/${escape(id)}/" class="card">
+  <span class="card-name">${escape(label)}</span>
+  ${desc ? `<span class="card-desc">${escape(desc)}</span>` : ''}
   <span class="card-count">${count} ${count === 1 ? 'Topic' : 'Topics'}</span>
 </a>`;
-  }).join('')}</div>`;
+
+  const domainList = domains as Domain[];
+
+  if (domainList.length > 0) {
+    // Domain accordion + werkzeuge below
+    const werkzeuge = catCards.find(c => c.slug === 'werkzeuge');
+    const accordionHtml = domainList.map((d, i) =>
+      `<details class="domain-item"${i === 0 ? ' open' : ''}>
+  <summary class="domain-hd">
+    <span class="domain-name">${escape(d.label)}</span>
+    <span class="domain-arr" aria-hidden="true">▸</span>
+  </summary>
+  <div class="domain-groups">${d.groups.map(g => groupCard(g.id, g.label, g.description, g.liveCount)).join('')}</div>
+</details>`
+    ).join('');
+
+    const toolsHtml = werkzeuge
+      ? `<div class="domain-tools">${groupCard('werkzeuge', werkzeuge.title, werkzeuge.description, live.filter(p => p.category === 'werkzeuge').length)}</div>`
+      : '';
+
+    stack.innerHTML = accordionHtml + toolsHtml;
+  } else {
+    // Fallback: flat grid of category cards
+    stack.innerHTML = `<div class="cat-grid">${catCards.map(cat => {
+      const count = live.filter(p => p.category === cat.slug).length;
+      return groupCard(cat.slug, cat.title, cat.description, count);
+    }).join('')}</div>`;
+  }
 }
 
 // ── Runtime ──────────────────────────────────────────────────

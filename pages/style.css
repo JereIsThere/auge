@@ -1015,6 +1015,73 @@ body:not(.home) #app p {
   width: 100%;
 }
 
+/* ── Domain Accordion ────────────────────────────────────────── */
+
+.domain-item {
+  border: 1px solid rgba(107,0,204,0.2);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: rgba(107,0,204,0.03);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.domain-item[open] {
+  border-color: rgba(107,0,204,0.38);
+}
+
+.domain-item summary {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: 1rem 1.4rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.domain-item summary::-webkit-details-marker { display: none; }
+.domain-item summary:hover .domain-name { color: var(--fg); }
+
+.domain-name {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .7rem;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: rgba(232,237,245,0.65);
+  transition: color .15s;
+}
+
+.domain-arr {
+  margin-left: auto;
+  color: var(--gold);
+  font-size: .65rem;
+  opacity: .6;
+  transition: transform .2s, opacity .15s;
+  flex-shrink: 0;
+}
+.domain-item[open] .domain-arr {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+.domain-item summary:hover .domain-arr { opacity: 1; }
+
+.domain-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: .9rem;
+  padding: 0 1.2rem 1.2rem;
+}
+
+.domain-tools {
+  margin-top: 1.5rem;
+}
+.domain-tools .card {
+  max-width: 320px;
+}
+
+@media (max-width: 600px) {
+  .domain-groups { grid-template-columns: 1fr; }
+}
+
 /* Categories stack vertically, full width */
 .home-topics .links-stack {
   display: grid;
