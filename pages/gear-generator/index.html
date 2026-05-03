@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Zahnrad-Generator — Evolventenverzahnung für 3D-Druck. Parameter einstellen, SVG exportieren." />
+  <title>Zahnrad-Generator · auge</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="tool-page">
+  <a href="#main" class="skip-link">Zum Inhalt springen</a>
+  <main id="main" class="gear-main">
+
+    <header class="gear-header">
+      <a href="/" class="back" aria-label="Zurück zur Übersicht">← zurück</a>
+      <h1>Zahnrad-Generator</h1>
+      <p class="gear-subtitle">Evolventenverzahnung · SVG-Export · 3D-Druck</p>
+    </header>
+
+    <div class="gear-layout">
+
+      <!-- ── Parameter-Panel ── -->
+      <aside class="gear-panel" aria-label="Parameter">
+        <section class="param-section">
+          <h2 class="param-heading">Verzahnung</h2>
+
+          <label class="param-row">
+            <span class="param-label">Modul <em>m</em></span>
+            <input type="range" id="p-module" min="0.5" max="5" step="0.1" value="2" />
+            <output id="o-module">2.0</output>
+            <span class="param-unit">mm</span>
+          </label>
+
+          <label class="param-row">
+            <span class="param-label">Zähnezahl <em>z</em></span>
+            <input type="range" id="p-teeth" min="6" max="120" step="1" value="20" />
+            <output id="o-teeth">20</output>
+          </label>
+
+          <label class="param-row">
+            <span class="param-label">Druckwinkel <em>α</em></span>
+            <input type="range" id="p-angle" min="14.5" max="25" step="0.5" value="20" />
+            <output id="o-angle">20.0</output>
+            <span class="param-unit">°</span>
+          </label>
+        </section>
+
+        <section class="param-section">
+          <h2 class="param-heading">Geometrie</h2>
+
+          <label class="param-row">
+            <span class="param-label">Bohrung</span>
+            <input type="range" id="p-bore" min="1" max="30" step="0.5" value="5" />
+            <output id="o-bore">5.0</output>
+            <span class="param-unit">mm</span>
+          </label>
+
+          <label class="param-row">
+            <span class="param-label">Nabenbreite</span>
+            <input type="range" id="p-hub" min="0" max="20" step="0.5" value="0" />
+            <output id="o-hub">0.0</output>
+            <span class="param-unit">mm Ø extra</span>
+          </label>
+
+          <label class="param-row">
+            <span class="param-label">Profilverschiebung <em>x</em></span>
+            <input type="range" id="p-shift" min="-0.6" max="0.6" step="0.05" value="0" />
+            <output id="o-shift">0.00</output>
+          </label>
+        </section>
+
+        <section class="param-section">
+          <h2 class="param-heading">Gegenzahnrad</h2>
+          <label class="param-row check-row">
+            <input type="checkbox" id="p-show2" />
+            <span class="param-label">Gegenzahnrad einblenden</span>
+          </label>
+          <label class="param-row">
+            <span class="param-label">Zähnezahl <em>z₂</em></span>
+            <input type="range" id="p-teeth2" min="6" max="120" step="1" value="40" />
+            <output id="o-teeth2">40</output>
+          </label>
+        </section>
+
+        <section class="param-section derived-section">
+          <h2 class="param-heading">Berechnete Werte</h2>
+          <dl class="derived-list" id="derived-list">
+            <div class="derived-row"><dt>Teilkreis-Ø</dt><dd id="d-pitch">–</dd></div>
+            <div class="derived-row"><dt>Kopfkreis-Ø</dt><dd id="d-outer">–</dd></div>
+            <div class="derived-row"><dt>Fußkreis-Ø</dt><dd id="d-root">–</dd></div>
+            <div class="derived-row"><dt>Grundkreis-Ø</dt><dd id="d-base">–</dd></div>
+            <div class="derived-row" id="d-ratio-row" hidden><dt>Übersetzung</dt><dd id="d-ratio">–</dd></div>
+            <div class="derived-row" id="d-cd-row" hidden><dt>Achsabstand</dt><dd id="d-cd">–</dd></div>
+          </dl>
+        </section>
+
+        <div class="export-buttons">
+          <button id="btn-svg" class="btn-export">SVG exportieren</button>
+          <button id="btn-copy" class="btn-export btn-secondary">SVG kopieren</button>
+        </div>
+      </aside>
+
+      <!-- ── Canvas-Bereich ── -->
+      <div class="gear-canvas-wrap">
+        <canvas id="gear-canvas" aria-label="Zahnrad-Vorschau"></canvas>
+        <div class="canvas-info" id="canvas-info" aria-live="polite"></div>
+      </div>
+
+    </div>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

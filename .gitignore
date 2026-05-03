@@ -28,3 +28,6 @@ pages/security-cryptography/index.html
 pages/statistics/index.html
 pages/system-design/index.html
 pages/web-performance/index.html
+
+# QA-Artefakte (PDF wird vom build-pptx-Workflow erzeugt, pptx ist Source-of-Truth)
+docs/auge-status.pdf

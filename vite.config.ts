@@ -17,7 +17,7 @@ export default defineConfig({
   root: 'pages',
   publicDir: false,
   server: {
-    allowedHosts: ['test.jeremias-groehl.de'],
+    allowedHosts: ['auge.jeremias-groehl.de'],
   },
   build: {
     outDir: '/var/www/auge',

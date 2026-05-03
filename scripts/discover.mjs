@@ -9,7 +9,7 @@
 
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readdirSync, statSync, existsSync, writeFileSync, readFileSync, rmSync } from 'fs';
+import { readdirSync, statSync, existsSync, writeFileSync, readFileSync, rmSync, mkdirSync } from 'fs';
 import { marked } from 'marked';
 
 marked.setOptions({ gfm: true, breaks: false });
@@ -97,6 +97,8 @@ ${availableLevels.map(l => `<a href="#${l.name}">${escapeHtml(l.name)}</a>`).joi
 <meta name="color-scheme" content="dark">
 <meta name="description" content="${escapeHtml(title)} — auge.">
 <title>${escapeHtml(title)} · auge</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body class="topic">
@@ -165,7 +167,7 @@ export function discoverAndGenerate() {
       const availableLevels = levelData.filter(l => l.content !== null).map(l => l.name);
 
       const outDir = resolve(pagesDir, slug);
-      if (!isDir(outDir)) continue; // top-level scaffold muss existieren
+      if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
       writeFileSync(resolve(outDir, 'index.html'), renderTopicPage(title, readmeMd, levelData));
       generatedSlugs.add(slug);
 
