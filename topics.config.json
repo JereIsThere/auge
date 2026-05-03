@@ -40,11 +40,97 @@
   },
   "ueber": {
     "title": "Über",
-    "category": "misc",
+    "category": "_hidden",
     "order": 99
   },
   "linear-algebra": {
     "title": "Linear Algebra",
-    "description": "Vektoren, Matrizen, Transformationen — die Sprache von ML und Computer Graphics."
+    "description": "Vektoren, Matrizen, Transformationen — die Sprache von ML und Computer Graphics.",
+    "category": "lernen",
+    "order": 0
+  },
+  "regex": {
+    "category": "lernen",
+    "order": 1
+  },
+  "latex": {
+    "category": "lernen",
+    "order": 2
+  },
+  "data-structures-algorithms": {
+    "category": "lernen",
+    "order": 3
+  },
+  "tensorflow-keras": {
+    "category": "lernen",
+    "order": 4
+  },
+  "git-version-control": {
+    "category": "lernen",
+    "order": 5
+  },
+  "docker-containers": {
+    "category": "lernen",
+    "order": 6
+  },
+  "pandas-data-wrangling": {
+    "category": "lernen",
+    "order": 7
+  },
+  "statistics": {
+    "category": "lernen",
+    "order": 8
+  },
+  "web-performance": {
+    "category": "lernen",
+    "order": 9
+  },
+  "system-design": {
+    "category": "lernen",
+    "order": 10
+  },
+  "functional-programming": {
+    "category": "lernen",
+    "order": 11
+  },
+  "databases": {
+    "category": "lernen",
+    "order": 12
+  },
+  "design-patterns": {
+    "category": "lernen",
+    "order": 13
+  },
+  "operating-systems": {
+    "category": "lernen",
+    "order": 14
+  },
+  "computer-networks": {
+    "category": "lernen",
+    "order": 15
+  },
+  "discrete-math": {
+    "category": "lernen",
+    "order": 16
+  },
+  "computer-vision": {
+    "category": "lernen",
+    "order": 17
+  },
+  "nlp": {
+    "category": "lernen",
+    "order": 18
+  },
+  "security-cryptography": {
+    "category": "lernen",
+    "order": 19
+  },
+  "compiler-design": {
+    "category": "lernen",
+    "order": 20
+  },
+  "api-rest": {
+    "category": "lernen",
+    "order": 21
   }
 }

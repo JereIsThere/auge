@@ -180,6 +180,7 @@ export function discoverAndGenerate() {
   for (const slug of readdirSync(pagesDir).sort()) {
     if (generatedSlugs.has(slug)) continue;
     if (slug === 'claude-learnings') continue;
+    if (slug.startsWith('.')) continue;
     const dir = resolve(pagesDir, slug);
     if (!isDir(dir)) continue;
     if (!existsSync(resolve(dir, 'index.html'))) continue;

@@ -974,6 +974,18 @@ body:not(.home) #app p {
   padding-bottom: 1.5rem;
 }
 
+.hero-about {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: .6rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: rgba(200,192,216,0.28);
+  text-decoration: none;
+  margin-top: .6rem;
+  transition: color .2s;
+}
+.hero-about:hover { color: var(--cyan); }
+
 .home-topics {
   padding: 0 2.4rem 5rem;
   width: 100%;

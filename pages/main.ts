@@ -27,7 +27,7 @@ const displayTitle = (p: TopicMeta) =>
 
 const stack = document.getElementById('links-stack');
 if (stack) {
-  const all        = pages as unknown as TopicMeta[];
+  const all        = (pages as unknown as TopicMeta[]).filter(p => !p.category.startsWith('_'));
   const categories = [...new Set(all.map(p => p.category))].sort();
 
   stack.innerHTML = categories.map(cat => {
