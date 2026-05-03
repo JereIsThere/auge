@@ -7,6 +7,7 @@ pages/pages.json
 .vite
 
 # Auto-generierte Topic-Pages (vom Vite-Plugin aus dem Submodule erzeugt)
+pages/.claude/
 pages/regex/index.html
 pages/latex/index.html
 pages/data-structures-algorithms/index.html

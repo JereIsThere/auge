@@ -153,6 +153,7 @@ export function discoverAndGenerate() {
       const subPath = resolve(submoduleDir, slug);
       const readmePath = resolve(subPath, 'README.md');
       if (!isDir(subPath)) continue;
+      if (slug.startsWith('.')) continue;
       if (slug === ART_ADVANCED_EXEMPT) continue;
 
       const readmeMd = existsSync(readmePath) ? readFileSync(readmePath, 'utf8') : null;
