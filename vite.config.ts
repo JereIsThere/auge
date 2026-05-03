@@ -13,11 +13,9 @@ const pageEntries = topics
     return acc;
   }, {});
 
-const OUTPUT_DIR = '../public_html';
-
 export default defineConfig({
   root: 'pages',
-  publicDir: resolve(__dirname, 'public', OUTPUT_DIR),
+  publicDir: false,
   server: {
     allowedHosts: ['test.jeremias-groehl.de'],
   },
@@ -28,9 +26,6 @@ export default defineConfig({
       input: {
         index: resolve(__dirname, 'pages/index.html'),
         ...pageEntries,
-      },
-      output: {
-        dir: OUTPUT_DIR,
       },
     },
   },
