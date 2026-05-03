@@ -6,6 +6,11 @@ pages/pages.json
 .env
 .vite
 
+# Auto-generierte Kategorie-Pages
+pages/lernen/index.html
+pages/werkzeuge/index.html
+pages/kunst/index.html
+
 # Auto-generierte Topic-Pages (vom Vite-Plugin aus dem Submodule erzeugt)
 pages/.claude/
 pages/regex/index.html

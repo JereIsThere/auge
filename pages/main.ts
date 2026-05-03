@@ -2,7 +2,7 @@ import './sidebar';
 import pages from './pages.json';
 
 type Status = 'todo' | 'in-progress' | 'finished' | 'archived';
-type Kind   = 'topic' | 'page' | 'comingsoon';
+type Kind   = 'topic' | 'page' | 'comingsoon' | 'category';
 
 interface TopicMeta {
   slug: string;
@@ -19,54 +19,23 @@ interface TopicMeta {
 const escape = (s: string) =>
   s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-const stripEmoji = (s: string) =>
-  s.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
-
-const displayTitle = (p: TopicMeta) =>
-  stripEmoji(p.title || p.slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
 
 const stack = document.getElementById('links-stack');
 if (stack) {
-  const all        = (pages as unknown as TopicMeta[]).filter(p => !p.category.startsWith('_'));
-  const categories = [...new Set(all.map(p => p.category))].sort();
+  const all     = pages as unknown as TopicMeta[];
+  const catCards = all
+    .filter(p => p.kind === 'category')
+    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  const live    = all.filter(p => p.kind !== 'comingsoon' && p.kind !== 'category' && !p.category.startsWith('_'));
 
-  stack.innerHTML = categories.map(cat => {
-    const items = all.filter(p => p.category === cat);
-    const live  = items.filter(p => p.kind !== 'comingsoon');
-    const soon  = items.filter(p => p.kind === 'comingsoon');
-
-    const liveHtml = live.map(p => {
-      const lvls = (p.levels ?? []).map(l =>
-        `<span class="lvl lvl-${escape(l)}" title="${escape(l)}">${l[0].toUpperCase()}</span>`
-      ).join('');
-      const statusLabel = p.status === 'in-progress' ? 'aktiv'
-        : p.status === 'finished' ? '' : p.status ?? '';
-      const statusHtml = statusLabel
-        ? `<span class="card-status status-${escape(p.status)}">${escape(statusLabel)}</span>`
-        : '';
-      return `<a href="/${escape(p.slug)}/" class="card">
-  <span class="card-name">${escape(displayTitle(p))}</span>
-  ${p.description ? `<span class="card-desc">${escape(p.description)}</span>` : ''}
-  <div class="card-meta">
-    ${lvls ? `<div class="card-levels">${lvls}</div>` : ''}
-    ${statusHtml}
-  </div>
+  stack.innerHTML = `<div class="cat-grid">${catCards.map(cat => {
+    const count = live.filter(p => p.category === cat.slug).length;
+    return `<a href="/${escape(cat.slug)}/" class="card">
+  <span class="card-name">${escape(cat.title)}</span>
+  ${cat.description ? `<span class="card-desc">${escape(cat.description)}</span>` : ''}
+  <span class="card-count">${count} ${count === 1 ? 'Topic' : 'Topics'}</span>
 </a>`;
-    }).join('');
-
-    const soonHtml = soon.slice(0, 3).map(p =>
-      `<div class="card card-locked" aria-hidden="true">
-  <span class="card-name">${escape(displayTitle(p))}</span>
-  ${p.description ? `<span class="card-desc">${escape(p.description)}</span>` : ''}
-  <div class="card-meta"><span class="card-status status-todo">geplant</span></div>
-</div>`
-    ).join('');
-
-    return `<section class="cat-section">
-<h2 class="cat-heading">${escape(cat.toUpperCase())}</h2>
-<div class="cat-grid">${liveHtml}${soonHtml}</div>
-</section>`;
-  }).join('');
+  }).join('')}</div>`;
 }
 
 // ── Runtime ──────────────────────────────────────────────────

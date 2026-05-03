@@ -4,10 +4,10 @@ import { resolve } from 'path';
 import { discoverAndGenerate, wipeOutBuildDir } from './scripts/discover.mjs';
 
 const pagesDir = resolve(__dirname, 'pages');
-const topics = discoverAndGenerate() as Array<{ slug: string; kind: 'topic' | 'page' | 'comingsoon' }>;
+const topics = discoverAndGenerate() as Array<{ slug: string; kind: 'topic' | 'page' | 'comingsoon' | 'category' }>;
 
 const pageEntries = topics
-  .filter(t => t.kind === 'topic' || t.kind === 'page')
+  .filter(t => t.kind === 'topic' || t.kind === 'page' || t.kind === 'category')
   .reduce<Record<string, string>>((acc, t) => {
     acc[t.slug] = resolve(pagesDir, t.slug, 'index.html');
     return acc;

@@ -66,6 +66,34 @@ function stripFirstH1(md) {
   return md.replace(/^#[^\r\n]*(?:\r?\n)+/, '');
 }
 
+function renderCategoryPage(slug, title, description) {
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+${description ? `<meta name="description" content="${escapeHtml(description)}">` : ''}
+<title>${escapeHtml(title)} · auge</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="topic" data-category="${escapeHtml(slug)}">
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
+<main id="main" class="topic-page">
+<a href="/" class="back" aria-label="Zurück zur Startseite">← zurück</a>
+<header class="topic-header">
+<h1>${escapeHtml(title)}</h1>
+${description ? `<p class="topic-desc">${escapeHtml(description)}</p>` : ''}
+</header>
+<div id="cat-content"></div>
+</main>
+<script type="module" src="../category.ts"></script>
+</body>
+</html>`;
+}
+
 function renderTopicPage(title, readmeMd, levels) {
   const readmeHtml = readmeMd ? marked.parse(stripFirstH1(readmeMd)) : '';
   const availableLevels = levels.filter(l => l.content !== null);
@@ -147,6 +175,10 @@ export function discoverAndGenerate() {
   const topics = [];
   const generatedSlugs = new Set();
 
+  // Pre-populate category slugs so they're never picked up as standalone pages
+  const catConfig = config['_categories'] ?? {};
+  for (const catSlug of Object.keys(catConfig)) generatedSlugs.add(catSlug);
+
   // 1) Submodule-Topics → generate pages/<slug>/index.html
   if (isDir(submoduleDir)) {
     for (const slug of readdirSync(submoduleDir).sort()) {
@@ -187,6 +219,23 @@ export function discoverAndGenerate() {
     topics.push(applyConfig({ slug, kind: 'page', title: slug, description: '' }, config));
   }
 
+  // 2b) Category pages — one per non-hidden category that has live entries
+  const liveCats = new Set(
+    topics.filter(t => !t.category.startsWith('_')).map(t => t.category)
+  );
+  for (const [catSlug, meta] of Object.entries(catConfig)) {
+    if (!liveCats.has(catSlug)) continue;
+    const title = meta.title ?? catSlug.charAt(0).toUpperCase() + catSlug.slice(1);
+    const desc  = meta.description ?? '';
+    const outDir = resolve(pagesDir, catSlug);
+    if (!isDir(outDir)) mkdirSync(outDir, { recursive: true });
+    writeFileSync(resolve(outDir, 'index.html'), renderCategoryPage(catSlug, title, desc));
+    topics.push({
+      slug: catSlug, kind: 'category', title, description: desc,
+      category: '_cat', status: 'finished', order: meta.order ?? 99,
+    });
+  }
+
   // 3) Coming-Soon: alle Marker-Ordner unter topics/
   if (isDir(topicsDir)) {
     for (const slug of readdirSync(topicsDir).sort()) {
@@ -208,7 +257,7 @@ export function discoverAndGenerate() {
   }
 
   // Sortierung: nach Kategorie alphabetisch, innerhalb nach order (asc) > kind (topic > page > comingsoon) > slug
-  const kindOrder = { topic: 0, page: 1, comingsoon: 2 };
+  const kindOrder = { topic: 0, page: 1, category: 2, comingsoon: 3 };
   topics.sort((a, b) => {
     if (a.category !== b.category) return a.category.localeCompare(b.category);
     if ((a.order ?? 999) !== (b.order ?? 999)) return (a.order ?? 999) - (b.order ?? 999);
