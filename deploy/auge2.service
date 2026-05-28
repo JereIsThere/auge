@@ -1,0 +1,31 @@
+[Unit]
+Description=Auge 2.0 – Next.js Lernportal
+Documentation=https://github.com/JereIsThere/claude-projects
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/auge2
+
+# Standalone-Build: direkt node, kein npx/next nötig
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5s
+
+# Produktionsvariablen
+Environment=NODE_ENV=production
+Environment=PORT=3010
+Environment=HOSTNAME=127.0.0.1
+
+# Anwendungs-Konfiguration (wird via setup.sh angelegt)
+EnvironmentFile=/var/www/auge2/.env.local
+
+# Limits
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=auge2
+
+[Install]
+WantedBy=multi-user.target

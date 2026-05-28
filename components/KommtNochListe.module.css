@@ -1,0 +1,78 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.gruppe {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gruppeTitel {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--farbe, #00d4c8);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.gruppeAnzahl {
+  font-size: 0.62rem;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.themenListe {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px;
+}
+
+.themaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  opacity: 0.65;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+.themaItem:hover {
+  opacity: 0.85;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.themaTitel {
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  color: #e0d8f0;
+  font-weight: 600;
+}
+
+.themaBeschreibung {
+  font-size: 0.7rem;
+  color: rgba(200, 192, 216, 0.5);
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .themenListe {
+    grid-template-columns: 1fr;
+  }
+}

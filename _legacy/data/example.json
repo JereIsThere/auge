@@ -1,0 +1,279 @@
+{
+  "themen": [
+    {
+      "id": "#12:0",
+      "slug": "regex",
+      "titel": "Reguläre Ausdrücke",
+      "kategorie": "cs",
+      "tags": ["programmierung", "text", "python", "muster"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Stell dir vor, du hast eine <strong>magische Lupe</strong>, die genau das findet, was du beschreibst – egal wo es sich im Text versteckt. <em>Reguläre Ausdrücke</em> sind diese Lupe.</p><p>Du sagst: <code>\\d{3}-\\d{4}</code> und die Lupe leuchtet auf bei <code>123-4567</code>, <code>987-6543</code> – immer wenn drei Ziffern, ein Strich, vier Ziffern kommen. Magie? Nein – Muster.</p><p>Muster sind überall: in Telefonnummern, E-Mail-Adressen, Postleitzahlen. Lerne die Sprache der Muster, und Text wird für dich lesbar wie Musik für einen Musiker.</p>",
+          "zusammenfassung": "Muster in Text finden – spielerisch erklärt",
+          "erstelltAm": "2026-04-10T09:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Reguläre Ausdrücke</h2><p>Reguläre Ausdrücke (RegEx) sind formale Beschreibungen von Textmustern, basierend auf der Theorie regulärer Sprachen (Chomsky-Hierarchie, Typ-3).</p><h3>Grundsyntax</h3><ul><li><code>.</code> – beliebiges Zeichen außer Newline</li><li><code>\\d</code> – Ziffer [0-9], <code>\\w</code> – Wortzeichen, <code>\\s</code> – Whitespace</li><li><code>*</code> (0+), <code>+</code> (1+), <code>?</code> (0–1), <code>{n,m}</code> (n bis m Mal)</li><li><code>^</code> Anfang, <code>$</code> Ende, <code>[]</code> Zeichenklasse, <code>|</code> Oder</li></ul><h3>Lookahead / Lookbehind</h3><p><code>(?=...)</code> positiver Lookahead: Match nur wenn dahinter; <code>(?&lt;=...)</code> positiver Lookbehind: Match nur wenn davor.</p><h3>Anwendung</h3><p>In Python: <code>re.findall(r'\\b\\w+@\\w+\\.\\w+\\b', text)</code> findet E-Mail-Adressen. Gruppen mit <code>(...)</code> erlauben Extraktion von Teilstrings.</p>",
+          "zusammenfassung": "Formale Grundlagen, Syntax und praktische Anwendung",
+          "erstelltAm": "2026-04-10T09:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>Reguläre Ausdrücke – Vollständige Synthese</h2><p>RegEx-Engines implementieren nichtdeterministische endliche Automaten (NFA), die intern in deterministische (DFA) umgewandelt werden. POSIX unterscheidet BRE (Basic) und ERE (Extended); Perl-kompatible RegEx (PCRE) erweitern ERE um Lookaheads, benannte Gruppen und Unicode-Support.</p><h3>Katastrophales Backtracking</h3><p>Patterns wie <code>(a+)+b</code> auf Input <code>aaaaac</code> führen zu exponentiellem Backtracking (ReDoS). Lösung: atomare Gruppen <code>(?&gt;...)</code> oder possessive Quantifizierer <code>a++</code>.</p><h3>Unicode</h3><p>In Python 3 matcht <code>\\w</code> standardmäßig Unicode-Wortzeichen. Mit Flag <code>re.ASCII</code> wird auf ASCII beschränkt. <code>\\p{L}</code> (in regex-Modul) matcht alle Unicode-Buchstaben.</p><h3>Fakten</h3><ul><li>POSIX BRE: <code>\\(...\\)</code> für Gruppen; ERE: <code>(...)</code></li><li>Lookaheads sind Zero-Width Assertions – konsumieren keine Zeichen</li><li>Named Groups: <code>(?P&lt;name&gt;...)</code> in Python, <code>(?&lt;name&gt;...)</code> in PCRE</li></ul>",
+          "zusammenfassung": "Vollständige Synthese: Automatentheorie, PCRE, ReDoS-Vermeidung, Unicode",
+          "erstelltAm": "2026-04-10T09:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:0", "inhalt": "POSIX definiert BRE (Basic) und ERE (Extended Regular Expressions)", "erstelltAm": "2026-04-10T09:10:00Z" },
+        { "id": "#20:1", "inhalt": "Katastrophales Backtracking entsteht durch verschachtelte Quantifizierer auf ambigen Mustern", "erstelltAm": "2026-04-10T09:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-10T09:00:00Z",
+      "aktualisiertAm": "2026-04-10T09:10:00Z"
+    },
+    {
+      "id": "#12:1",
+      "slug": "datenstrukturen-algorithmen",
+      "titel": "Datenstrukturen & Algorithmen",
+      "kategorie": "cs",
+      "tags": ["programmierung", "algorithmik", "big-o", "python"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Eine Liste ist wie eine Schublade: du weißt, wo alles liegt, kannst schnell ans Ende greifen. Ein Baum ist wie ein Stammbaum: von oben nach unten verzweigt sich alles. Ein Graph? Das ist die ganze Stadt – jedes Haus mit Straßen verbunden.</p><p>Algorithmen sind die Routen, die du durch diese Strukturen nimmst. Manchmal direkt (Linear Search), manchmal klug (Binary Search, halbiere das Problem jedes Mal).</p>",
+          "zusammenfassung": "Datenstrukturen als Alltagsmetaphern",
+          "erstelltAm": "2026-04-11T10:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Datenstrukturen & Algorithmen</h2><h3>Komplexität</h3><p>Big-O beschreibt das asymptotische Wachstum. O(1) konstant, O(log n) logarithmisch, O(n) linear, O(n log n) linearithmisch, O(n²) quadratisch.</p><h3>Wichtige Strukturen</h3><ul><li><strong>Array</strong>: O(1) Zugriff, O(n) Suche, O(n) Insert/Delete</li><li><strong>HashMap</strong>: O(1) amortisiert für alle Operationen</li><li><strong>BST</strong>: O(log n) wenn balanciert (AVL, Red-Black)</li><li><strong>Heap</strong>: O(log n) Insert/Delete, O(1) Min/Max-Zugriff</li></ul><h3>Sortieralgorithmen</h3><p>QuickSort: O(n log n) avg, O(n²) worst; MergeSort: O(n log n) stabil; TimSort (Python default): Hybridansatz aus Merge + Insertion.</p>",
+          "zusammenfassung": "Big-O, Datenstrukturen und Sortierung im Überblick",
+          "erstelltAm": "2026-04-11T10:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>DSA – Vollständige Synthese</h2><p>Algorithmen auf Graphen: BFS (O(V+E), Shortest Path in ungewichtetem Graph), DFS (O(V+E), Cycle Detection, Topological Sort). Dijkstra: O((V+E) log V) mit Min-Heap. A*: informierte Suche mit Heuristik, O(E) im Besten Fall.</p><h3>Dynamische Programmierung</h3><p>Optimal-Substruktur + Überlappende Teilprobleme → DP. Top-Down (Memoization) vs Bottom-Up (Tabulation). Beispiele: Knapsack O(n·W), LCS O(n·m), Matrix-Chain O(n³).</p><h3>NP-Vollständigkeit</h3><p>Travelling Salesman, 3-SAT, Vertex Cover sind NP-vollständig. Approximationsalgorithmen (Christofides: 1.5-fache Approximation für TSP) oder Heuristiken (Greedy, Simulated Annealing) für praktische Lösungen.</p>",
+          "zusammenfassung": "Graphenalgorithmen, DP und NP-Komplexität",
+          "erstelltAm": "2026-04-11T10:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:2", "inhalt": "TimSort ist Pythons Standard-Sortieralgorithmus: Hybrid aus MergeSort und InsertionSort", "erstelltAm": "2026-04-11T10:10:00Z" },
+        { "id": "#20:3", "inhalt": "A* ist vollständig und optimal, wenn die Heuristik zulässig (nie überschätzt) ist", "erstelltAm": "2026-04-11T10:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-11T10:00:00Z",
+      "aktualisiertAm": "2026-04-11T10:10:00Z"
+    },
+    {
+      "id": "#12:2",
+      "slug": "tensorflow-keras",
+      "titel": "TensorFlow & Keras",
+      "kategorie": "cs",
+      "tags": ["ml", "neural-networks", "python", "deep-learning"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Ein neuronales Netz lernt wie ein Kind: zeige ihm tausend Katzenbilder, und es beginnt zu <em>fühlen</em>, was eine Katze ausmacht. Nicht durch Regeln – durch Erfahrung.</p><p>TensorFlow ist die Fabrik, Keras das freundliche Gesicht davor. Du stapelst Schichten wie Legobausteine: Eingabe → Verarbeitung → Ausgabe. Das Netz justiert seine Schrauben (Gewichte) automatisch, bis die Ausgabe stimmt.</p>",
+          "zusammenfassung": "Neuronale Netze als lernende Systeme",
+          "erstelltAm": "2026-04-12T11:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>TensorFlow & Keras</h2><p>TensorFlow (Google, 2015) ist ein Open-Source-Framework für numerische Berechnungen auf Tensoren. Keras ist die High-Level-API, seit TF 2.0 integriert.</p><h3>Workflow</h3><ol><li>Daten laden und normalisieren</li><li>Modell definieren: <code>model = keras.Sequential([layers.Dense(128, activation='relu'), layers.Dense(10, activation='softmax')])</code></li><li>Kompilieren: Loss, Optimizer, Metrics</li><li>Trainieren: <code>model.fit(X_train, y_train, epochs=10)</code></li><li>Evaluieren: <code>model.evaluate(X_test, y_test)</code></li></ol><h3>Wichtige Konzepte</h3><p>Backpropagation berechnet Gradienten via Chain Rule. Adam-Optimizer adaptiert Lernraten pro Parameter. Dropout verhindert Overfitting.</p>",
+          "zusammenfassung": "Keras Sequential API und Trainingsworkflow",
+          "erstelltAm": "2026-04-12T11:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>TensorFlow & Keras – Vollständige Synthese</h2><p>TF 2.x nutzt Eager Execution standardmäßig; <code>@tf.function</code> kompiliert in statischen Graphen (XLA-Optimierung möglich). Für benutzerdefinierte Trainingsloops: <code>tf.GradientTape</code> für automatische Differentiation.</p><h3>Architekturvarianten</h3><ul><li><strong>CNN</strong>: Conv2D + MaxPooling für spatial features; ResNet löst Vanishing Gradient durch Skip Connections</li><li><strong>RNN/LSTM</strong>: Sequentielle Daten; LSTM-Gating verhindert Vanishing Gradient über Zeit</li><li><strong>Transformer</strong>: Self-Attention O(n²) Komplexität; BERT/GPT-Familien</li></ul><h3>Deployment</h3><p>TF Serving, TFLite (mobile), TF.js (browser). SavedModel-Format ist portabel. Quantisierung (INT8) reduziert Modellgröße um ~4x bei geringem Genauigkeitsverlust.</p>",
+          "zusammenfassung": "Eager/Graph Execution, CNN/RNN/Transformer, Deployment",
+          "erstelltAm": "2026-04-12T11:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:4", "inhalt": "TF 2.0 führte Eager Execution als Standard ein; tf.function kompiliert zu statischem Graph", "erstelltAm": "2026-04-12T11:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-12T11:00:00Z",
+      "aktualisiertAm": "2026-04-12T11:10:00Z"
+    },
+    {
+      "id": "#12:3",
+      "slug": "git",
+      "titel": "Git & Versionskontrolle",
+      "kategorie": "cs",
+      "tags": ["git", "vcs", "collaboration", "devops"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Stell dir vor, jede Version deines Textes wäre eingefroren – du kannst jederzeit zurück. Das ist <strong>Git</strong>. Jeder Commit ist ein Schnappschuss. Branches sind parallele Welten deines Projekts, die du später vereinen kannst.</p>",
+          "zusammenfassung": "Git als Zeitmaschine für Code",
+          "erstelltAm": "2026-04-13T08:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Git</h2><p>Git ist ein verteiltes Versionskontrollsystem (DVCS). Jedes Repository enthält die vollständige Historie. Commits sind SHA-1-Hashes des Snapshots + Metadaten + Parent-Hash.</p><h3>Kernbefehle</h3><ul><li><code>git add</code> → Staging Area; <code>git commit</code> → permanenter Snapshot</li><li><code>git branch</code> / <code>git checkout -b</code> → parallele Entwicklungslinien</li><li><code>git merge</code> → fast-forward oder three-way merge; <code>git rebase</code> → lineare Historie</li><li><code>git stash</code> → temporäres Weglegen von Änderungen</li></ul>",
+          "zusammenfassung": "DAG-Commits, Branching und Merge-Strategien",
+          "erstelltAm": "2026-04-13T08:05:00Z"
+        },
+        "denker2": null
+      },
+      "fakten": [],
+      "status": "denker2_laeuft",
+      "erstelltAm": "2026-04-13T08:00:00Z",
+      "aktualisiertAm": "2026-04-13T08:05:00Z"
+    },
+    {
+      "id": "#12:4",
+      "slug": "docker",
+      "titel": "Docker & Container",
+      "kategorie": "cs",
+      "tags": ["devops", "container", "deployment", "linux"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Docker ist wie ein Umzugskarton für Software: alles, was ein Programm zum Laufen braucht, steckt drin. Öffne den Karton auf jedem Rechner – es funktioniert immer gleich.</p>",
+          "zusammenfassung": "Container als portable Umzugskartons",
+          "erstelltAm": "2026-04-14T09:00:00Z"
+        },
+        "denker": null,
+        "denker2": null
+      },
+      "fakten": [],
+      "status": "traumer_laeuft",
+      "erstelltAm": "2026-04-14T09:00:00Z",
+      "aktualisiertAm": "2026-04-14T09:00:00Z"
+    },
+    {
+      "id": "#12:5",
+      "slug": "linux-cli",
+      "titel": "Linux & CLI",
+      "kategorie": "cs",
+      "tags": ["linux", "shell", "bash", "terminal"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Die Kommandozeile ist wie ein Gespräch mit dem Computer in seiner Muttersprache. Kein Klicken – du schreibst, was du willst, und der Rechner handelt sofort.</p>",
+          "zusammenfassung": "Shell als direkte Kommunikation mit dem System",
+          "erstelltAm": "2026-04-15T10:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Linux CLI</h2><p>Der Linux-Kernel verwaltet Prozesse, Speicher und I/O. Die Shell (bash/zsh) interpretiert Befehle und verbindet Programme via Pipes (<code>|</code>).</p><h3>Essentielle Befehle</h3><ul><li><code>ls, cd, pwd, mkdir, rm, cp, mv</code> – Dateisystem</li><li><code>grep, find, sed, awk</code> – Textverarbeitung</li><li><code>ps, top, kill, &, nohup</code> – Prozessverwaltung</li><li><code>chmod, chown, sudo</code> – Berechtigungen</li></ul>",
+          "zusammenfassung": "Kernel, Shell, Pipes und essentielle Befehle",
+          "erstelltAm": "2026-04-15T10:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>Linux CLI – Vollständige Synthese</h2><p>Alles in Linux ist eine Datei (VFS-Abstraktion). Daemons laufen als Hintergrundprozesse; systemd verwaltet den Lifecycle. cgroups und namespaces sind die Grundlage für Container (Docker nutzt beides).</p><h3>Shell-Scripting</h3><p>Bash-Skripte: Shebang <code>#!/bin/bash</code>, Variablen, Conditionals, Loops, Funktionen. Process Substitution: <code>diff &lt;(cmd1) &lt;(cmd2)</code>.</p>",
+          "zusammenfassung": "VFS, systemd, cgroups und Shell-Scripting",
+          "erstelltAm": "2026-04-15T10:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:5", "inhalt": "In Linux ist alles eine Datei: Devices, Sockets, Pipes – alle über den VFS-Layer zugänglich", "erstelltAm": "2026-04-15T10:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-15T10:00:00Z",
+      "aktualisiertAm": "2026-04-15T10:10:00Z"
+    },
+    {
+      "id": "#12:6",
+      "slug": "latex",
+      "titel": "LaTeX",
+      "kategorie": "cs",
+      "tags": ["dokumentation", "wissenschaft", "typografie", "tex"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>LaTeX ist wie ein Architekt für Texte: du beschreibst die <em>Struktur</em>, LaTeX übernimmt das <em>Layout</em>. Formeln sehen plötzlich aus wie im Lehrbuch – weil sie von derselben Engine gesetzt werden.</p>",
+          "zusammenfassung": "LaTeX als Struktursprache für wissenschaftliche Dokumente",
+          "erstelltAm": "2026-04-16T09:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>LaTeX</h2><p>LaTeX ist ein Makropaket auf TeX (Knuth, 1978). Dokumente werden als <code>.tex</code>-Dateien geschrieben und zu PDF kompiliert (<code>pdflatex</code>, <code>xelatex</code>, <code>lualatex</code>).</p><h3>Grundstruktur</h3><pre><code>\\documentclass{article}\n\\usepackage[utf8]{inputenc}\n\\begin{document}\nHallo Welt! $E = mc^2$\n\\end{document}</code></pre>",
+          "zusammenfassung": "TeX-Grundlagen, Dokumentklassen und Math-Mode",
+          "erstelltAm": "2026-04-16T09:05:00Z"
+        },
+        "denker2": null
+      },
+      "fakten": [],
+      "status": "denker_laeuft",
+      "erstelltAm": "2026-04-16T09:00:00Z",
+      "aktualisiertAm": "2026-04-16T09:05:00Z"
+    },
+    {
+      "id": "#12:7",
+      "slug": "aquarell",
+      "titel": "Aquarellmalerei",
+      "kategorie": "art",
+      "tags": ["malerei", "farbe", "wasser", "technik"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Aquarell ist die Kunst, dem Zufall zu vertrauen. Das Wasser bewegt die Farbe, wo es will – du steuerst nur grob. In diesem Kontrollverlust liegt die Schönheit: jedes Bild ist einmalig, weil das Wasser nie zweimal gleich fließt.</p><p>Beginne nass: feuchte das Papier, lass die erste Farbe laufen, atme durch. Aquarell lehrt Loslassen.</p>",
+          "zusammenfassung": "Aquarell als Tanz zwischen Kontrolle und Zufall",
+          "erstelltAm": "2026-04-17T14:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Aquarellmalerei</h2><p>Aquarellfarben sind wasserbasierte Pigmente, transparent und lichtstabil. Das Papier (140lb/300gsm Baumwolle empfohlen) trägt die Farbe; Weiß entsteht durch Aussparung, nicht durch Beimischung.</p><h3>Techniken</h3><ul><li><strong>Wet-on-wet</strong>: Papier vorfeuchten → weiche, fließende Kanten; ideal für Himmel, Hintergründe</li><li><strong>Wet-on-dry</strong>: Trockenes Papier → harte, kontrollierte Kanten; für Details</li><li><strong>Glazing</strong>: Transparente Schichten übereinander für Tiefe</li><li><strong>Reserving whites</strong>: Masking Fluid oder Aussparung</li></ul><h3>Farbtheorie</h3><p>Primäre Farbpalette: Lemon Yellow, Ultramarine Blue, Alizarin Crimson. Simultankontrast: komplementäre Farben wirken nebeneinander leuchtender.</p>",
+          "zusammenfassung": "Techniken, Materialien und Farbtheorie für Aquarell",
+          "erstelltAm": "2026-04-17T14:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>Aquarellmalerei – Vollständige Synthese</h2><p>Aquarellpigmente unterscheiden sich in Granulierung (Ultramarine Blue granuliert stark), Transparenz (Phthalo Blue opak, Quinacridone Magenta transparent) und Lichtechtheit (Blue Wool Scale 1–8).</p><h3>Wertstruktur</h3><p>Notan-Prinzip (japanisch für Hell-Dunkel): klare Wertkontraste (min. 3 Stufen) schaffen Lesbarkeit. Thumbnails mit 2–3 Werten before color.</p><h3>Fortgeschrittene Techniken</h3><ul><li><strong>Blooms</strong>: Nasse Farbe in halb-getrocknete Schicht → organische Texturen; steuerbar durch Wasseranteil</li><li><strong>Lifting</strong>: Nasse Farbe mit Pinsel/Schwamm abheben; staining pigments resisten gegen Lifting</li><li><strong>Granulation Medium</strong>: Verstärkt Granulierungseffekte bei glatten Pigmenten</li></ul>",
+          "zusammenfassung": "Pigmenteigenschaften, Notan-Wertstruktur und Fortgeschrittenen-Techniken",
+          "erstelltAm": "2026-04-17T14:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:6", "inhalt": "Aquarellpapier sollte mindestens 300gsm (140lb) Baumwolle sein, um Wellen zu minimieren", "erstelltAm": "2026-04-17T14:10:00Z" },
+        { "id": "#20:7", "inhalt": "Staining pigments (Phthalo-Familie) können nach Trocknung kaum noch geliftet werden", "erstelltAm": "2026-04-17T14:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-17T14:00:00Z",
+      "aktualisiertAm": "2026-04-17T14:10:00Z"
+    },
+    {
+      "id": "#12:8",
+      "slug": "figurzeichnen",
+      "titel": "Figurzeichnen",
+      "kategorie": "art",
+      "tags": ["zeichnen", "anatomie", "gestik", "manga"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Jede Pose erzählt eine Geschichte. Bevor du eine Linie ziehst, <em>fühle</em> die Bewegung: Wohin zieht das Gewicht? Was sagt die Silhouette? Zeichnen heißt erst Beobachten.</p><p>Fange mit dem Rhythmus an – eine S-Kurve durch den ganzen Körper. Dann Volumen. Dann Details. Nie andersherum.</p>",
+          "zusammenfassung": "Figur als Bewegung, nicht als Umriss",
+          "erstelltAm": "2026-04-18T15:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Figurzeichnen</h2><p>Die menschliche Figur wird in <em>Kopflängen</em> gemessen: Realistische Proportion ~7,5 Kopflängen; heroische/Modeproportionen 8–8,5; Manga-Chibi 2–3.</p><h3>Konstruktionsansatz</h3><ol><li><strong>Gesture/Rhythmuslinie</strong>: Wirbelsäulenkurve + Schulter-/Hüftneigung (30 Sek. Gestures)</li><li><strong>Volumen-Primitives</strong>: Torso als Ei/Box, Gliedmaßen als Zylinder</li><li><strong>Anatomie</strong>: Muskelgruppen im Dienst der Pose (push vs. pull)</li><li><strong>Kontur & Flächen</strong>: Licht/Schatten definieren Form</li></ol>",
+          "zusammenfassung": "Proportionen, Gesture-Drawing und Konstruktionsmethode",
+          "erstelltAm": "2026-04-18T15:05:00Z"
+        },
+        "denker2": null
+      },
+      "fakten": [],
+      "status": "denker2_laeuft",
+      "erstelltAm": "2026-04-18T15:00:00Z",
+      "aktualisiertAm": "2026-04-18T15:05:00Z"
+    },
+    {
+      "id": "#12:9",
+      "slug": "lineare-algebra",
+      "titel": "Lineare Algebra",
+      "kategorie": "math",
+      "tags": ["mathematik", "vektoren", "matrizen", "ml-grundlage"],
+      "stufen": {
+        "traumer": {
+          "html": "<p>Lineare Algebra ist die Sprache des Raums. Vektoren sind Pfeile; Matrizen sind Transformationen – Drehungen, Streckungen, Spiegelungen. ML-Modelle sprechen ausschließlich diese Sprache.</p>",
+          "zusammenfassung": "Vektoren und Matrizen als Sprache des Raums",
+          "erstelltAm": "2026-04-19T11:00:00Z"
+        },
+        "denker": {
+          "html": "<h2>Lineare Algebra</h2><p>Kernkonzepte: Vektoren und Räume, lineare Abbildungen, Matrizen als Darstellung von Abbildungen, Determinante, Eigenwerte/-vektoren, Orthogonalität.</p><h3>Für ML relevant</h3><ul><li>Matrix-Multiplikation: Gewichtsmatrizen in Neural Nets</li><li>SVD: Dimensionsreduktion (PCA), Recommendation Systems</li><li>Eigenwerte: PCA, Google's PageRank</li></ul>",
+          "zusammenfassung": "Kernkonzepte und ML-Relevanz",
+          "erstelltAm": "2026-04-19T11:05:00Z"
+        },
+        "denker2": {
+          "html": "<h2>Lineare Algebra – Vollständige Synthese</h2><p>Vektorräume über Körpern: Axiome, Basis, Dimension. Lineare Abbildungen als Homomorphismen: Bild und Kern (Dimensionssatz: dim(V) = dim(Kern f) + dim(Bild f)).</p><h3>Eigenwerttheorie</h3><p>Av = λv; charakteristisches Polynom det(A-λI)=0. Spektralzerlegung symmetrischer Matrizen (reelle Eigenwerte, orthogonale Eigenvektoren). PCA: Eigenvektoren der Kovarianzmatrix.</p><h3>Numerische Stabilität</h3><p>Konditionszahl κ(A) = ||A||·||A⁻¹||: großes κ → schlecht konditioniert → Rundungsfehler amplifiziert. QR-Zerlegung stabiler als Gauß für Least-Squares.</p>",
+          "zusammenfassung": "Vektorraumtheorie, Spektralzerlegung und numerische Stabilität",
+          "erstelltAm": "2026-04-19T11:10:00Z"
+        }
+      },
+      "fakten": [
+        { "id": "#20:8", "inhalt": "Dimensionssatz: dim(V) = dim(Kern f) + dim(Bild f) für jede lineare Abbildung f: V→W", "erstelltAm": "2026-04-19T11:10:00Z" }
+      ],
+      "status": "fertig",
+      "erstelltAm": "2026-04-19T11:00:00Z",
+      "aktualisiertAm": "2026-04-19T11:10:00Z"
+    }
+  ]
+}

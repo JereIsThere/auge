@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.env.local
+next-env.d.ts
+
+# dev server log
+dev.log
+.commit_msg.txt
