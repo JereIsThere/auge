@@ -1,128 +1,233 @@
-# auge — Agent Guide
+# Auge 2 — für Claude
 
-Statische Multi-Page-Website auf Vite + TypeScript + Vanilla DOM. Eine „Sammlung von Notizen, Guides und Experimenten" — jede Sub-Page lebt in `pages/<name>/`. Inhaltliche Topics werden aus dem Submodule `pages/claude-learnings/` gespeist.
+Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScript-Code (keine DB). Featured + Kommt-noch auf der Landing, Lektionen mit DepthBox + Quellen + Übungsaufgaben.
 
-## Tech-Stack
+**Tech:** Next.js 15.5 (App Router, standalone build, typedRoutes), React 19, Tailwind v4 (für Lektionen) + CSS-Modules (für Auge-Frame), TypeScript strict, Node ≥18.
 
-- **Vite 5** (Multi-Page, `root: 'pages'`, build → `../public_html/`)
-- **TypeScript** strict, `module: ESNext`, `moduleResolution: bundler`
-- **Kein Framework.** Reines DOM + `<script type="module">`. Kein React/Vue/Svelte.
-- **Kein CSS-Framework.** Reines CSS in `pages/style.css` (geteilt) + per-Page-CSS optional.
-- **Submodule** für inhaltliche Topics: `pages/claude-learnings/` → `github.com/JereIsThere/claude-learnings`.
-- **Deploy:** `npm run deploy` → rsync auf `claude-user:/home/claude-user/public_html/`.
+**Live:** [auge2.jeremias-groehl.de](https://auge2.jeremias-groehl.de) — Deploy via GitHub Action bei push auf main mit Pfad-Filter `auge-2/**`. Wenn nicht triggert: `gh workflow run "Deploy Auge 2.0" --ref main`.
 
-## Folder-Layout
+---
+
+## Verzeichnis-Map (das Wesentliche)
 
 ```
-pages/                          Was tatsächlich gerendert wird
-├── index.html                  Home (auge-Landing mit Canvas-Effekten)
-├── main.ts                     Home-Logik (Cursor, Backdrop, Card-Rendering)
-├── style.css                   Geteiltes Stylesheet, gemounted als /style.css
-├── pages.json                  AUTOGENERIERT (gitignored)
-├── README.md                   Kopie des Submodule-README — kann irgendwann weg
-├── art-advanced/               Standalone-Page (eigene CSS, eigener Inhalt)
-│   ├── index.html
-│   └── style.css
-├── seite-eins/                 Boilerplate-Demo
-├── seite-zwei/                 Boilerplate-Demo
-├── claude-learnings/           SUBMODULE — kanonischer Inhalt für Topics
-│   ├── README.md
-│   ├── regex/{README.md,beginner/,intermediate/,advanced/}
-│   ├── latex/...
-│   ├── data-structures-algorithms/...
-│   ├── tensorflow-keras/...
-│   └── art-advanced/index.html (bestehende Variante im Submodule, NICHT das top-level art-advanced)
-└── <topic>/                    Top-Level-Stale-Duplikate ODER vom Generator befüllt:
-    ├── regex/                  → pre-submodule README + GENERIERTES index.html (gitignored)
-    ├── latex/                  → dito
-    ├── data-structures-algorithms/  → dito
-    └── tensorflow-keras/       → dito
-
-topics/                         Coming-Soon-Marker — leere Ordner, je 1 .gitkeep
-├── api-rest/.gitkeep
-├── compiler-design/.gitkeep
-└── ... (19 Stück)
-
-topics.config.json              OPTIONAL — Status/Kategorie/Tags-Overrides
-                                Schema: docs/topics-config-schema.md
-public/                         Vite publicDir — derzeit leer
-scripts/discover.mjs            Single Source of Truth fürs Page-Inventar
-vite.config.ts                  Importiert discover, baut rollup-input
+auge-2/
+  app/                              App-Router-Routen
+    page.tsx                        Landing (Featured + Kommt-noch)
+    thema/[slug]/                   Thema-Hub
+    thema/[slug]/lektionen/[lektion]/   Lektion mit Sidebar
+  components/
+    lessons/                        WIEDERVERWENDBAR: DepthBox, QuelleBox, Aufgabe, KiReview, LessonsSidebar, LessonsScope, ThemeToggle
+    kurse/<thema>/                  Lektions-Components pro Thema
+    KommtNochListe.tsx              Landing-Sektion
+    TopicGrid.tsx                   (alt, ungenutzt)
+    CyrillicCanvas.tsx              Hero-Hintergrund
+  themen/
+    index.ts                        REGISTRY (alle Themen importieren + listen)
+    _platzhalter.ts                 Themen ohne Lektionen (status kommt-noch)
+    <thema>/meta.ts                 Thema-Definition (Gruppen, Lektionen, Pfade)
+    <thema>/quellen.ts              (optional) wissenschaftliche Quellen
+  lib/schema.ts                     berechneSchemaLayout (Landing-Schema-Hinweis)
+  types/index.ts                    Thema, Lektion, Pfad, Quelle, Kategorie
+  docs/
+    architektur.md                  Detaillierte Architektur-Doku
+    prompts/                        Copy-Paste Templates für neue Chats
+    roadmap.md                      Was fertig, was offen, was v1.0-Blocker
+  _legacy/                          Schlafende OrientDB/Generierungs-Pipeline (vom Build ausgeschlossen)
 ```
 
-## Auto-Discovery & Topic-Generator
+---
 
-`scripts/discover.mjs` ist die Single Source of Truth fürs Page-Inventar. Läuft als `prebuild`/`predev` Hook, von vite.config.ts beim Config-Load, und im Dev-Server bei jedem Submodule-`.md`-Change.
+## Patterns (das was du in jeder Lektion brauchst)
 
-Was es tut:
-1. **Submodule-Topics rendern**: Scant `pages/claude-learnings/{topic}/README.md` → für jedes Topic mit Inhalt: rendert README + `{beginner,intermediate,advanced}/resources.md` per `marked` zu `pages/<topic>/index.html` (gitignored).
-2. **Standalone-Pages erkennen**: Scant `pages/<slug>/` nach Ordnern mit eigener `index.html`, die nicht generiert wurden (z.B. `art-advanced`, `seite-eins`, `seite-zwei`).
-3. **Coming-Soon-Scaffolds erkennen**: Scant `topics/<slug>/` (leere Marker-Ordner für geplante Inhalte).
-4. **Optionale Config mergen**: Wenn `topics.config.json` (Repo-Root) existiert, wird sie über die auto-discovered Metadaten gemergt — Schema in [docs/topics-config-schema.md](docs/topics-config-schema.md). Liefert `status` (todo/in-progress/finished/archived), `category`, `tags`, `order`.
-5. **`pages.json` schreiben** — Array von `{ slug, kind, title, description, levels?, status, category, tags?, order? }`. Sortiert nach Kategorie, dann order, dann kind.
+### DepthBox — aufklappbare Tiefe
 
-vite.config.ts ruft `discoverAndGenerate()` beim Load und filtert auf `kind ∈ {topic, page}` für die Build-Entries.
+```tsx
+import { DepthBox } from "@/components/lessons/DepthBox";
 
-### Workflows
-- **Neuen Submodule-Topic anlegen**: `pages/claude-learnings/<slug>/README.md` schreiben, im auge-Repo `mkdir pages/<slug>`, `npm run discover`. Topic erscheint sofort als Page.
-- **Neuen Coming-Soon-Marker**: `mkdir topics/<slug> && touch topics/<slug>/.gitkeep`. Zeigt sich als gelockte Card.
-- **Standalone-Page**: `pages/<slug>/index.html` schreiben → Build greift sie automatisch ab.
-- **Status/Kategorie ändern**: `topics.config.json` editieren (siehe Schema-Doc) → re-discover.
+<DepthBox variant="why" title="Warum funktioniert das?">
+  Erklärung der Hintergründe.
+</DepthBox>
+```
 
-→ `art-advanced` ist im Generator explizit ausgenommen (zwei parallele Varianten, siehe [docs/todos/art-advanced-unification.md](docs/todos/art-advanced-unification.md)).
+Varianten: `basic` 🌱 · `why` 🤔 · `mistake` ⚠️ · `deeper` 🔬 · `related` 🔗 · `history` 📜
 
-## Konventionen
+Reihenfolge pro Lektion: `why` → `mistake` → `deeper` → `related` (→ `history` optional). Selten alle sechs.
 
-### Inhalte
-- **Submodule-Content (`pages/claude-learnings/**`) NIEMALS direkt editieren** — separates Repo, separater Workflow. Read-only von hier aus.
-- Inhaltliche Änderungen am Submodule passieren upstream (eigenes Repo `claude-learnings`).
+### QuelleBox — wissenschaftliche Quelle am Ort der Referenz
 
-### Performance (Home)
-- Animationen nur via `requestAnimationFrame`, nie `setInterval`.
-- Ein einziges Canvas für alle Backdrop-Layer (Cyrillic-Drift + Embers).
-- DPR-aware: `cyrCanvas.width = w * dpr`, `setTransform(dpr,…)`.
-- Particle-Count skaliert mit Viewport (`Math.min(80, Math.floor(w/20))`).
-- Resize debounced (120 ms).
-- `prefers-reduced-motion: reduce` deaktiviert Backdrop komplett (`cyrCanvas.remove()`).
+```tsx
+// 1. Quelle in themen/<thema>/quellen.ts definieren (typed: Quelle)
+// 2. Convenience-Wrapper in components/kurse/<thema>/<Thema>Quelle.tsx
+//    der ragQuelleFinden / kryptoQuelleFinden o.ä. nutzt
+// 3. Verwendung in der Lektion:
+<RagQuelle id="liu2024-lostmiddle" kernaussagen={[
+  "Empirische Studie über 10 LLMs",
+  "U-förmige Accuracy-Kurve",
+  "Effekt verschwindet nicht durch größeres Kontextfenster",
+]} />
+```
 
-### Accessibility
-- Custom-Cursor läuft NUR bei `(pointer: fine)`. Sonst nativen Cursor lassen — sonst Touch-Geräte ohne Cursor.
-- `cursor: none` wird per JS-Klasse `body.cursor-hidden` gesetzt, nicht statisch in CSS.
-- Skip-Link auf jeder Page (`<a href="#main" class="skip-link">`).
-- `:focus-visible` ist global definiert in `style.css`.
-- Alle dekorativen Elemente (Ornamente, Canvas, sub-cyr Slogan) haben `aria-hidden="true"`.
-- `<nav>` mit `aria-label` für die Card-Liste auf Home.
+Nur an zentralen Stellen, nicht hinter jeder Aussage.
 
-### CSS
-- Geteilte Variablen in `:root` (`--cyan`, `--purple`, `--gold`, `--gold-b`, `--bg`, `--fg`).
-- `body.home` für die Landing, `body:not(.home)` für Sub-Page-Defaults.
-- Externe Fonts via `<link rel="preconnect">` + Stylesheet-Link, nie via `@import` in CSS (blockiert Critical Path).
+### Aufgabe + KiReview — Übung mit KI-Feedback
 
-### TypeScript
-- `pages.json` wird zur Build-Zeit von vite.config.ts geschrieben — wenn `tsc --noEmit` schreit, weil `pages.json` fehlt: `npm run build` einmal laufen lassen oder das Snippet aus vite.config.ts manuell ausführen.
+```tsx
+import { Aufgabe, AufgabeCheckliste } from "@/components/lessons/Aufgabe";
+import { KiReview } from "@/components/lessons/KiReview";
 
-## Dev-Workflow
+<Aufgabe titel="Café mit Schatten" schwierigkeit="leicht" zeit="45 min">
+  <p>Beschreibung der Aufgabe.</p>
+  <AufgabeCheckliste items={[
+    "Pflichtelement 1",
+    "Pflichtelement 2",
+  ]} />
+  <KiReview prompt={`200-300-Wort-Prompt, der genau die Konzepte
+der Vorgänger-Lektionen abfragt und mit "nenn die zwei größten
+Verbesserungs-Hebel" endet.`} />
+</Aufgabe>
+```
+
+Schwierigkeit: `leicht | mittel | schwer`. Mini-Aufgaben (ohne KiReview) auch in normale Lektionen einbaubar.
+
+---
+
+## Wie ich eine neue Lektion baue
+
+1. Datei `components/kurse/<thema>/<Name>.tsx`
+2. `"use client"` nur wenn `useState`/Events nötig
+3. Skelett:
+   ```tsx
+   import { DepthBox } from "@/components/lessons/DepthBox";
+   import "@/components/lessons/lesson.css";
+
+   export default function Name() {
+     return (
+       <div className="lesson-card">
+         <h2>Lektions-Titel</h2>
+         <p className="lesson-description">Einstieg in 2-3 Sätzen.</p>
+         <div className="info-box">Kurzfassung als Anker.</div>
+
+         {/* Hauptinhalt: h3 + step-list / actors / interaktive Demo */}
+
+         <DepthBox variant="why" title="...">...</DepthBox>
+         <DepthBox variant="mistake" title="...">...</DepthBox>
+         <DepthBox variant="deeper" title="...">...</DepthBox>
+         <DepthBox variant="related" title="Hängt zusammen mit…">...</DepthBox>
+       </div>
+     );
+   }
+   ```
+4. In `themen/<thema>/meta.ts` mit `loader: () => import('@/components/kurse/<thema>/<Name>')` registrieren
+5. `npm run build` lokal (siehe Pitfalls!)
+
+Interaktive Lektionen: `useState` für State, SVG für Visualisierung (kein Canvas), Slider via `<input type="range">`. Vorbild: `components/kurse/procreate-rendering/Lichtkugel.tsx`.
+
+---
+
+## Wie ich ein neues Thema baue
+
+Vorbild: Aquarell-Starter (3 Lektionen) oder Procreate/Neuro (voll ausgebaut).
+
+1. `themen/<slug>/meta.ts` mit `Thema`-Typ — 3-4 Lektionen reichen für den ersten PR, rest als `kommtNoch: true`-Stubs
+2. `components/kurse/<slug>/<Lektion>.tsx` für die 3 Starter
+3. In `themen/index.ts` importieren + in `THEMEN[]` einfügen (vor `...PLATZHALTER_THEMEN`)
+4. In `themen/_platzhalter.ts` aus der Liste streichen (falls vorher dort)
+5. In `app/page.tsx` `THEMA_ICON` ergänzen
+6. `npm run build`, Commit, PR
+
+Status: `in-arbeit` für Starter, später `fertig` bei Vertiefung.
+
+---
+
+## Common pitfalls (alle schon mal passiert)
+
+### Quote-Bug bei deutschen „Anführungszeichen"
+
+In JSX-**Attributen** mit `title="..."` und in **JavaScript-Strings** mit `"..."` schließen deutsche `"` den String vorzeitig:
+
+```tsx
+// ❌ KAPUTT
+<DepthBox title="Was ist „X"?">     // → "Was ist „X" als String, dann "?" als JSX → Syntax-Error
+const x = "Bild mit „Stempel"";     // → String endet nach Stempel, leerer String + Komma kommt
+
+// ✅ OK
+<DepthBox title="Was ist X?">
+const x = "Bild mit Stempel";
+// JSX-Text-Content (zwischen Tags) darf „...":
+<p>Das ist der „Stempel"-Effekt.</p>
+```
+
+### `.commit_msg.txt` nicht ins Repo
+
+Wird oft als File-Quelle für `git commit -F` benutzt (weil PowerShell-Heredoc bockt). Steht in `.gitignore`.
+
+### Build vor Commit
+
+`npm run build` vor jedem Commit. SWC ist beim TypeScript-Parsen strenger als IDE-Linter — manche Quote-Bugs sieht nur der Build.
+
+### Tailwind-Layer
+
+Custom-CSS in `globals.css` ist in `@layer base` gewrappt, damit Tailwind utilities aus `@layer utilities` darüber gewinnen. `.lessons-scope` und `.skip-link` sind bewusst unlayered (lokale Wrapper). Niemals ein universal Reset (`* { margin: 0 }`) außerhalb von `@layer base`.
+
+### Deploy triggert nicht nach Merge
+
+Kann passieren wenn der Merge-Commit den Pfad-Filter (`paths: 'auge-2/**'`) nicht greift. Fix:
 
 ```bash
-npm install
-npm run dev        # vite, port 3001
-npm run build      # tsc --noEmit && vite build → ../public_html
-npm run deploy     # build + rsync zu claude-user
+gh workflow run "Deploy Auge 2.0" --ref main
 ```
 
-Submodule initial holen:
+---
+
+## Branch + PR + Deploy Workflow
+
 ```bash
-git submodule update --init --recursive
+# Neuer Branch von main
+git fetch origin main && git checkout main && git pull
+git checkout -b claude-edits/<beschreibung>
+
+# Arbeiten + Build prüfen
+npm run build   # in auge-2/
+
+# Commit (Heredoc bockt unter PowerShell — File-Variante:)
+echo "feat(...): ..." > .commit_msg.txt   # mehrzeilig editieren
+git add -A
+git commit -F .commit_msg.txt
+rm .commit_msg.txt   # in .gitignore — Sicherheitsnetz
+
+# Push + PR
+git push -u origin claude-edits/<beschreibung>
+gh pr create --title "..." --body-file <body>.md
+
+# Merge + Deploy
+gh pr merge <nr> --merge   # Standard, kein squash/rebase
+# Falls Deploy nicht triggert:
+gh workflow run "Deploy Auge 2.0" --ref main
 ```
 
-## Status quo (Stand 2026-04)
+Branchname-Konvention: `claude-edits/<thema>-vertiefung`, `claude-edits/<feature>`, `claude-edits/<thema>-quellen` etc.
 
-`npm run discover` ergibt aktuell: **26 Pages — 4 topic, 3 page, 19 coming-soon**, 1 Kategorie (`misc`).
+---
 
-- **4 Submodule-Topics** rendern automatisch: `regex`, `latex`, `data-structures-algorithms`, `tensorflow-keras`.
-- **3 Standalone-Pages**: `art-advanced` (eigene Optik), `seite-eins`, `seite-zwei` (Boilerplate-Demos).
-- **19 Coming-Soon-Scaffolds** in `topics/` — gelockte Cards auf der Home, kein Link.
-- **Stale Top-Level-Duplikate**: `pages/regex/`, `pages/latex/`, `pages/data-structures-algorithms/`, `pages/tensorflow-keras/` enthalten EIGENE README+Resources-Dateien (Pre-Submodule-Reste). Werden vom Generator IGNORIERT — Source of Truth ist das Submodule. Nicht löschen ohne Rückfrage.
-- **`topics.config.json` existiert noch nicht** — ALL Topics laufen mit Default-Status (finished für topic/page, todo für coming-soon) und Default-Kategorie `misc`. Sobald die Config kommt, wird auf der Home dynamisch nach Kategorien gruppiert.
+## Aktueller Stand (Stand: nach PR #26)
 
-Siehe [docs/pending.md](docs/pending.md) für offene Arbeiten und [docs/architecture.md](docs/architecture.md) für Detail-Patterns.
+**Themen fertig (`status: 'fertig'`)** — alle ausgebaut auf Voll-Lektionen + Pfade:
+- 🔐 Kryptografie — 22 Lektionen, 3 Pfade
+- 🧬 RAG — 11 Lektionen + 11 wissenschaftliche Quellen
+- 🖌️ Procreate-Rendering — 12 Lektionen + Übungsaufgaben mit KI-Review
+- 🧠 Neurologie & MMC — 13 Lektionen + Ergo-Übungsaufgaben
+- 🛠️ MCP — 12 Lektionen, 4 Pfade, inkl. Sampling + Sicherheits-Block + Übungsaufgaben
+- 🎨 Aquarell — 11 Lektionen, 4 Pfade + Übungsaufgaben mit KI-Review
+
+**v1.0 erreicht** — alle Kern-Themen ausgebaut. Nächste Schritte sind v1.1-Themen (siehe roadmap).
+
+Vollständige Liste mit Prio in [`docs/roadmap.md`](./docs/roadmap.md).
+
+---
+
+## Wenn du wenig Tokens hast
+
+Nimm dir was Kleines vor — Prompts in [`docs/prompts/finish-cleanup.md`](./docs/prompts/finish-cleanup.md) sortieren Aufgaben nach Größe. Beispiele für 5-10k-Token-Tasks: einzelne Lektion ausbauen, Quellen in einer Lektion ergänzen, kleinen Bug fixen.
+
+Größere Tasks (volle Vertiefung, neues Feature) brauchen meist 30-50k Tokens — am besten zu Sessions wenn du Zeit hast.

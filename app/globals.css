@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Auge-Frame: mystischer Codex (immer dunkel) */
+  --cyan: #00d4c8;
+  --purple: #6b00cc;
+  --gold: #d4a200;
+  --bg: #06000e;
+  --fg: #c8c0d8;
+  --fg-dim: #8880a0;
+  --border: rgba(255, 255, 255, 0.07);
+  --surface: rgba(255, 255, 255, 0.03);
+}
+
+@theme inline {
+  /* Tailwind-Tokens, die Lektionen nutzen können */
+  --font-sans: var(--font-geist-sans, Georgia, 'Times New Roman', serif);
+  --font-mono: var(--font-geist-mono, 'Courier New', Courier, monospace);
+}
+
+/* ────────────────────────────────────────────────────────────
+   Auge-Frame-Basis (geht in @layer base, damit Tailwind-
+   Utilities darauf greifen können – unlayered Styles würden
+   sonst alle Utilities pauschal überschreiben).
+   ──────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.6;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Rauschen-Overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9000;
+  }
+
+  /* Vignette — weicher als früher, damit Karten am Rand sichtbar bleiben. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(6, 0, 14, 0.45) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+
+  code, pre, kbd {
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.25;
+  }
+}
+
+/* Skip-Link bleibt unlayered – kleiner Helper, kollidiert mit nichts. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Lektionen-Scope: lokaler heller Lern-Look, überdeckt das
+   dunkle Auge-Frame im Lektions-Bereich. Bewusst unlayered,
+   damit der Container-Hintergrund die Vignette dahinter
+   überzeichnet. Tailwind-Utilities INNERHALB des Scopes
+   bleiben unbeeinflusst, weil utility-Selektoren auf andere
+   Elemente matchen als .lessons-scope selbst.
+   ──────────────────────────────────────────────────────────── */
+.lessons-scope {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+  color: #18181b; /* zinc-900 */
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+:where(.dark) .lessons-scope {
+  background: #09090b; /* zinc-950 */
+  color: #f4f4f5; /* zinc-100 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

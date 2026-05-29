@@ -1,42 +1,66 @@
-name: Deploy
+name: Deploy Auge
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
-concurrency:
-  group: deploy
-  cancel-in-progress: false
-
 jobs:
-  build-and-deploy:
+  deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Init public submodule (claude-learnings)
-        run: git submodule update --init pages/claude-learnings
-
-      - uses: actions/setup-node@v4
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Abhängigkeiten installieren
+        run: npm ci
 
-      - run: npm run build
+      - name: Bauen (standalone)
+        run: npm run build
+        env:
+          USE_EXAMPLE_DATA: 'true'
 
-      - name: Setup SSH
+      - name: Standalone-Paket zusammensetzen
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          cp -r .next/static .next/standalone/.next/static
+          if [ -d public ]; then
+            cp -r public .next/standalone/public
+          fi
 
-      - name: Deploy via rsync
+      - name: SSH-Key einrichten
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.AUGE2_SSH_KEY }}
+
+      - name: Bekannte Hosts eintragen
         run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }}" \
-            dist/ \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/claude-user/public_html/
+          ssh-keyscan -p ${{ secrets.AUGE2_SSH_PORT }} -H ${{ secrets.AUGE2_SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Dateien auf Server übertragen
+        run: |
+          rsync -az --delete \
+            -e "ssh -p ${{ secrets.AUGE2_SSH_PORT }}" \
+            --exclude='.env.local' \
+            .next/standalone/ \
+            ${{ secrets.AUGE2_SSH_USER }}@${{ secrets.AUGE2_SSH_HOST }}:/var/www/auge2/
+
+      - name: Dienst neu starten
+        run: |
+          ssh -p ${{ secrets.AUGE2_SSH_PORT }} \
+            ${{ secrets.AUGE2_SSH_USER }}@${{ secrets.AUGE2_SSH_HOST }} \
+            "sudo systemctl restart auge2 && systemctl is-active auge2"
+
+      - name: Deploy-Zusammenfassung
+        run: |
+          echo "✓ https://auge2.jeremias-groehl.de"
+          echo "  Commit: ${{ github.sha }}"
+          echo "  Branch: ${{ github.ref_name }}"

@@ -1,0 +1,389 @@
+.seite {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 2rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: rgba(200, 192, 216, 0.4);
+}
+
+.breadcrumb a {
+  color: rgba(200, 192, 216, 0.5);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: rgba(200, 192, 216, 0.85);
+}
+
+.kategoriePill {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid var(--farbe, #00d4c8);
+  color: var(--farbe, #00d4c8);
+  letter-spacing: 0.05em;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.titel {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #e0d8f0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.unterTitel {
+  font-size: 1.05rem;
+  color: rgba(200, 192, 216, 0.7);
+  max-width: 65ch;
+  line-height: 1.55;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.statusBadge {
+  font-size: 0.68rem;
+  font-family: monospace;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.statusBadge[data-status='kommt-noch'] {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statusBadge[data-status='in-arbeit'] {
+  background: rgba(212, 162, 0, 0.08);
+  color: #d4a200;
+  border: 1px solid rgba(212, 162, 0, 0.3);
+  animation: pulsieren 2s ease-in-out infinite;
+}
+
+.statusBadge[data-status='fertig'] {
+  background: rgba(0, 204, 107, 0.08);
+  color: #00cc6b;
+  border: 1px solid rgba(0, 204, 107, 0.3);
+}
+
+.metaText {
+  font-size: 0.78rem;
+  color: rgba(200, 192, 216, 0.55);
+  font-family: monospace;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.tag {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(200, 192, 216, 0.4);
+  letter-spacing: 0.03em;
+}
+
+.ctaPrimary {
+  align-self: flex-start;
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: var(--cyan, #00d4c8);
+  color: var(--bg, #06000e);
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.ctaPrimary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.einleitung {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(200, 192, 216, 0.78);
+  max-width: 70ch;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid rgba(0, 212, 200, 0.3);
+  border-radius: 4px;
+}
+
+.h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #e0d8f0;
+  letter-spacing: -0.01em;
+}
+
+.h2Untertitel {
+  margin-top: 0.3rem;
+  font-size: 0.88rem;
+  color: rgba(200, 192, 216, 0.55);
+}
+
+/* ── Pfade ──────────────────────────────────────────────────────────────── */
+.pfadeBereich {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pfadeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.pfadKarte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.pfadKarte:hover {
+  border-color: rgba(0, 212, 200, 0.3);
+}
+
+.pfadKopf {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pfadIcon {
+  font-size: 1.25rem;
+}
+
+.pfadTitel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e0d8f0;
+}
+
+.pfadBeschreibung {
+  font-size: 0.82rem;
+  color: rgba(200, 192, 216, 0.6);
+  line-height: 1.5;
+}
+
+.pfadSchritte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  list-style: none;
+  padding: 0;
+}
+
+.pfadSchritte li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(200, 192, 216, 0.75);
+}
+
+.pfadNummer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  background: rgba(0, 212, 200, 0.1);
+  color: var(--cyan, #00d4c8);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.pfadCta {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: var(--cyan, #00d4c8);
+  align-self: flex-start;
+}
+
+/* ── Landkarte ──────────────────────────────────────────────────────────── */
+.landkarteBereich {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gruppenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.gruppe {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+.gruppeTitel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e0d8f0;
+}
+
+.gruppeUntertitel {
+  font-size: 0.78rem;
+  color: rgba(200, 192, 216, 0.55);
+  line-height: 1.5;
+}
+
+.lektionsListe {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.lektionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: rgba(200, 192, 216, 0.85);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.lektionItem:hover {
+  background: rgba(0, 212, 200, 0.06);
+  color: var(--cyan, #00d4c8);
+}
+
+.lektionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  color: rgba(0, 204, 107, 0.7);
+}
+
+.pfeil {
+  margin-left: auto;
+  color: rgba(200, 192, 216, 0.3);
+  font-family: monospace;
+}
+
+.lektionItemMuted {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+  color: rgba(200, 192, 216, 0.35);
+  font-style: italic;
+}
+
+.kommtNoch {
+  margin-left: auto;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.05em;
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+.leer {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: rgba(200, 192, 216, 0.5);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.leerHinweis {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  color: rgba(200, 192, 216, 0.35);
+  font-style: italic;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.backLink {
+  font-size: 0.82rem;
+  color: rgba(200, 192, 216, 0.4);
+  text-decoration: none;
+  font-family: monospace;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: rgba(200, 192, 216, 0.8);
+}
+
+@keyframes pulsieren {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (max-width: 640px) {
+  .seite {
+    padding: 1.5rem 1rem 4rem;
+  }
+}

@@ -1,0 +1,98 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(6, 0, 14, 0.7);
+}
+
+.nav {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.logoAuge {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e0d8f0;
+  font-family: Georgia, serif;
+}
+
+.logoVersion {
+  font-size: 0.65rem;
+  color: var(--cyan, #00d4c8);
+  font-family: monospace;
+  opacity: 0.8;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.generirenLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-family: 'Courier New', monospace;
+  color: var(--cyan, #00d4c8);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid rgba(0, 212, 200, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.generirenLink:hover {
+  background: rgba(0, 212, 200, 0.06);
+  border-color: rgba(0, 212, 200, 0.6);
+  text-decoration: none;
+}
+
+.generirenPunkt {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan, #00d4c8);
+  animation: pulsieren 2s ease-in-out infinite;
+}
+
+.haupt {
+  position: relative;
+  z-index: 2;
+  padding-top: 4.5rem;
+  min-height: 100dvh;
+}
+
+@keyframes pulsieren {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+}
