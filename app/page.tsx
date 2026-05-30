@@ -19,6 +19,7 @@ const THEMA_ICON: Record<string, string> = {
   aquarell: '🎨',
   'procreate-rendering': '🖌️',
   'neurologie-mmc': '🧠',
+  'next-auth-beta': '🔑',
 };
 
 export default function Home() {
