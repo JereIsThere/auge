@@ -1,0 +1,3 @@
+[submodule "hand"]
+	path = hand
+	url = https://github.com/JereIsThere/hand.git
