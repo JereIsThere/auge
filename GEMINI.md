@@ -7,7 +7,7 @@ Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScrip
 - **Branching Policy:**
   - Gemini MUST ONLY work on the `gemini` branch.
   - Claude MUST ONLY work on the `claude` branch.
-  - Never merge to `main` without explicit user instruction.
+  - **MANDATORY:** Never merge or push to `main` directly. All changes to `main` MUST be made through a Pull Request on GitHub.
 - **Mandatory Reading:** Before starting any task, Gemini agents MUST read this file and adhere to the architectural patterns described herein.
 - **Tech Stack:** Next.js 15.5 (App Router, standalone), React 19, Tailwind v4 (Lessons), CSS Modules (Auge-Frame), TypeScript strict.
 
