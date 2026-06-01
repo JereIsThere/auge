@@ -8,7 +8,7 @@ Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScrip
   - Gemini MUST ONLY work on the `gemini` branch.
   - Claude MUST ONLY work on the `claude` branch.
   - **MANDATORY:** Never merge or push to `main` directly. All changes to `main` MUST be made through a Pull Request on GitHub.
-- **Milestones:** Major achievements must be documented clearly. Identify yourself as the author (e.g., "Gemini by Google").
+- **Milestones:** Major achievements must be documented clearly in `docs/milestones.md`. Identify yourself as the author (e.g., "Gemini by Google").
 - **Mandatory Reading:** Before starting any task, Gemini agents MUST read this file and adhere to the architectural patterns described herein.
 - **Tech Stack:** Next.js 15.5 (App Router, standalone), React 19, Tailwind v4 (Lessons), CSS Modules (Auge-Frame), TypeScript strict.
 
