@@ -1,17 +1,25 @@
 .bühne {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem 5rem;
   position: relative;
   z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 3.5rem;
+}
+
+.hauptInhalt {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Hero (kompakter als zuvor) ───────────────────────────────── */
 .hero {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   padding: 4rem 0 3rem;
   gap: 1.1rem;
 }
@@ -50,7 +58,6 @@
   font-size: 1.05rem;
   color: rgba(200, 192, 216, 0.78);
   max-width: 580px;
-  margin: 0 auto;
   line-height: 1.5;
 }
 
@@ -58,7 +65,7 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 0.5rem;
 }
 
@@ -312,6 +319,13 @@
 @keyframes pulsieren {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
+}
+
+@media (max-width: 900px) {
+  .bühne {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 }
 
 @media (max-width: 600px) {
