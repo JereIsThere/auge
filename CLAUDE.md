@@ -1,6 +1,13 @@
-# Auge 2 — für Claude
+# Auge 2 — für Claude (Legacy/Branch Policy)
 
-Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScript-Code (keine DB). Featured + Kommt-noch auf der Landing, Lektionen mit DepthBox + Quellen + Übungsaufgaben.
+Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScript-Code (keine DB).
+
+**BRANCHING POLICY:**
+- Claude MUST work on branch `claude`.
+- Gemini MUST work on branch `gemini`.
+- **MANDATORY:** Do not merge or push to `main` directly. Changes must be made via Pull Request.
+- **MILESTONES:** Document major milestones clearly in `docs/milestones.md`. Identify yourself as the author (e.g., "Claude by Anthropic").
+ Featured + Kommt-noch auf der Landing, Lektionen mit DepthBox + Quellen + Übungsaufgaben.
 
 **Tech:** Next.js 15.5 (App Router, standalone build, typedRoutes), React 19, Tailwind v4 (für Lektionen) + CSS-Modules (für Auge-Frame), TypeScript strict, Node ≥18.
 

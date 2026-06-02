@@ -219,6 +219,19 @@ export const QUELLE_TYP_LABELS: Record<Quelle['typ'], string> = {
   talk: 'Talk',
 };
 
+// ────────────────────────────────────────────────────────────
+// Blog & Live Feed
+// ────────────────────────────────────────────────────────────
+
+export interface BlogPost {
+  slug: string;
+  titel: string;
+  datum: string;
+  autor: string;
+  kurztext: string;
+  icon?: string;
+}
+
 /** Kurzform „Autor et al. Jahr" für Marker im Fließtext. */
 export function quelleKurz(q: Quelle): string {
   if (q.typ === 'rfc') return `RFC ${q.nummer}`;
