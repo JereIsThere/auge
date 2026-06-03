@@ -21,6 +21,7 @@ const THEMA_ICON: Record<string, string> = {
   'procreate-rendering': '🖌️',
   'neurologie-mmc': '🧠',
   'next-auth-beta': '🔑',
+  'html-css': '🌐',
 };
 
 export default function Home() {

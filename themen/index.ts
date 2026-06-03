@@ -7,6 +7,7 @@ import aquarell from './aquarell/meta';
 import procreateRendering from './procreate-rendering/meta';
 import neurologieMmc from './neurologie-mmc/meta';
 import nextAuthBeta from './next-auth-beta/meta';
+import htmlCss from './html-css/meta';
 
 // Registry aller Themen.
 //
@@ -23,6 +24,7 @@ export const THEMEN: Thema[] = [
   procreateRendering,
   neurologieMmc,
   nextAuthBeta,
+  htmlCss,
   ...PLATZHALTER_THEMEN,
 ];
 
