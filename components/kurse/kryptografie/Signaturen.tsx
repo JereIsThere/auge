@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 type KeyPair = { publicKey: CryptoKey; privateKey: CryptoKey };
 
@@ -211,6 +212,15 @@ export default function Signaturen() {
           </li>
         </ul>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-fips-186-5"
+        kernaussagen={[
+          "FIPS 186-5 (2023) standardisiert ECDSA und EdDSA als offizielle Signaturalgorithmen — DSA selbst wird darin als veraltet markiert und soll nicht mehr neu eingesetzt werden.",
+          "ECDSA mit P-256 bietet bei 256-Bit-Schlüsseln Sicherheit vergleichbar mit 3072-Bit-RSA — deutlich kompaktere Signaturen bei gleicher Stärke.",
+          "EdDSA (Ed25519) wurde in FIPS 186-5 neu aufgenommen: deterministisch, schnell und ohne Anfälligkeit für schlechten Zufall wie klassisches ECDSA.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Wo Signaturen weiterwirken">
         <ul>

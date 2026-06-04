@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function Tls() {
   return (
@@ -38,6 +39,15 @@ export default function Tls() {
           AES-GCM-verschlüsselt — HTTP-Requests, Cookies, Inhalte.
         </li>
       </ol>
+
+      <KryptoQuelle
+        id="rfc-8446"
+        kernaussagen={[
+          "TLS 1.3 (2018) ist ein kompletter Neustart: veraltete Cipher-Suites wurden gestrichen, nur noch ECDHE als Schlüsseltausch erlaubt.",
+          "Der Handshake braucht nur noch 1 Round-Trip (statt 2 in TLS 1.2), was Ladezeiten messbar reduziert.",
+          "Forward Secrecy ist in TLS 1.3 verpflichtend — rückwirkende Entschlüsselung alter Mitschnitte ist ausgeschlossen.",
+        ]}
+      />
 
       <DepthBox variant="why" title="Wozu das Zertifikat?">
         <p>

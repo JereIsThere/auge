@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function PostQuantum() {
   return (
@@ -121,6 +122,15 @@ export default function PostQuantum() {
           Bereitstellungen (klassisch + PQ parallel).
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-fips-203"
+        kernaussagen={[
+          "FIPS 203 (2024) standardisiert ML-KEM — das erste post-quantensichere Key-Encapsulation-Verfahren mit offiziellem NIST-Status, basierend auf CRYSTALS-Kyber.",
+          "Die Sicherheit basiert auf dem Module-LWE-Problem (Learning With Errors): auch Quantencomputer haben dagegen bisher keinen bekannten effizienten Angriff.",
+          "ML-KEM-768 hat ~1,1 KB Public Key und ~1,1 KB Ciphertext — größer als RSA-2048, aber für Netzwerkprotokolle wie TLS 1.3 handhabbar.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Drumherum">
         <ul>

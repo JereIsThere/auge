@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { Route } from 'next'
 import Link from 'next/link'
 import styles from './framework.module.css'
 
@@ -229,7 +230,7 @@ export default function FrameworkPage() {
       </section>
 
       <footer className={styles.footer}>
-        <Link href="/roadmaps">→ Roadmaps ansehen</Link>
+        <Link href={"/roadmaps" as Route}>→ Roadmaps ansehen</Link>
         <a href="https://github.com/JereIsThere/auge-framework" target="_blank" rel="noopener">
           → auge-framework auf GitHub
         </a>

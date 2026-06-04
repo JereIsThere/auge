@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function Modi() {
   return (
@@ -118,6 +119,15 @@ export default function Modi() {
           AES-Hardware schneller und wird z. B. von Google bevorzugt.
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-sp-800-38d"
+        kernaussagen={[
+          "SP 800-38D definiert GCM formal als Kombination aus CTR-Modus (Verschlüsselung) und GHASH (Authentifizierung) — ein AEAD-Modus in einem Durchlauf.",
+          "Der Standard warnt explizit: eine einzige IV-Wiederholung unter demselben Schlüssel enthüllt den geheimen Authentifizierungsschlüssel H — ein katastrophaler Fehlermodus.",
+          "GCM ist hardwarebeschleunigt implementierbar und parallelisierbar — deshalb heute Standard in TLS 1.3, IPsec und SSH.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Drumherum">
         <ul>

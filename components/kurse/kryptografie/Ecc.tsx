@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function Ecc() {
   return (
@@ -118,6 +119,15 @@ export default function Ecc() {
           ECC, nicht mehr auf RSA.
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-fips-186-5"
+        kernaussagen={[
+          "FIPS 186-5 definiert die offiziellen NIST-Kurven: P-256, P-384, P-521 — mit dokumentierten Parametern für transparente, prüfbare Sicherheit.",
+          "P-256 (secp256r1) ist heute die meistgenutzte ECC-Kurve — in TLS-Zertifikaten, JWT-Signaturen und Android-Schlüsselspeichern.",
+          "Der Standard ordnet konkrete Sicherheitsniveaus zu: P-256 entspricht 128 Bit, P-384 entspricht 192 Bit Sicherheit.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Wo ECC dir begegnet">
         <ul>

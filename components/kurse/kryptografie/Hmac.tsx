@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "@/components/lessons/lesson.css";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 async function hmacSha256(key: string, message: string): Promise<string> {
   if (!key) return "";
@@ -132,6 +133,15 @@ export default function Hmac() {
         nutzen – das kann über Timing-Unterschiede angreifbar sein. Stattdessen
         eine <em>constant-time comparison</em> verwenden.
       </div>
+
+      <KryptoQuelle
+        id="rfc-2104"
+        kernaussagen={[
+          "RFC 2104 definiert HMAC als doppelte Hash-Konstruktion: H((K ⊕ opad) ‖ H((K ⊕ ipad) ‖ m)) — schützt damit vor Length-Extension-Angriffen auf nackte Hashes.",
+          "HMAC ist sicher, solange die zugrundeliegende Hash-Funktion kollisionsresistent ist — also auch HMAC-SHA-256 und HMAC-SHA-3.",
+          "Krawczyk et al. bewiesen die Sicherheit von HMAC formal — eine seltene Eigenschaft für praktisch weit verbreitete Konstruktionen.",
+        ]}
+      />
 
       <SyntaxHighlighter language="typescript" style={oneLight}>
         {implCode}
