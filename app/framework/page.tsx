@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { Route } from 'next'
 import Link from 'next/link'
 import { NODES, STATUS_LABEL, type EcoNode } from '@/lib/ecosystem'
 import styles from './framework.module.css'
@@ -101,7 +102,7 @@ export default function FrameworkPage() {
 
       <footer className={styles.footer}>
         <Link href="/karte">→ Ökosystem-Karte</Link>
-        <a href="/roadmaps">→ Roadmaps ansehen</a>
+        <Link href={"/roadmaps" as Route}>→ Roadmaps ansehen</Link>
         <a href="https://github.com/JereIsThere/auge-framework" target="_blank" rel="noopener">
           → auge-framework auf GitHub
         </a>

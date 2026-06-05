@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function Kerckhoffs() {
   return (
@@ -108,6 +109,15 @@ export default function Kerckhoffs() {
           richtiger Nutzung), reines AES-CBC ist es nicht.
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="katz-lindell-2021"
+        kernaussagen={[
+          "Kerckhoffs' Prinzip ist formal als EAV-Sicherheit (Eavesdropping Indistinguishability) verankert: der Angreifer kennt den Algorithmus, darf aber aus dem Ciphertext nichts lernen.",
+          "Security-through-Obscurity scheitert in der Praxis: geheime Algorithmen werden irgendwann enthüllt — dann ist die Sicherheit sofort null.",
+          "Alle modernen Standards (AES, RSA, SHA-256, TLS) sind öffentlich spezifiziert und trotzdem sicher — weil die Sicherheit am Schlüssel hängt, nicht am Geheimnis des Verfahrens.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Wo das gleich relevant wird">
         <ul>

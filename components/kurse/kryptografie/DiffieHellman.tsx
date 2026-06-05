@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "@/components/lessons/lesson.css";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 function modPow(base: number, exp: number, mod: number): number {
   let result = 1;
@@ -168,6 +169,15 @@ export default function DiffieHellman() {
         <li>Alice rechnet Bᵃ mod p, Bob rechnet Aᵇ mod p – beide erhalten denselben Wert (gᵃᵇ mod p).</li>
         <li>Dieser Wert dient als Schlüssel für ein symmetrisches Verfahren (z. B. AES).</li>
       </ol>
+
+      <KryptoQuelle
+        id="diffie1976-newdirections"
+        kernaussagen={[
+          "Das Paper von 1976 begründete asymmetrische Kryptografie: erstmals konnte man Schlüssel über einen offen abhörbaren Kanal austauschen.",
+          "Diffie und Hellman formulierten gleichzeitig das Konzept digitaler Signaturen — die konkrete Umsetzung (RSA) folgte 1978.",
+          "Die Sicherheit des Protokolls beruht auf dem diskreten Logarithmus: g^x mod p ist einfach zu berechnen, x daraus zu bestimmen aber praktisch unmöglich.",
+        ]}
+      />
 
       <SyntaxHighlighter language="typescript" style={oneLight}>
         {implCode}

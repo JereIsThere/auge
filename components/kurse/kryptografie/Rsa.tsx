@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "@/components/lessons/lesson.css";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 function gcd(a: number, b: number): number {
   while (b) {
@@ -176,6 +177,15 @@ export default function Rsa() {
           (ECDSA, Ed25519) – kleinere Schlüssel, gleiche Sicherheit.
         </li>
       </ol>
+
+      <KryptoQuelle
+        id="rivest1978-rsa"
+        kernaussagen={[
+          "Rivest, Shamir und Adleman lösten 1978 das von Diffie gestellte Problem: eine konkrete Einwegfunktion mit Trapdoor auf Basis der Primzahlfaktorisierung.",
+          "Die Sicherheit basiert auf dem Integer-Factorization-Problem: n = p × q ist trivial zu berechnen; p und q aus n zurückzurechnen ist bei großen Zahlen praktisch unmöglich.",
+          "Das Paper wurde 2002 mit dem Turing Award ausgezeichnet — es ist eines der meistzitierten Werke der Informatikgeschichte.",
+        ]}
+      />
 
       <div className="warn-box">
         <strong>Wichtig:</strong> Echte RSA-Schlüssel haben heute mindestens
