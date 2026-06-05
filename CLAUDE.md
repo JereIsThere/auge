@@ -218,6 +218,19 @@ Branchname-Konvention für Feature-Branches: `claude-edits/<thema>-vertiefung`, 
 
 ---
 
+## Live-PR-Status (automatisch — kein Agent-Aufwand)
+
+Jeder offene PR der Dateien unter `themen/<slug>/` oder `components/kurse/<slug>/`
+berührt, erscheint **automatisch** als "live edit"-Badge auf der Landing-Page
+und als rotierender Dashed-Ring auf `/karte`.
+
+- Kein manueller Schritt nötig — das System liest die GitHub PR-API
+- Revalidierung alle 10 Minuten (ISR), Implementierung in `lib/active-prs.ts`
+- Gilt für alle Agents (Claude, Gemini, …) — PR öffnen reicht
+- Optional: `GITHUB_TOKEN` in `.env` für höheres Rate-Limit (5000 statt 60 req/h)
+
+---
+
 ## Aktueller Stand
 
 **Themen fertig (`status: 'fertig'`)** — alle ausgebaut auf Voll-Lektionen + Pfade:
@@ -228,6 +241,7 @@ Branchname-Konvention für Feature-Branches: `claude-edits/<thema>-vertiefung`, 
 - 🛠️ MCP — 12 Lektionen, 4 Pfade, inkl. Sampling + Sicherheits-Block + Übungsaufgaben
 - 🎨 Aquarell — 11 Lektionen, 4 Pfade + Übungsaufgaben mit KI-Review
 - 🔑 Auth.js v5 (next-auth@beta) — 6 Lektionen, 3 Pfade (Einstieg · Schutz & Edge · Übung)
+- 🌐 HTML & CSS — status fertig (genaue Lektionszahl: siehe `themen/html-css/meta.ts`)
 
 **v1.0 erreicht** — alle Kern-Themen ausgebaut. Nächste Schritte sind v1.1-Themen (siehe roadmap).
 

@@ -171,6 +171,44 @@
   box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--farbe, #00d4c8) 30%, transparent);
 }
 
+/* Karte mit aktivem PR bekommt schwachen Cyan-Rand */
+.featuredKarte[data-live] {
+  border-color: rgba(0, 212, 200, 0.22);
+}
+
+/* ── Live-Edit-Banner ──────────────────────────────────────────────────────── */
+
+.liveEditBanner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.62rem;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan, #00d4c8);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+  margin-bottom: -4px;
+}
+.liveEditBanner:hover { opacity: 1; }
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan, #00d4c8);
+  box-shadow: 0 0 6px var(--cyan, #00d4c8);
+  flex-shrink: 0;
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--cyan, #00d4c8); }
+  50%       { opacity: 0.35; box-shadow: 0 0 2px var(--cyan, #00d4c8); }
+}
+
 .featuredKopf {
   display: flex;
   align-items: baseline;
