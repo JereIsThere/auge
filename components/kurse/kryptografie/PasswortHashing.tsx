@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 // Toy "slow hash" — repeated SHA-256 to simulate cost factor.
 async function slowHash(pw: string, salt: string, iterations: number): Promise<{ hex: string; ms: number }> {
@@ -176,6 +177,15 @@ export default function PasswortHashing() {
           </li>
         </ol>
       </DepthBox>
+
+      <KryptoQuelle
+        id="rfc-9106"
+        kernaussagen={[
+          "RFC 9106 standardisiert Argon2 als Ergebnis der Password Hashing Competition 2015 — Argon2id ist die empfohlene Variante für allgemeine Anwendungen.",
+          "Argon2id kombiniert Resistenz gegen Side-Channel-Angriffe (Argon2i) und GPU-Brute-Force (Argon2d) — Angreifer müssen Speicher und Zeit pro Versuch aufwenden.",
+          "Empfohlene Mindestparameter: 64 MiB Speicher, 3 Iterationen — macht massenhaftes Raten auf GPUs finanziell unattraktiv.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Drumherum">
         <ul>

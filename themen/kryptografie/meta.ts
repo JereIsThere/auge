@@ -29,7 +29,7 @@ const thema: Thema = {
       beschreibung:
         'Du kennst es aus dem Job, möchtest die modernen Bausteine richtig verstehen.',
       icon: '💻',
-      lektionenSlugs: ['symm-asymm', 'aes', 'diffie-hellman', 'tls', 'oauth'],
+      lektionenSlugs: ['symm-asymm', 'aes', 'diffie-hellman', 'tls', 'oauth', 'uebungsaufgaben'],
       akzent: 'from-blue-500 to-indigo-600',
     },
     {
@@ -230,6 +230,20 @@ const thema: Thema = {
           icon: '🧪',
           kurzbeschreibung: 'Fragen zum Testen des Gelernten mit sofortigem Feedback.',
           loader: () => import('@/components/kurse/kryptografie/Quiz'),
+        },
+      ],
+    },
+    {
+      titel: 'Übung',
+      untertitel: 'Das Gelernte anwenden — mit KI-Review-Feedback.',
+      lektionen: [
+        {
+          slug: 'uebungsaufgaben',
+          titel: 'Übungsaufgaben',
+          icon: '✏️',
+          kurzbeschreibung:
+            'Drei Aufgaben (TLS analysieren · DH durchrechnen · System entwerfen) — jede mit KI-Review-Prompt.',
+          loader: () => import('@/components/kurse/kryptografie/Uebungsaufgaben'),
         },
       ],
     },

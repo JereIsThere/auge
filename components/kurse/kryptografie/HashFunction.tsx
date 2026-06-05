@@ -6,6 +6,7 @@ import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
@@ -243,6 +244,15 @@ export default function HashFunction() {
           ganz anderen Konstruktion (Keccak-Schwamm).
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-fips-180-4"
+        kernaussagen={[
+          "FIPS 180-4 definiert SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 und weitere Varianten als offizielle US-Bundesstandards.",
+          "SHA-256 liefert einen 256-Bit-Digest — ausreichend Kollisionsresistenz für praktisch alle aktuellen Anwendungen.",
+          "Der Standard schreibt die genauen Rundenkonstanten und Initialisierungsvektoren vor, sodass jede konforme Implementierung identische Hashes erzeugt.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Was du als nächstes anschauen kannst">
         <ul>

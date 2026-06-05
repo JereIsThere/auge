@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { KryptoQuelle } from "./KryptoQuelle";
 import "@/components/lessons/lesson.css";
 
 type Step = {
@@ -165,6 +166,15 @@ export default function OAuth() {
         <dt>PKCE</dt>
         <dd>Erweiterung für native/SPA-Clients ohne client_secret.</dd>
       </dl>
+
+      <KryptoQuelle
+        id="rfc-6749"
+        kernaussagen={[
+          "RFC 6749 definiert vier Grant-Typen: Authorization Code, Implicit, Resource Owner Password und Client Credentials — für unterschiedliche Client-Szenarien.",
+          "Der Authorization Code Flow (hier gezeigt) ist der einzige Grant-Typ, der ein client_secret sicher einsetzen kann, da der Code-Tausch Server-zu-Server erfolgt.",
+          "Scopes sind absichtlich nicht vom RFC standardisiert — jeder Authorization Server definiert seine eigenen (z.B. 'read:email', 'repo').",
+        ]}
+      />
 
       <div className="warn-box">
         <strong>OAuth ≠ OpenID Connect.</strong> OAuth regelt nur die Autorisierung
