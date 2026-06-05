@@ -115,9 +115,10 @@ function Popup({
 
 // ── Haupt-Komponente ─────────────────────────────────────────────────────────
 
-export default function KarteClient() {
+export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: string[] }) {
   const [selected, setSelected] = useState<EcoNode | null>(null)
   const [hovered,  setHovered]  = useState<string | null>(null)
+  const activeSet = new Set(activeRepoIds)
 
   const edges = getEdges()
 
@@ -267,15 +268,16 @@ export default function KarteClient() {
 
           {/* ── Nodes ─────────────────────────────────────────────────── */}
           {NODES.map(node => {
-            const color   = STATUS_COLOR[node.status]
-            const r       = NODE_RADIUS[node.status]
-            const glowR   = GLOW_RADIUS[node.status]
-            const isLive  = node.status === 'live'
-            const isPlan  = node.status === 'planned'
-            const isHov   = hovered === node.id
-            const isSel   = selected?.id === node.id
+            const color    = STATUS_COLOR[node.status]
+            const r        = NODE_RADIUS[node.status]
+            const glowR    = GLOW_RADIUS[node.status]
+            const isLive   = node.status === 'live'
+            const isPlan   = node.status === 'planned'
+            const isHov    = hovered === node.id
+            const isSel    = selected?.id === node.id
             const isDimmed = connectedIds !== null && !connectedIds.has(node.id)
             const filterId = isLive ? 'glow-live' : isPlan ? 'glow-plan' : 'glow-prog'
+            const isActive = activeSet.has(node.id)
 
             return (
               <g
@@ -310,6 +312,27 @@ export default function KarteClient() {
                   opacity={isDimmed ? 0.25 : 1}
                   style={{ transition: 'r 0.2s, opacity 0.25s, fill-opacity 0.2s' }}
                 />
+
+                {/* Live-Edit-Ring — pulsiert wenn aktiver PR offen */}
+                {isActive && (
+                  <circle
+                    r={r + 14}
+                    fill="none"
+                    stroke="#00d4c8"
+                    strokeWidth="1"
+                    opacity="0.5"
+                    strokeDasharray="3 4"
+                  >
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0"
+                      to="360"
+                      dur="8s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                )}
 
                 {/* Selektions-Ring */}
                 {(isSel || isHov) && (
