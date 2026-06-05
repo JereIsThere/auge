@@ -1,46 +1,47 @@
-# Auge 2 — für Claude (Legacy/Branch Policy)
+# Auge — für Claude
 
-Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScript-Code (keine DB).
+Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScript-Code (keine DB). Featured + Kommt-noch auf der Landing, Lektionen mit DepthBox + Quellen + Übungsaufgaben.
 
 **BRANCHING POLICY:**
 - Claude MUST work on branch `claude`.
 - Gemini MUST work on branch `gemini`.
 - **MANDATORY:** Do not merge or push to `main` directly. Changes must be made via Pull Request.
 - **MILESTONES:** Document major milestones clearly in `docs/milestones.md`. Identify yourself as the author (e.g., "Claude by Anthropic").
- Featured + Kommt-noch auf der Landing, Lektionen mit DepthBox + Quellen + Übungsaufgaben.
 
 **Tech:** Next.js 15.5 (App Router, standalone build, typedRoutes), React 19, Tailwind v4 (für Lektionen) + CSS-Modules (für Auge-Frame), TypeScript strict, Node ≥18.
 
-**Live:** [auge2.jeremias-groehl.de](https://auge2.jeremias-groehl.de) — Deploy via GitHub Action bei push auf main mit Pfad-Filter `auge-2/**`. Wenn nicht triggert: `gh workflow run "Deploy Auge 2.0" --ref main`.
+**Live:** [auge2.jeremias-groehl.de](https://auge2.jeremias-groehl.de) — Deploy via GitHub Action bei push auf main (kein Pfad-Filter). Manuell triggern: `gh workflow run "Deploy Auge" --ref main`.
+
+**Klammer-Repo:** Dieses Repo ist ein Submodule von [JereIsThere/auge-framework](https://github.com/JereIsThere/auge-framework), dem Umbrella-Repo (OrientDB + n8n + hand + ADRs). Submission-Pipeline-Details dort.
 
 ---
 
 ## Verzeichnis-Map (das Wesentliche)
 
 ```
-auge-2/
-  app/                              App-Router-Routen
-    page.tsx                        Landing (Featured + Kommt-noch)
-    thema/[slug]/                   Thema-Hub
+/                                 Repo-Root (kein auge-2/-Unterverzeichnis mehr)
+  app/                            App-Router-Routen
+    page.tsx                      Landing (Featured + Kommt-noch)
+    thema/[slug]/                 Thema-Hub
     thema/[slug]/lektionen/[lektion]/   Lektion mit Sidebar
   components/
-    lessons/                        WIEDERVERWENDBAR: DepthBox, QuelleBox, Aufgabe, KiReview, LessonsSidebar, LessonsScope, ThemeToggle
-    kurse/<thema>/                  Lektions-Components pro Thema
-    KommtNochListe.tsx              Landing-Sektion
-    TopicGrid.tsx                   (alt, ungenutzt)
-    CyrillicCanvas.tsx              Hero-Hintergrund
+    lessons/                      WIEDERVERWENDBAR: DepthBox, QuelleBox, Aufgabe, KiReview, LessonsSidebar, LessonsScope, ThemeToggle
+    kurse/<thema>/                Lektions-Components pro Thema
+    KommtNochListe.tsx            Landing-Sektion
+    TopicGrid.tsx                 (alt, ungenutzt)
+    CyrillicCanvas.tsx            Hero-Hintergrund
   themen/
-    index.ts                        REGISTRY (alle Themen importieren + listen)
-    _platzhalter.ts                 Themen ohne Lektionen (status kommt-noch)
-    <thema>/meta.ts                 Thema-Definition (Gruppen, Lektionen, Pfade)
-    <thema>/quellen.ts              (optional) wissenschaftliche Quellen
-  lib/schema.ts                     berechneSchemaLayout (Landing-Schema-Hinweis)
-  types/index.ts                    Thema, Lektion, Pfad, Quelle, Kategorie
+    index.ts                      REGISTRY (alle Themen importieren + listen)
+    _platzhalter.ts               Themen ohne Lektionen (status kommt-noch)
+    <thema>/meta.ts               Thema-Definition (Gruppen, Lektionen, Pfade)
+    <thema>/quellen.ts            (optional) wissenschaftliche Quellen
+  lib/schema.ts                   berechneSchemaLayout (Landing-Schema-Hinweis)
+  types/index.ts                  Thema, Lektion, Pfad, Quelle, Kategorie
   docs/
-    architektur.md                  Detaillierte Architektur-Doku
-    prompts/                        Copy-Paste Templates für neue Chats
-    roadmap.md                      Was fertig, was offen, was v1.0-Blocker
-  _legacy/                          Schlafende OrientDB/Generierungs-Pipeline (vom Build ausgeschlossen)
+    architektur.md                Detaillierte Architektur-Doku
+    prompts/                      Copy-Paste Templates für neue Chats
+    roadmap.md                    Was fertig, was offen, was v1.1-kandidaten
+  _legacy/                        Schlafende OrientDB/Generierungs-Pipeline (vom Build ausgeschlossen)
 ```
 
 ---
@@ -145,6 +146,8 @@ Vorbild: Aquarell-Starter (3 Lektionen) oder Procreate/Neuro (voll ausgebaut).
 
 Status: `in-arbeit` für Starter, später `fertig` bei Vertiefung.
 
+**Skelett per Submission-Pipeline:** Themen-Vorschläge aus hand/auge werden von n8n als Skelett-PR geöffnet (erzeugt `themen/<slug>/meta.ts`). Dieser PR ist Startpunkt — Gruppen füllen, Components bauen, in `themen/index.ts` registrieren.
+
 ---
 
 ## Common pitfalls (alle schon mal passiert)
@@ -179,10 +182,8 @@ Custom-CSS in `globals.css` ist in `@layer base` gewrappt, damit Tailwind utilit
 
 ### Deploy triggert nicht nach Merge
 
-Kann passieren wenn der Merge-Commit den Pfad-Filter (`paths: 'auge-2/**'`) nicht greift. Fix:
-
 ```bash
-gh workflow run "Deploy Auge 2.0" --ref main
+gh workflow run "Deploy Auge" --ref main
 ```
 
 ---
@@ -190,12 +191,12 @@ gh workflow run "Deploy Auge 2.0" --ref main
 ## Branch + PR + Deploy Workflow
 
 ```bash
-# Neuer Branch von main
+# Neuer Branch von main (Claude arbeitet auf Branch 'claude')
 git fetch origin main && git checkout main && git pull
-git checkout -b claude-edits/<beschreibung>
+git checkout claude   # oder: git checkout -b claude (falls noch nicht da)
 
 # Arbeiten + Build prüfen
-npm run build   # in auge-2/
+npm run build
 
 # Commit (Heredoc bockt unter PowerShell — File-Variante:)
 echo "feat(...): ..." > .commit_msg.txt   # mehrzeilig editieren
@@ -204,20 +205,20 @@ git commit -F .commit_msg.txt
 rm .commit_msg.txt   # in .gitignore — Sicherheitsnetz
 
 # Push + PR
-git push -u origin claude-edits/<beschreibung>
+git push -u origin claude
 gh pr create --title "..." --body-file <body>.md
 
 # Merge + Deploy
 gh pr merge <nr> --merge   # Standard, kein squash/rebase
 # Falls Deploy nicht triggert:
-gh workflow run "Deploy Auge 2.0" --ref main
+gh workflow run "Deploy Auge" --ref main
 ```
 
-Branchname-Konvention: `claude-edits/<thema>-vertiefung`, `claude-edits/<feature>`, `claude-edits/<thema>-quellen` etc.
+Branchname-Konvention für Feature-Branches: `claude-edits/<thema>-vertiefung`, `claude-edits/<feature>`, `claude-edits/<thema>-quellen` etc.
 
 ---
 
-## Aktueller Stand (Stand: nach PR #26)
+## Aktueller Stand
 
 **Themen fertig (`status: 'fertig'`)** — alle ausgebaut auf Voll-Lektionen + Pfade:
 - 🔐 Kryptografie — 22 Lektionen, 3 Pfade
@@ -226,6 +227,7 @@ Branchname-Konvention: `claude-edits/<thema>-vertiefung`, `claude-edits/<feature
 - 🧠 Neurologie & MMC — 13 Lektionen + Ergo-Übungsaufgaben
 - 🛠️ MCP — 12 Lektionen, 4 Pfade, inkl. Sampling + Sicherheits-Block + Übungsaufgaben
 - 🎨 Aquarell — 11 Lektionen, 4 Pfade + Übungsaufgaben mit KI-Review
+- 🔑 Auth.js v5 (next-auth@beta) — 6 Lektionen, 3 Pfade (Einstieg · Schutz & Edge · Übung)
 
 **v1.0 erreicht** — alle Kern-Themen ausgebaut. Nächste Schritte sind v1.1-Themen (siehe roadmap).
 
