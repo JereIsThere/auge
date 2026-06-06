@@ -202,4 +202,74 @@ Lektionen können dieselbe Quelle für unterschiedliche Aspekte zitieren.
 - Keine globale `/quellen`-Bibliografie-Seite. Quellen leben heute pro
   Thema; eine aggregierte Übersicht (mit "wird zitiert in …") ist eine
   natürliche nächste Iteration.
+
+---
+
+## Additive Architektur — Conflict-Free Contributions
+
+Ein neues Thema soll **ausschließlich neue Dateien** erzeugen, ohne dass
+bestehende zentrale Dateien angefasst werden müssen. So entstehen keine
+Merge-Konflikte wenn mehrere Contributors gleichzeitig arbeiten.
+
+### Aktueller Stand (manuell, konfliktanfällig)
+
+Jedes neue Thema erfordert Edits in drei zentralen Dateien:
+
+| Datei | Warum angefasst | Konfliktrisiko |
+|-------|-----------------|----------------|
+| `themen/index.ts` | `import` + Eintrag in `THEMEN[]` | ⚠️ hoch |
+| `app/page.tsx` | Icon in `THEMA_ICON` Record | ⚠️ mittel |
+| `docs/milestones.md` | Milestone-Eintrag | ℹ️ niedrig |
+
+### Geplante Lösung: Self-Registering Themes
+
+**Schritt 1 — Auto-Discovery in `themen/index.ts`**
+
+Statt manueller Imports: Vite/Next.js `import.meta.glob` scannt den Ordner
+automatisch. Ein neues Thema registriert sich durch seine bloße Existenz.
+
+```ts
+// themen/index.ts — niemand muss diese Datei mehr anfassen
+const modules = import.meta.glob('./*/meta.ts', { eager: true }) as Record<
+  string,
+  { default: Thema }
+>
+export const THEMEN: Thema[] = Object.values(modules)
+  .map(m => m.default)
+  .filter(t => t.status !== 'kommt-noch')
+  .sort(/* nach Prio oder Datum */)
+```
+
+**Schritt 2 — Icon in `Thema`-Typ + `meta.ts`**
+
+`THEMA_ICON` in `app/page.tsx` entfällt. Stattdessen bekommt `types/index.ts`
+ein optionales `icon`-Feld, das in jeder `meta.ts` gepflegt wird:
+
+```ts
+// types/index.ts
+export interface Thema {
+  // ...
+  icon?: string  // Emoji für Landing-Karte, z.B. '🪟'
+}
+
+// themen/windows/meta.ts
+const thema: Thema = {
+  slug: 'windows',
+  icon: '🪟',
+  // ...
+}
+```
+
+`app/page.tsx` liest dann `thema.icon ?? '📖'` — keine zentrale Map mehr.
+
+### Bis zur Implementierung: Hinweis für Contributors
+
+Wenn du ein Thema hinzufügst, editiere diese drei Dateien **in einem einzigen
+Commit**, um den Konflikt-Scope klein zu halten:
+
+1. `themen/index.ts` — Import + Eintrag vor `...PLATZHALTER_THEMEN`
+2. `app/page.tsx` — Icon in `THEMA_ICON`
+3. Dein neues `themen/<slug>/meta.ts` + `components/kurse/<slug>/`
+
+Rebase auf `main` direkt vor dem PR öffnen — minimiert Konflikt-Fenster.
 - Keine i18n. `de` only.
