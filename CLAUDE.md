@@ -241,7 +241,7 @@ und als rotierender Dashed-Ring auf `/karte`.
 - 🛠️ MCP — 12 Lektionen, 4 Pfade, inkl. Sampling + Sicherheits-Block + Übungsaufgaben
 - 🎨 Aquarell — 11 Lektionen, 4 Pfade + Übungsaufgaben mit KI-Review
 - 🔑 Auth.js v5 (next-auth@beta) — 6 Lektionen, 3 Pfade (Einstieg · Schutz & Edge · Übung)
-- 🌐 HTML & CSS — status fertig (genaue Lektionszahl: siehe `themen/html-css/meta.ts`)
+- 🌐 HTML & CSS — 13 Lektionen, 3 Pfade (Grundlagen · Layout · KI-HTML)
 
 **v1.0 erreicht** — alle Kern-Themen ausgebaut. Nächste Schritte sind v1.1-Themen (siehe roadmap).
 
