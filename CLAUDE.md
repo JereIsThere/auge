@@ -144,6 +144,12 @@ Vorbild: Aquarell-Starter (3 Lektionen) oder Procreate/Neuro (voll ausgebaut).
 5. In `app/page.tsx` `THEMA_ICON` ergänzen
 6. `npm run build`, Commit, PR
 
+> **⚠️ Merge-Konflikt-Hinweis:** Schritte 3 und 5 editieren zentrale Dateien,
+> die alle Contributors anfassen. Immer direkt vor dem PR auf `main` rebasen
+> (`git fetch origin main && git rebase origin/main`), um das Konflikt-Fenster
+> zu minimieren. — Geplante Lösung: Auto-Discovery + Icon in `meta.ts`
+> (siehe `docs/architektur.md` → "Additive Architektur").
+
 Status: `in-arbeit` für Starter, später `fertig` bei Vertiefung.
 
 **Skelett per Submission-Pipeline:** Themen-Vorschläge aus hand/auge werden von n8n als Skelett-PR geöffnet (erzeugt `themen/<slug>/meta.ts`). Dieser PR ist Startpunkt — Gruppen füllen, Components bauen, in `themen/index.ts` registrieren.
