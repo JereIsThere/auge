@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 export default function Einleitung() {
   return (
@@ -86,6 +87,15 @@ export default function Einleitung() {
           erpresste Schlüssel — all das ist außerhalb der Mathematik.
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="katz-lindell-2021"
+        kernaussagen={[
+          "Moderne Kryptografie basiert auf beweisbarer Sicherheit: ein Verfahren gilt als sicher, wenn ein Angreifer es nur mit vernachlässigbarer Wahrscheinlichkeit brechen kann.",
+          "Vertraulichkeit, Integrität und Authentizität sind drei unabhängige Schutzziele — Verschlüsselung allein erfüllt nicht alle drei.",
+          "Das Buch legt das formale Fundament: Sicherheitsbeweise, Berechnungsannahmen und Angreifermodelle, auf denen alle modernen Verfahren aufbauen.",
+        ]}
+      />
 
       <DepthBox variant="related" title="Wie du am besten weitermachst">
         <ul>

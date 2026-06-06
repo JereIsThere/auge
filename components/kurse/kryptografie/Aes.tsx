@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import "@/components/lessons/lesson.css";
 import { DepthBox } from "@/components/lessons/DepthBox";
+import { KryptoQuelle } from "./KryptoQuelle";
 
 async function aesEncrypt(plain: string, password: string): Promise<{ cipher: string; iv: string }> {
   const enc = new TextEncoder();
@@ -95,6 +96,15 @@ export default function Aes() {
           merkliche CPU-Last.
         </p>
       </DepthBox>
+
+      <KryptoQuelle
+        id="nist-fips-197"
+        kernaussagen={[
+          "Rijndael gewann 2000 den offenen NIST-Wettbewerb gegen 14 andere Kandidaten — nach 3 Jahren öffentlicher Kryptoanalyse.",
+          "AES definiert drei Schlüssellängen: 128, 192 und 256 Bit, mit 10, 12 bzw. 14 Runden.",
+          "Der Standard ist frei verfügbar und beschreibt den Algorithmus vollständig — kein Security-through-Obscurity.",
+        ]}
+      />
 
       <DepthBox variant="deeper" title="Wie funktioniert AES innen?">
         <p>

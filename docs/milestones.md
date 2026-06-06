@@ -17,15 +17,25 @@ Chronologische Liste der Meilensteine, erreicht durch die verschiedenen KI-Agent
 ---
 
 ## [03.06.2026] Neues Thema: Windows besser nutzen
-**Agent:** Claude by Anthropic
+**Agent:** Yoshie2000 (Mensch)
 
 ### Achievements:
 - **Neues Voll-Thema `windows`** (`status: 'fertig'`, Kategorie `cs`, Icon 🪟) — 9 Lektionen in 3 Pfaden, registriert in `themen/index.ts` und `app/page.tsx`.
 - **Tastatur & Fenster (3):** Shortcuts (interaktive, filterbare Übersicht mit Suchfeld) · Fenster & virtuelle Desktops (interaktiver Snap-Layout-Visualizer) · Programme blitzschnell öffnen (Start-Such-Simulator + Win+R-Referenz + Taskleiste).
 - **Terminal & PowerShell (4):** CMD/PowerShell/Terminal/WSL klar getrennt · PowerShell-Grundlagen (interaktiver Konsolen-Simulator, Verb-Noun, Aliase) · Navigieren & Dateien verwalten · Pipeline & Praxis (Where/Sort/Select, als Admin, Execution Policy).
 - **Power-User & Übung (2):** Eingebaute Power-Tools (Task-Manager, Win+V, Win+Shift+S, PowerToys, winget) · Übungsaufgaben mit KI-Review-Prompts.
-- **Neue wiederverwendbare Komponenten:** `Kbd`/`Combo` (Keycaps), `Terminal`/`TerminalSim` (Konsolen-Simulator), `CmdBlock` (kopierbar) + `windows.css` — dunkler Konsolen-Look in beiden Theme-Modi.
-- **Inhaltlich korrekt:** echte Shortcuts, Win+R-Befehle und PowerShell-Cmdlets (Verb-Noun, Aliase, Pipeline, -WhatIf-Sicherheit, RemoteSigned).
-- **Build verifiziert:** `next build` kompiliert das Thema sauber (alle Lektionen statisch generiert). Hinweis: weiterhin vorbestehender, themenfremder Build-Blocker in `app/framework/page.tsx` (Link auf nicht existierende Route `/roadmaps`).
+- **Neue wiederverwendbare Komponenten:** `Kbd`/`Combo` (Keycaps), `Terminal`/`TerminalSim` (Konsolen-Simulator), `CmdBlock` (kopierbar) + `windows.css`.
+
+---
+
+## [03.06.2026] Neues Thema: HTML & CSS
+**Agent:** Claude by Anthropic
+
+### Achievements:
+- **Neues Voll-Thema `html-css`** (`status: 'fertig'`, Kategorie `cs`, Icon 🌐) — 13 Lektionen in 3 Pfaden, registriert in `themen/index.ts` und `app/page.tsx`.
+- **Grundlagen (5):** Was HTML/CSS sind (interaktive „CSS an/aus"-Demo) · HTML-Grundgerüst & semantische Tags · CSS einbinden + Anatomie einer Regel · **Box-Modell interaktiv** (padding/border/margin-Regler + box-sizing) · **Kaskade/Spezifität interaktiv** (Spezifitäts-Rechner mit konkurrierenden Regeln).
+- **Modernes Layout (4):** **Flexbox-Playground** (direction/justify/align/wrap live) · **Grid interaktiv** (Spalten/Gap/Span) · Position & Stacking (interaktiver position-Demo + z-index/Stacking-Context) · **Responsive** mit simuliertem Viewport-Regler.
+- **KI-HTML lesen & reparieren (4):** KI-HTML erkennen (Fingerabdrücke) · schnell lesen (Struktur-zuerst-Toggle, DevTools) · **systematisch bugfixen** (interaktive Bug-Galerie der üblichen Verdächtigen + 5-Schritte-Verfahren) · Übungsaufgaben mit KI-Review-Prompts.
+- **Neue wiederverwendbare Komponente:** `components/kurse/html-css/CodeBlock.tsx` (dunkler Editor-Look in beiden Themes, Copy-Button) + `html-css.css`.
 
 ---

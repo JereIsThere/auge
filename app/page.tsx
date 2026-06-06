@@ -2,7 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { alleThemen } from '@/themen';
 import { berechneSchemaLayout } from '@/lib/schema';
-import { KATEGORIE_FARBEN, KATEGORIE_LABELS, lektionenFlach } from '@/types';
+import { KATEGORIE_FARBEN, lektionenFlach } from '@/types';
+import { getActiveThemaEdits } from '@/lib/active-prs';
 import CyrillicCanvas from '@/components/CyrillicCanvas';
 import KommtNochListe from '@/components/KommtNochListe';
 import BlogFeed from '@/components/BlogFeed';
@@ -11,6 +12,9 @@ import styles from './page.module.css';
 export const metadata: Metadata = {
   title: 'Auge',
 };
+
+// ISR: Seite wird alle 10 Minuten neu gerendert → Live-PR-Status bleibt aktuell.
+export const revalidate = 600;
 
 // Themen-spezifisches Icon für die Featured-Karten.
 const THEMA_ICON: Record<string, string> = {
@@ -22,10 +26,13 @@ const THEMA_ICON: Record<string, string> = {
   'neurologie-mmc': '🧠',
   'next-auth-beta': '🔑',
   windows: '🪟',
+  'html-css': '🌐',
 };
 
-export default function Home() {
+export default async function Home() {
   const themen = alleThemen();
+  const activeEdits = await getActiveThemaEdits();
+  const activeSlugs = new Set(activeEdits.map((e) => e.slug));
 
   // Featured = was spielbar oder in Arbeit ist. Kommt-noch = Platzhalter.
   const featured = themen.filter((t) => t.status !== 'kommt-noch');
@@ -87,13 +94,29 @@ export default function Home() {
                   const farbe = KATEGORIE_FARBEN[thema.kategorie];
                   const icon = THEMA_ICON[thema.slug] ?? '📘';
                   const istFertig = thema.status === 'fertig';
+                  const liveEdit = activeSlugs.has(thema.slug)
+                    ? activeEdits.find((e) => e.slug === thema.slug)
+                    : undefined;
 
                   return (
                     <article
                       key={thema.slug}
                       className={styles.featuredKarte}
                       style={{ '--farbe': farbe } as React.CSSProperties}
+                      data-live={liveEdit ? 'true' : undefined}
                     >
+                      {liveEdit && (
+                        <a
+                          href={liveEdit.prUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.liveEditBanner}
+                          title={`PR #${liveEdit.prNumber}: ${liveEdit.prTitle}`}
+                        >
+                          <span className={styles.liveDot} aria-hidden />
+                          live edit
+                        </a>
+                      )}
                       <header className={styles.featuredKopf}>
                         <span className={styles.featuredIcon} aria-hidden>{icon}</span>
                         <Link href={`/thema/${thema.slug}`} className={styles.featuredTitel}>

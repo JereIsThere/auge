@@ -8,6 +8,7 @@ import procreateRendering from './procreate-rendering/meta';
 import neurologieMmc from './neurologie-mmc/meta';
 import nextAuthBeta from './next-auth-beta/meta';
 import windows from './windows/meta';
+import htmlCss from './html-css/meta';
 
 // Registry aller Themen.
 //
@@ -25,6 +26,7 @@ export const THEMEN: Thema[] = [
   neurologieMmc,
   nextAuthBeta,
   windows,
+  htmlCss,
   ...PLATZHALTER_THEMEN,
 ];
 

@@ -1,0 +1,222 @@
+/* ────────────────────────────────────────────────────────────
+   HTML/CSS-Kurs — eigene Helfer.
+   Code-Blöcke nutzen bewusst in beiden Theme-Modi einen dunklen
+   Editor-Look (wie Docs-Seiten), damit kein .dark-Spiegel nötig ist.
+   ──────────────────────────────────────────────────────────── */
+
+.codeblk {
+  margin: 16px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.codeblk-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #0b1120;
+  border-bottom: 1px solid #1e293b;
+}
+
+.codeblk-lang {
+  font-family: ui-monospace, "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.codeblk-lang.html {
+  color: #fdba74;
+  background: rgba(251, 146, 60, 0.14);
+}
+.codeblk-lang.css {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+}
+.codeblk-lang.text {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.codeblk-title {
+  font-size: 0.76rem;
+  color: #94a3b8;
+}
+
+.codeblk-copy {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-family: ui-monospace, monospace;
+  color: #cbd5e1;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.codeblk-copy:hover {
+  background: #1e293b;
+  border-color: #475569;
+}
+.codeblk-copy.kopiert {
+  color: #34d399;
+  border-color: #34d399;
+}
+
+.codeblk-pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: ui-monospace, "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: pre;
+  tab-size: 2;
+}
+.codeblk-pre code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Hervorhebung einer fehlerhaften / wichtigen Zeile im Code-Block */
+.codeblk-pre .bad {
+  display: inline-block;
+  width: 100%;
+  background: rgba(248, 113, 113, 0.18);
+  border-left: 3px solid #f87171;
+  margin-left: -16px;
+  padding-left: 13px;
+}
+.codeblk-pre .good {
+  display: inline-block;
+  width: 100%;
+  background: rgba(52, 211, 153, 0.16);
+  border-left: 3px solid #34d399;
+  margin-left: -16px;
+  padding-left: 13px;
+}
+
+/* ── Vorher/Nachher-Gegenüberstellung ── */
+.hc-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+@media (max-width: 640px) {
+  .hc-compare {
+    grid-template-columns: 1fr;
+  }
+}
+.hc-compare-col h4 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Live-Vorschau-Rahmen (zeigt gerendertes Ergebnis) ── */
+.hc-preview {
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 16px;
+  background:
+    linear-gradient(45deg, #f8fafc 25%, transparent 25%) -8px 0 / 16px 16px,
+    linear-gradient(-45deg, #f8fafc 25%, transparent 25%) -8px 0 / 16px 16px,
+    #ffffff;
+}
+.dark .hc-preview {
+  border-color: #334155;
+  background:
+    linear-gradient(45deg, #1e293b 25%, transparent 25%) -8px 0 / 16px 16px,
+    linear-gradient(-45deg, #1e293b 25%, transparent 25%) -8px 0 / 16px 16px,
+    #0f172a;
+}
+.hc-preview-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  font-family: ui-monospace, monospace;
+}
+
+/* Demo-Kästchen, die in mehreren Lektionen wiederkehren */
+.hc-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.hc-box.b1 { background: #6366f1; }
+.hc-box.b2 { background: #0ea5e9; }
+.hc-box.b3 { background: #10b981; }
+.hc-box.b4 { background: #f59e0b; }
+.hc-box.b5 { background: #ec4899; }
+.hc-box.b6 { background: #8b5cf6; }
+
+/* Segmented-Control für Lektions-Optionen (direction, justify, …) */
+.hc-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hc-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.hc-seg-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 4px;
+  font-family: ui-monospace, monospace;
+}
+.dark .hc-seg-label { color: #cbd5e1; }
+.hc-chip {
+  font-family: ui-monospace, monospace;
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.hc-chip:hover { border-color: #94a3b8; }
+.hc-chip.active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+  font-weight: 700;
+}
+.dark .hc-chip {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+.dark .hc-chip.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}

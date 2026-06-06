@@ -15,21 +15,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Init public submodule (claude-learnings)
-        run: git submodule update --init pages/claude-learnings
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
+          cache: 'npm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: npm ci
 
-      - run: pnpm build
+      - name: Tests
+        run: npm test
+
+      - name: Build (standalone)
+        run: npm run build
+        env:
+          USE_EXAMPLE_DATA: 'true'
+
+      - name: Standalone-Paket zusammensetzen
+        run: |
+          cp -r .next/static .next/standalone/.next/static
+          if [ -d public ]; then
+            cp -r public .next/standalone/public
+          fi
 
       - name: Setup SSH
         run: |
@@ -41,6 +47,7 @@ jobs:
       - name: Deploy via rsync
         run: |
           rsync -avz --delete \
+            --exclude='.env.local' \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }}" \
-            dist/ \
+            .next/standalone/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/claude-user/public_html/
