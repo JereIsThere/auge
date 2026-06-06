@@ -21,6 +21,7 @@ Lebendes Dokument. Jeder PR pflegt hier mit.
 - **PR #23** — Neurologie & MMC Vertiefung auf 13 Lektionen + Ergo-Übungsaufgaben
 - **PR #25** — MCP-Vertiefung auf 12 Lektionen, 4 Pfade (Einstieg · Primitives · Unter der Haube · Sicherheit & Übung) + Sampling-Bonus + Übungsaufgaben mit KI-Review
 - **PR #26** — Aquarell-Vertiefung auf 11 Lektionen, 4 Pfade + Übungsaufgaben mit KI-Review
+- **Claude (Session 2026-06-06)** — Kryptografie: wissenschaftliche Quellen (RFCs, NIST FIPS) + Übungsaufgaben mit KI-Review
 
 ---
 
@@ -32,9 +33,8 @@ _keine offen — alle Kern-Themen sind ausgebaut. v1.0 ist erreicht._
 
 ### v1.1-Nice (nach v1.0)
 
-- **Krypto-Quellen** — RFCs (8446 TLS, 6749 OAuth), NIST FIPS (197 AES, 180 SHA), Bücher (Katz & Lindell). Größe: 1 Session.
 - **Globale `/quellen`-Seite** — alle Quellen aggregiert, durchsuchbar, mit „wird zitiert in [Lektion X, Y]". Brauchen neue Route + Aggregations-Logik. Größe: 1 Session.
-- **Übungsaufgaben in weiteren Themen** — Procreate, Neuro, Aquarell sind durch. Krypto könnte Code-Aufgaben. RAG könnte „Bau ein Mini-RAG mit X Dokumenten + diesen Queries". Größe: 1 Session pro Thema.
+- **RAG-Übungsaufgaben** — „Bau ein Mini-RAG mit X Dokumenten + diesen Queries". Größe: 1 Session. *(in Arbeit)*
 - **BibTeX-Export pro Quelle** — kleiner Button in `<QuelleBox>` → BibTeX im Clipboard. Größe: kleine Aufgabe.
 
 ### Sonstiges
