@@ -24,6 +24,10 @@ export interface EcoNode {
   details:  string[]
   /** IDs anderer EcoNodes, von denen dieses Projekt abhängt */
   deps:     string[]
+  /** ADR-Nummern die zu diesem Node gehören (z.B. ['0002', '0007']) */
+  adrs:     string[]
+  /** Key in healthByNode → 'hand' | 'gehirn' | 'funkner' */
+  healthId?: string
   /** Position auf der 2D-Karte (SVG-Einheiten, 0-1000 × 0-640) */
   mx: number
   my: number
@@ -45,6 +49,7 @@ export const NODES: EcoNode[] = [
       'Live: auge2.jeremias-groehl.de',
     ],
     deps: [],
+    adrs: ['0001'],
     mx: 500, my: 115,
   },
   {
@@ -64,6 +69,8 @@ export const NODES: EcoNode[] = [
       'Bookmarks/Embeds Dashboard via OrientDB',
     ],
     deps: ['gehirn'],
+    adrs: ['0001', '0006'],
+    healthId: 'hand',
     mx: 248, my: 318,
   },
   {
@@ -84,6 +91,8 @@ export const NODES: EcoNode[] = [
       'search_bits("nginx reverse proxy") → fertiger Block statt Halluzination',
     ],
     deps: [],
+    adrs: ['0004', '0006', '0007', '0008'],
+    healthId: 'gehirn',
     mx: 738, my: 268,
   },
   {
@@ -102,6 +111,7 @@ export const NODES: EcoNode[] = [
       'Auto-Bump Submodule-Pointer in auge-framework',
     ],
     deps: [],
+    adrs: ['0009'],
     mx: 132, my: 492,
   },
   {
@@ -121,6 +131,8 @@ export const NODES: EcoNode[] = [
       'Zentraler Vault pro GitHub-User',
     ],
     deps: ['dann2'],
+    adrs: ['0002', '0007'],
+    healthId: 'funkner',
     mx: 312, my: 504,
   },
   {
@@ -139,6 +151,7 @@ export const NODES: EcoNode[] = [
       'Kein Google Drive, kein iCloud — vollständig selbst gehostet',
     ],
     deps: ['gehirn', 'hand'],
+    adrs: ['0003'],
     mx: 806, my: 458,
   },
 ]
