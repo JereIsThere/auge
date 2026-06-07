@@ -52,6 +52,7 @@ function Popup({
   onSelectDep: (id: string) => void
 }) {
   const color = STATUS_COLOR[node.status]
+  const [ctxOpen, setCtxOpen] = useState(false)
 
   return (
     <aside className={styles.popup} onClick={e => e.stopPropagation()}>
@@ -103,6 +104,30 @@ function Popup({
               )
             })}
           </div>
+        </div>
+      )}
+
+      {node.context?.length > 0 && (
+        <div className={styles.popupContext}>
+          <button
+            onClick={() => setCtxOpen(o => !o)}
+            className={styles.contextToggle}
+          >
+            Kontext {ctxOpen ? '↑' : '↓'}
+          </button>
+          {ctxOpen && (
+            <ul className={styles.contextList}>
+              {node.context.map((c, i) => <li key={i}>{c}</li>)}
+              {node.areas && (
+                <>
+                  <li className={styles.contextAreaLabel}>Bereiche:</li>
+                  {node.areas.map((a, i) => (
+                    <li key={'a' + i} className={styles.contextArea}>{a}</li>
+                  ))}
+                </>
+              )}
+            </ul>
+          )}
         </div>
       )}
 
