@@ -28,6 +28,10 @@ export interface EcoNode {
   adrs:     string[]
   /** Key in healthByNode → 'hand' | 'gehirn' | 'funkner' */
   healthId?: string
+  /** Vollständiger Tech/Arch-Kontext — was Agents in CLAUDE.md sehen (für /karte Popup) */
+  context:  string[]
+  /** Tabs / Routen — für Apps mit mehreren Bereichen */
+  areas?:   string[]
   /** Position auf der 2D-Karte (SVG-Einheiten, 0-1000 × 0-640) */
   mx: number
   my: number
@@ -50,6 +54,15 @@ export const NODES: EcoNode[] = [
     ],
     deps: [],
     adrs: ['0001'],
+    context: [
+      'Next.js 15 App Router · TypeScript · Tailwind',
+      'DB-frei: Themen = TypeScript-Dateien unter themen/<slug>/meta.ts',
+      'Deploy: auge-framework self-hosted runner → Docker (Port 3010 intern)',
+      'Submission-Pipeline: buildSubmission() in hand → PR auf JereIsThere/auge',
+      'ISR-Pattern: active-prs.ts revalidiert alle 10 min (live PR-Badges)',
+      '/karte: 2D-Ökosystem-Map mit ADR-Chips + live Health-Dots',
+      'Agents: neue themen/<slug>/meta.ts + Components anlegen, dann PR öffnen',
+    ],
     mx: 500, my: 115,
   },
   {
@@ -71,6 +84,20 @@ export const NODES: EcoNode[] = [
     deps: ['gehirn'],
     adrs: ['0001', '0006'],
     healthId: 'hand',
+    context: [
+      'Express.js · Vanilla JS/HTML · Node.js · Port 3737',
+      'OrientDB: Submissions, Snippets, Roadmap-Tasks (via funkner-API)',
+      'Submissions-Admin bleibt bis gehirn-admin existiert',
+      'buildSubmission(): GitHub API → Branch → meta.ts → PR auf JereIsThere/auge',
+      'Atlas Cloud Image-Modelle wählbar im Sprecher (via gehirn /gen/image)',
+    ],
+    areas: [
+      'Sprecher — Chat + Mode-Selector (Text/Bild/Video) + Modell-Dropdown via gehirn',
+      'Zettel — lineierter Schreibmodus + Malmodus (Paint×PPT-Style)',
+      'Drop — WebRTC Dateitransfer, AirDrop-Style, cross-platform',
+      'Projekte — dann-Roadmap-Cockpit (interaktiv: add/done/blocks)',
+      'Submissions-Admin — offene Submissions genehmigen/ablehnen/bauen',
+    ],
     mx: 248, my: 318,
   },
   {
@@ -93,25 +120,48 @@ export const NODES: EcoNode[] = [
     deps: [],
     adrs: ['0004', '0006', '0007', '0008'],
     healthId: 'gehirn',
+    context: [
+      'Express.js · Node.js · Port 4000 (API) + 3738 (Admin-Panel, geplant)',
+      'POST /gen/text · /gen/image · /gen/video — unified KI-Gateway',
+      'GET /models → filtert nach vorhandenen API-Keys (nur verfügbare Modelle)',
+      'Provider: xAI (Grok-3-mini, Grok-4), OpenAI, Anthropic, Atlas Cloud',
+      'Atlas Cloud Image-Modelle: flux-2-pro, imagen-4-ultra, ideogram-v3, z-image-turbo, seedream-5',
+      'bits: OrientDB Lucene-Vector-Index für verifizierte Snippets (nginx, JSX, MCP, shell)',
+      '/deploy/* Routen: Docker-Socket-Mount → Service-Status + Rolling-Update-Triggering',
+      'gehirn-admin (Port 3738, geplant): OrientDB-CRUD, SSH-Tunnel, Submissions, bits-Verwaltung',
+    ],
+    areas: [
+      'API (Port 4000) — /gen/text · /gen/image · /gen/video · /models',
+      'bits — Snippet-VectorDB via OrientDB Lucene',
+      'deploy — /deploy/status · /deploy/update/:service · /deploy/log/:service',
+      'Admin-Panel (Port 3738, geplant) — OrientDB-CRUD, SSH-Tunnel, Submissions',
+    ],
     mx: 738, my: 268,
   },
   {
-    id:      'dann2',
-    name:    'dann2',
+    id:      'dann',
+    name:    'dann',
     emoji:   '🗺️',
-    tagline: 'Roadmap-Store — alle roadmap.*.md, live aggregiert aus allen Repos.',
+    tagline: 'Live-Roadmap — priorisierte Task-Liste aus dem Ökosystem, immer aktuell.',
     status:  'in-progress',
     group:   'Infra',
-    url:     'https://github.com/JereIsThere/dann2',
     details: [
-      'GitHub Action scannt alle JereIsThere-Repos alle 30 min',
-      'Findet roadmap.*.md → aggregiert in external/',
-      'loadRoadmaps() lädt aus mehreren Quellen mit Source-Label',
-      'Live: jeremias-groehl.de/roadmaps',
-      'Auto-Bump Submodule-Pointer in auge-framework',
+      'Kein eigener Service — drei aufeinander aufbauende Schichten',
+      'funkner GET /roadmap → Task+Score-JSON aus OrientDB',
+      'auge /dann → ISR-Page (revalidiert alle 10 min, read-only)',
+      'hand Projekte-Tab → interaktiv: add/done/blocks',
     ],
-    deps: [],
+    deps: ['funkner'],
     adrs: ['0009'],
+    context: [
+      'Kein eigener Service — drei Schichten (ADR 0009)',
+      'Schicht 1: OrientDB Task-Vertex + Blocks-Edge (Datenmodell in ADR 0002)',
+      'Schicht 2: funkner GET /roadmap → priorisierte Task-Liste + Abhängigkeitsgraph',
+      'Schicht 3: auge /dann ISR-Page (revalidiert alle 10 min, read-only)',
+      'Schreiben: hand Projekte-Tab (interaktiv) oder funkner CLI (roadmap add/done/blocks)',
+      'Blocking-Score: transitiver Graph-Traverse via OrientDB TRAVERSE out(Blocks)',
+      'Voraussetzung: funkner v0.2 (Task+Blocks-Schema) → dann ADR 0009',
+    ],
     mx: 132, my: 492,
   },
   {
@@ -130,9 +180,18 @@ export const NODES: EcoNode[] = [
       'funkner roadmap add/done → ersetzt manuelle MD-Edits',
       'Zentraler Vault pro GitHub-User',
     ],
-    deps: ['dann2'],
+    deps: [],
     adrs: ['0002', '0007'],
     healthId: 'funkner',
+    context: [
+      'Node.js · HTTP-Service Port 3100',
+      'Pattern: verb + [service-override]? + content (analog DJ-Syntax)',
+      'v0.1: denk (→ gehirn /gen/text, SSE-Streaming), merke, lies (OrientDB Snippets)',
+      'v0.2: roadmap add/done/blocks/prio → OrientDB Task-Vertex + Blocks-Edge',
+      'GET /roadmap → priorisierte Task-Liste für auge /dann und hand Projekte-Tab',
+      'Vault: zentraler Snippet-Store pro GitHub-User (OrientDB)',
+      'Settings (preferred services, Key-Priorität) liegen in OrientDB',
+    ],
     mx: 312, my: 504,
   },
   {
@@ -152,6 +211,15 @@ export const NODES: EcoNode[] = [
     ],
     deps: ['gehirn', 'hand'],
     adrs: ['0003'],
+    context: [
+      'MinIO S3 · Port 9000 (API) / 9001 (Web-UI) · geplant (ADR 0003)',
+      'Nextcloud-artiger Zugriff: Web-UI + WebDAV + Mobile (S3-kompatibel)',
+      'gehirn gen/image → speicher statt flüchtige xAI-URLs (persistente Bild-URLs)',
+      'hand Drop-Page → speicher als persistentes Backend (statt WebRTC-only)',
+      'Galerie-Page in hand: zeigt gespeicherte Bilder/Dateien',
+      'Selbst gehostet — kein Google Drive, kein iCloud, kein Drittanbieter',
+      'Voraussetzung: hand Restructure (ADR 0006) → dann Galerie-Tab integrierbar',
+    ],
     mx: 806, my: 458,
   },
 ]
