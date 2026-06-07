@@ -204,6 +204,41 @@
   opacity: 0.45;
 }
 
+/* ADRs */
+.popupAdrs {
+  margin-bottom: 1.5rem;
+}
+.adrsLabel {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+.adrChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.adrChip {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  background: rgba(107, 0, 204, 0.08);
+  border: 1px solid rgba(107, 0, 204, 0.25);
+  border-radius: 6px;
+  padding: 3px 9px;
+  color: #c084fc;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.adrChip:hover {
+  background: rgba(107, 0, 204, 0.18);
+  border-color: rgba(107, 0, 204, 0.5);
+  color: #e9d5ff;
+}
+
 /* Deps */
 .popupDeps {
   margin-bottom: 1.5rem;

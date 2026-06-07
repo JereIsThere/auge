@@ -6,6 +6,8 @@ import {
   STATUS_COLOR, STATUS_LABEL, NODE_RADIUS, GLOW_RADIUS,
   type EcoNode,
 } from '@/lib/ecosystem'
+import type { AdrMeta } from '@/lib/adrs'
+import type { HealthStatus } from '@/lib/service-health'
 import styles from './karte.module.css'
 
 const VW = 1000
@@ -18,7 +20,6 @@ function edgePath(from: EcoNode, to: EcoNode): string {
   const dx = to.mx - from.mx
   const dy = to.my - from.my
   const len = Math.hypot(dx, dy)
-  // Senkrechter Einheitsvektor
   const nx = -dy / len
   const ny =  dx / len
   const curve = len * 0.22
@@ -29,7 +30,6 @@ function edgePath(from: EcoNode, to: EcoNode): string {
 
 // ── Dekorative Elemente ──────────────────────────────────────────────────────
 
-// Accent-Circles: manuelle "Sterne" für atmosphere (deterministic, kein Math.random)
 const ACCENT_STARS = [
   [72,  44], [183, 87], [640, 55], [830, 30], [940, 95],
   [65, 180], [420,165], [780,145], [955,200], [115,285],
@@ -42,10 +42,12 @@ const ACCENT_STARS = [
 
 function Popup({
   node,
+  adrMeta,
   onClose,
   onSelectDep,
 }: {
   node: EcoNode
+  adrMeta: Record<string, AdrMeta>
   onClose: () => void
   onSelectDep: (id: string) => void
 }) {
@@ -77,6 +79,32 @@ function Popup({
       <ul className={styles.popupDetails}>
         {node.details.map((d, i) => <li key={i}>{d}</li>)}
       </ul>
+
+      {node.adrs.length > 0 && (
+        <div className={styles.popupAdrs}>
+          <span className={styles.adrsLabel}>ADRs</span>
+          <div className={styles.adrChips}>
+            {node.adrs.map(num => {
+              const meta = adrMeta[num]
+              return meta ? (
+                <a
+                  key={num}
+                  href={meta.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.adrChip}
+                >
+                  ADR {num} · {meta.title}
+                </a>
+              ) : (
+                <span key={num} className={styles.adrChip} style={{ opacity: 0.4 }}>
+                  ADR {num}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {node.deps.length > 0 && (
         <div className={styles.popupDeps}>
@@ -115,14 +143,21 @@ function Popup({
 
 // ── Haupt-Komponente ─────────────────────────────────────────────────────────
 
-export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: string[] }) {
+export default function KarteClient({
+  activeRepoIds = [],
+  adrMeta = {},
+  healthByNode = {},
+}: {
+  activeRepoIds?: string[]
+  adrMeta?: Record<string, AdrMeta>
+  healthByNode?: Record<string, HealthStatus>
+}) {
   const [selected, setSelected] = useState<EcoNode | null>(null)
   const [hovered,  setHovered]  = useState<string | null>(null)
   const activeSet = new Set(activeRepoIds)
 
   const edges = getEdges()
 
-  // ESC schließt Popup
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelected(null)
@@ -137,7 +172,6 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
     if (n) setSelected(n)
   }, [])
 
-  // Welche IDs sind "verbunden" mit dem hover-Node?
   const connectedIds = hovered
     ? new Set([
         hovered,
@@ -167,7 +201,6 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
           aria-label="Auge-Ökosystem – 2D Karte aller Projekte"
         >
           <defs>
-            {/* Glow-Filter pro Status */}
             <filter id="glow-live" x="-80%" y="-80%" width="260%" height="260%">
               <feGaussianBlur stdDeviation="10" result="b" />
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -181,7 +214,6 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
 
-            {/* Feines Dot-Grid */}
             <pattern id="dotGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
               <circle cx="0"  cy="0"  r="0.7" fill="rgba(200,192,216,0.14)" />
               <circle cx="40" cy="0"  r="0.7" fill="rgba(200,192,216,0.14)" />
@@ -189,7 +221,6 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
               <circle cx="40" cy="40" r="0.7" fill="rgba(200,192,216,0.14)" />
             </pattern>
 
-            {/* Gradient für jede Edge */}
             {edges.map(({ from, to }) => (
               <linearGradient
                 key={`grad-${from.id}-${to.id}`}
@@ -208,7 +239,6 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
           <rect width={VW} height={VH} fill="#06000e" />
           <rect width={VW} height={VH} fill="url(#dotGrid)" />
 
-          {/* Akzent-Sterne */}
           {ACCENT_STARS.map(([x, y], i) => (
             <circle
               key={i}
@@ -218,12 +248,10 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
             />
           ))}
 
-          {/* Atmosphären-Zonen (sehr subtil) */}
           <ellipse cx={350} cy={420} rx={240} ry={175} fill="rgba(212,162,0,0.018)" />
           <ellipse cx={690} cy={390} rx={225} ry={190} fill="rgba(107,0,204,0.022)" />
           <ellipse cx={500} cy={160} rx={310} ry={160} fill="rgba(0,212,200,0.012)" />
 
-          {/* Orbitale Ringe um auge */}
           {[100, 175, 265, 370].map((r, i) => (
             <circle
               key={r}
@@ -235,15 +263,12 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
             />
           ))}
 
-          {/* Zonen-Labels */}
           <text x={68} y={295} fill="rgba(212,162,0,0.22)" fontSize="9" fontFamily="var(--font-mono)" letterSpacing="0.2em">
             APPS
           </text>
           <text x={820} y={215} fill="rgba(107,0,204,0.3)" fontSize="9" fontFamily="var(--font-mono)" letterSpacing="0.2em">
             INFRA
           </text>
-
-          {/* Karten-Titel */}
           <text x={26} y={28} fill="rgba(200,192,216,0.2)" fontSize="9" fontFamily="var(--font-mono)" letterSpacing="0.18em">
             ÖKOSYSTEM · KARTE
           </text>
@@ -278,6 +303,7 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
             const isDimmed = connectedIds !== null && !connectedIds.has(node.id)
             const filterId = isLive ? 'glow-live' : isPlan ? 'glow-plan' : 'glow-prog'
             const isActive = activeSet.has(node.id)
+            const health   = node.healthId ? healthByNode[node.healthId] : undefined
 
             return (
               <g
@@ -313,7 +339,7 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
                   style={{ transition: 'r 0.2s, opacity 0.25s, fill-opacity 0.2s' }}
                 />
 
-                {/* Live-Edit-Ring — pulsiert wenn aktiver PR offen */}
+                {/* Live-Edit-Ring */}
                 {isActive && (
                   <circle
                     r={r + 14}
@@ -344,6 +370,26 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
                     opacity={isSel ? 0.8 : 0.45}
                     style={{ transition: 'r 0.2s, opacity 0.2s' }}
                   />
+                )}
+
+                {/* Health-Dot */}
+                {health && health !== 'unknown' && (
+                  <circle
+                    cx={r - 4}
+                    cy={-(r - 4)}
+                    r={4}
+                    fill={health === 'up' ? '#22c55e' : '#ef4444'}
+                    opacity={isDimmed ? 0.25 : 1}
+                  >
+                    {health === 'up' && (
+                      <animate
+                        attributeName="opacity"
+                        values="1;0.4;1"
+                        dur="2s"
+                        repeatCount="indefinite"
+                      />
+                    )}
+                  </circle>
                 )}
 
                 {/* Emoji */}
@@ -418,6 +464,7 @@ export default function KarteClient({ activeRepoIds = [] }: { activeRepoIds?: st
       {selected && (
         <Popup
           node={selected}
+          adrMeta={adrMeta}
           onClose={() => setSelected(null)}
           onSelectDep={selectById}
         />
