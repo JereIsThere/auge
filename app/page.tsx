@@ -2,7 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { alleThemen } from '@/themen';
 import { berechneSchemaLayout } from '@/lib/schema';
-import { KATEGORIE_FARBEN, lektionenFlach } from '@/types';
+import { KATEGORIE_FARBEN, KATEGORIE_LABELS, lektionenFlach } from '@/types';
+import type { Kategorie, Thema } from '@/types';
 import { getActiveThemaEdits } from '@/lib/active-prs';
 import CyrillicCanvas from '@/components/CyrillicCanvas';
 import KommtNochListe from '@/components/KommtNochListe';
@@ -45,6 +46,21 @@ export default async function Home() {
   const cta1 = fertige[0];
   const cta2 = fertige[1];
 
+  // Featured nach Kategorie gruppieren — größte Gruppe zuerst, innerhalb
+  // der Gruppe die ausgebautesten Themen (meiste spielbare Lektionen) vorn.
+  const nachKategorie = featured.reduce<Map<Kategorie, Thema[]>>((acc, t) => {
+    acc.set(t.kategorie, [...(acc.get(t.kategorie) ?? []), t]);
+    return acc;
+  }, new Map());
+  const spielbarAnzahl = (t: Thema) =>
+    lektionenFlach(t).filter((l) => !l.kommtNoch).length;
+  const kategorieGruppen = [...nachKategorie.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([kategorie, gruppenThemen]) => ({
+      kategorie,
+      themen: [...gruppenThemen].sort((a, b) => spielbarAnzahl(b) - spielbarAnzahl(a)),
+    }));
+
   return (
     <>
       <CyrillicCanvas />
@@ -86,86 +102,101 @@ export default async function Home() {
                 </span>
               </div>
 
-              <div className={styles.featuredGrid}>
-                {featured.map((thema) => {
-                  const flach = lektionenFlach(thema);
-                  const spielbar = flach.filter((l) => !l.kommtNoch).length;
-                  const gruppen = thema.gruppen.length;
-                  const pfade = thema.pfade?.length ?? 0;
-                  const farbe = KATEGORIE_FARBEN[thema.kategorie];
-                  const icon = THEMA_ICON[thema.slug] ?? '📘';
-                  const istFertig = thema.status === 'fertig';
-                  const liveEdit = activeSlugs.has(thema.slug)
-                    ? activeEdits.find((e) => e.slug === thema.slug)
-                    : undefined;
+              <div className={styles.kategorieGruppen}>
+                {kategorieGruppen.map(({ kategorie, themen: gruppenThemen }) => (
+                  <div
+                    key={kategorie}
+                    className={styles.kategorieGruppe}
+                    style={{ '--farbe': KATEGORIE_FARBEN[kategorie] } as React.CSSProperties}
+                  >
+                    <h3 className={styles.kategorieTitel}>
+                      {KATEGORIE_LABELS[kategorie]}
+                      <span className={styles.kategorieAnzahl}>{gruppenThemen.length}</span>
+                    </h3>
 
-                  return (
-                    <article
-                      key={thema.slug}
-                      className={styles.featuredKarte}
-                      style={{ '--farbe': farbe } as React.CSSProperties}
-                      data-live={liveEdit ? 'true' : undefined}
-                    >
-                      {liveEdit && (
-                        <a
-                          href={liveEdit.prUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.liveEditBanner}
-                          title={`PR #${liveEdit.prNumber}: ${liveEdit.prTitle}`}
-                        >
-                          <span className={styles.liveDot} aria-hidden />
-                          live edit
-                        </a>
-                      )}
-                      <header className={styles.featuredKopf}>
-                        <span className={styles.featuredIcon} aria-hidden>{icon}</span>
-                        <Link href={`/thema/${thema.slug}`} className={styles.featuredTitel}>
-                          {thema.titel}
-                        </Link>
-                        <span
-                          className={styles.featuredStatus}
-                          data-status={thema.status}
-                        >
-                          {istFertig ? 'fertig' : 'in Arbeit'}
-                        </span>
-                      </header>
+                    <div className={styles.featuredGrid}>
+                      {gruppenThemen.map((thema) => {
+                        const flach = lektionenFlach(thema);
+                        const spielbar = flach.filter((l) => !l.kommtNoch).length;
+                        const gruppen = thema.gruppen.length;
+                        const pfade = thema.pfade?.length ?? 0;
+                        const farbe = KATEGORIE_FARBEN[thema.kategorie];
+                        const icon = THEMA_ICON[thema.slug] ?? '📘';
+                        const istFertig = thema.status === 'fertig';
+                        const liveEdit = activeSlugs.has(thema.slug)
+                          ? activeEdits.find((e) => e.slug === thema.slug)
+                          : undefined;
 
-                      <p className={styles.featuredPitch}>
-                        {thema.kurzbeschreibung}
-                      </p>
+                        return (
+                          <article
+                            key={thema.slug}
+                            className={styles.featuredKarte}
+                            style={{ '--farbe': farbe } as React.CSSProperties}
+                            data-live={liveEdit ? 'true' : undefined}
+                          >
+                            {liveEdit && (
+                              <a
+                                href={liveEdit.prUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.liveEditBanner}
+                                title={`PR #${liveEdit.prNumber}: ${liveEdit.prTitle}`}
+                              >
+                                <span className={styles.liveDot} aria-hidden />
+                                live edit
+                              </a>
+                            )}
+                            <header className={styles.featuredKopf}>
+                              <span className={styles.featuredIcon} aria-hidden>{icon}</span>
+                              <Link href={`/thema/${thema.slug}`} className={styles.featuredTitel}>
+                                {thema.titel}
+                              </Link>
+                              <span
+                                className={styles.featuredStatus}
+                                data-status={thema.status}
+                              >
+                                {istFertig ? 'fertig' : 'in Arbeit'}
+                              </span>
+                            </header>
 
-                      <div className={styles.featuredZahlen}>
-                        {istFertig ? (
-                          <>
-                            <span><strong>{spielbar}</strong> Lektionen</span>
-                            {gruppen > 1 && <span><strong>{gruppen}</strong> Gruppen</span>}
-                            {pfade > 0 && <span><strong>{pfade}</strong> Pfade</span>}
-                          </>
-                        ) : (
-                          <span>
-                            <strong>{spielbar}</strong> spielbar von <strong>{flach.length}</strong> geplant
-                          </span>
-                        )}
-                      </div>
+                            <p className={styles.featuredPitch}>
+                              {thema.kurzbeschreibung}
+                            </p>
 
-                      {thema.pfade && thema.pfade.length > 0 && (
-                        <nav className={styles.featuredPfade} aria-label="Lernpfade">
-                          {thema.pfade.map((p) => (
-                            <Link
-                              key={p.slug}
-                              href={`/thema/${thema.slug}/lektionen/${p.lektionenSlugs[0]}`}
-                              className={styles.featuredPfad}
-                            >
-                              {p.icon && <span aria-hidden>{p.icon}</span>}
-                              {p.titel}
-                            </Link>
-                          ))}
-                        </nav>
-                      )}
-                    </article>
-                  );
-                })}
+                            <div className={styles.featuredZahlen}>
+                              {istFertig ? (
+                                <>
+                                  <span><strong>{spielbar}</strong> Lektionen</span>
+                                  {gruppen > 1 && <span><strong>{gruppen}</strong> Gruppen</span>}
+                                  {pfade > 0 && <span><strong>{pfade}</strong> Pfade</span>}
+                                </>
+                              ) : (
+                                <span>
+                                  <strong>{spielbar}</strong> spielbar von <strong>{flach.length}</strong> geplant
+                                </span>
+                              )}
+                            </div>
+
+                            {thema.pfade && thema.pfade.length > 0 && (
+                              <nav className={styles.featuredPfade} aria-label="Lernpfade">
+                                {thema.pfade.map((p) => (
+                                  <Link
+                                    key={p.slug}
+                                    href={`/thema/${thema.slug}/lektionen/${p.lektionenSlugs[0]}`}
+                                    className={styles.featuredPfad}
+                                  >
+                                    {p.icon && <span aria-hidden>{p.icon}</span>}
+                                    {p.titel}
+                                  </Link>
+                                ))}
+                              </nav>
+                            )}
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           )}

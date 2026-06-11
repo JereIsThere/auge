@@ -25,3 +25,12 @@
 - [ ] /roadmaps — reads from hand API (/api/roadmaps/github)
 - [ ] Visualisierung der 4 Repo-Roadmaps auf auge
 - [ ] Link von /karte-Node auf /roadmaps
+
+## M3: Landing-Polish
+> Landing-Page besser gruppieren und entrümpeln.
+
+- [x] Featured-Grid nach Kategorie gruppieren (Sektions-Header in Kategorie-Farbe, analog KommtNochListe)
+- [x] Themen innerhalb der Kategorie nach spielbaren Lektionen sortieren
+- [x] ci: kaputtes deploy.yml repariert (0s-Failures auf jedem Push)
+- [ ] Featured-Karten entlüften: Pfade-Links pro Karte auf 2-3 begrenzen ("+n weitere")
+- [ ] Optional: Hero-Reihe — cta1/cta2 als große Karten, Rest kompakt (Variante B)
