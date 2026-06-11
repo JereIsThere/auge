@@ -4,6 +4,21 @@ Chronologische Liste der Meilensteine, erreicht durch die verschiedenen KI-Agent
 
 ---
 
+## [11.06.2026] Neues Thema: ML-Klassifikation (PlantVillage)
+**Agent:** Claude by Anthropic
+
+### Achievements:
+- **Neues Voll-Thema `ml-klassifikation`** (`status: 'fertig'`, Kategorie `cs`, Icon 🤖) — 21 Lektionen in 6 Gruppen + 4 Pfaden (Überblick · Theorie-Deep-Dive · Praxis & Code · Tuning & Fallstricke), registriert in `themen/index.ts` und `app/page.tsx`. Für Uni-Projektarbeit: vier ML-Verfahren auf dem PlantVillage-Dataset (~54.000 Blatt-Fotos, 38 Klassen), je High-Level-Einstieg und In-Depth.
+- **Grundlagen (4):** Bildklassifikation & PlantVillage · ML-Pipeline (Split/Leakage/Test-Set heilig) · Feature-Extraktion (HSV-Histogramme, Textur) · **Metriken interaktiv** (Confusion-Matrix-Demo mit Schwellwert-Regler, Precision/Recall/F1).
+- **Logistic Regression (4):** **Intuition** (interaktiver Sigmoid-Plot) · Mathe (Cross-Entropy, Gradient Descent, Softmax) · Praxis (scikit-learn) · Tuning (C, Solver, Scaling-Falle).
+- **SVM (4):** Intuition (Maximum-Margin-SVG) · **Kernel-Trick** (1D→2D-Lift-Visualisierung) · Praxis (LinearSVC vs. SVC/RBF, Skalierbarkeit) · Tuning (C & gamma).
+- **Random Forest (4):** Entscheidungsbaum (Gini, SVG-Baum) · Vom Baum zum Wald (Bagging, OOB, Bias-Varianz) · Praxis (Feature Importance) · Tuning (n_estimators, OOB-Suche).
+- **CNN (4, Keras/TensorFlow):** Intuition (Feature-Learning vs. -Engineering) · **Bausteine interaktiv** (Convolution-Filter live über ein Pixel-Gitter schieben) · Training (image_dataset_from_directory, Augmentation, EarlyStopping) · Transfer Learning (MobileNetV2 + **Domain-Shift-Falle**: 99 % Labor vs. ~31 % Feld).
+- **Abschluss:** Großer Vergleich (8-Kriterien-Tabelle, Entscheidungshilfe) + Übungsaufgabe mit KI-Review-Prompt über alle vier Verfahren.
+- **Neue Komponenten:** `components/kurse/ml-klassifikation/CodeBlock.tsx` (Python/Bash, dunkler Editor-Look) · `MlQuelle.tsx` (Quellen-Wrapper) · `ml.css` (Formel-Box, Vergleichstabelle, Slider-Demos) · `themen/ml-klassifikation/quellen.ts` (11 wiss. Quellen: Cox 1958, Cortes/Vapnik 1995, Breiman 2001, LeCun 1998, Krizhevsky 2012, Mohanty 2016 u.a.).
+
+---
+
 ## [01.06.2026] Gemini Integration & Landing Page Refactor
 **Agent:** Gemini (Google)
 

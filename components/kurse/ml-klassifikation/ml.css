@@ -1,0 +1,182 @@
+/* ────────────────────────────────────────────────────────────
+   ML-Klassifikation-Kurs — eigene Helfer.
+   Code-Blöcke nutzen bewusst in beiden Theme-Modi einen dunklen
+   Editor-Look (wie Docs-Seiten), damit kein .dark-Spiegel nötig ist.
+   ──────────────────────────────────────────────────────────── */
+
+.mlblk {
+  margin: 16px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.mlblk-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #0b1120;
+  border-bottom: 1px solid #1e293b;
+}
+
+.mlblk-lang {
+  font-family: ui-monospace, "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.mlblk-lang.python {
+  color: #93c5fd;
+  background: rgba(96, 165, 250, 0.14);
+}
+.mlblk-lang.bash {
+  color: #86efac;
+  background: rgba(74, 222, 128, 0.14);
+}
+.mlblk-lang.text {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.mlblk-title {
+  font-size: 0.76rem;
+  color: #94a3b8;
+}
+
+.mlblk-copy {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-family: ui-monospace, monospace;
+  color: #cbd5e1;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.mlblk-copy:hover {
+  background: #1e293b;
+  border-color: #475569;
+}
+.mlblk-copy.kopiert {
+  color: #34d399;
+  border-color: #34d399;
+}
+
+.mlblk-pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: ui-monospace, "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: pre;
+  tab-size: 2;
+}
+.mlblk-pre code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Hervorhebung einer fehlerhaften / wichtigen Zeile im Code-Block */
+.mlblk-pre .bad {
+  display: inline-block;
+  width: 100%;
+  background: rgba(248, 113, 113, 0.18);
+  border-left: 3px solid #f87171;
+  margin-left: -16px;
+  padding-left: 13px;
+}
+.mlblk-pre .good {
+  display: inline-block;
+  width: 100%;
+  background: rgba(52, 211, 153, 0.16);
+  border-left: 3px solid #34d399;
+  margin-left: -16px;
+  padding-left: 13px;
+}
+
+/* ── Formel-Box: zentrierte mathematische Ausdrücke ── */
+.ml-formel {
+  margin: 14px 0;
+  padding: 12px 16px;
+  text-align: center;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.02rem;
+  background: rgba(139, 92, 246, 0.07);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.dark .ml-formel {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+/* ── Vergleichstabelle ── */
+.ml-tabelle {
+  width: 100%;
+  margin: 14px 0;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+.ml-tabelle th,
+.ml-tabelle td {
+  padding: 8px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  text-align: left;
+  vertical-align: top;
+}
+.ml-tabelle th {
+  background: rgba(148, 163, 184, 0.12);
+  font-weight: 700;
+}
+.dark .ml-tabelle th {
+  background: rgba(148, 163, 184, 0.16);
+}
+
+/* ── Interaktive Demos: Slider-Zeile + Wertanzeige ── */
+.ml-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.ml-slider-row label {
+  min-width: 130px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.ml-slider-row input[type='range'] {
+  flex: 1;
+  min-width: 140px;
+}
+.ml-slider-wert {
+  font-family: ui-monospace, monospace;
+  font-size: 0.84rem;
+  min-width: 70px;
+  text-align: right;
+}
+
+.ml-demo {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.06);
+}
+.ml-demo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
