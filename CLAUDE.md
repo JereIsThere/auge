@@ -220,7 +220,7 @@ gh pr merge <nr> --merge   # Standard, kein squash/rebase
 gh workflow run "Deploy Auge" --ref main
 ```
 
-Branchname-Konvention für Feature-Branches: `claude-edits/<thema>-vertiefung`, `claude-edits/<feature>`, `claude-edits/<thema>-quellen` etc.
+Branchname-Konvention für Feature-Branches: `claude/<feature>` — z.B. `claude/landing-kategorie-sektionen`, `claude/fix-deploy-yaml`, `claude/<thema>-vertiefung`.
 
 ---
 
