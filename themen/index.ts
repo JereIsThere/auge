@@ -9,6 +9,7 @@ import neurologieMmc from './neurologie-mmc/meta';
 import nextAuthBeta from './next-auth-beta/meta';
 import windows from './windows/meta';
 import htmlCss from './html-css/meta';
+import mlKlassifikation from './ml-klassifikation/meta';
 
 // Registry aller Themen.
 //
@@ -27,6 +28,7 @@ export const THEMEN: Thema[] = [
   nextAuthBeta,
   windows,
   htmlCss,
+  mlKlassifikation,
   ...PLATZHALTER_THEMEN,
 ];
 

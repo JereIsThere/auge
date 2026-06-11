@@ -27,6 +27,7 @@ const THEMA_ICON: Record<string, string> = {
   'next-auth-beta': '🔑',
   windows: '🪟',
   'html-css': '🌐',
+  'ml-klassifikation': '🤖',
 };
 
 export default async function Home() {
