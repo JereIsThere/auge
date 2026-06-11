@@ -132,9 +132,48 @@
   margin-top: 1rem;
 }
 
+/* Kategorie-Sektionen — gleiche Optik wie die Gruppen der KommtNochListe,
+   damit die ganze Seite einem Muster folgt. */
+.kategorieGruppen {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.kategorieGruppe {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kategorieTitel {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--farbe, #00d4c8);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+
+.kategorieAnzahl {
+  font-size: 0.62rem;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
 .featuredGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  /* auto-fill statt auto-fit: eine einzelne Karte in einer kleinen
+     Kategorie-Gruppe bleibt Spaltenbreite statt volle Breite. */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 16px;
 }
 
