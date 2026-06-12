@@ -25,7 +25,7 @@ Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScrip
     thema/[slug]/                 Thema-Hub
     thema/[slug]/lektionen/[lektion]/   Lektion mit Sidebar
   components/
-    lessons/                      WIEDERVERWENDBAR: DepthBox, QuelleBox, Aufgabe, KiReview, LessonsSidebar, LessonsScope, ThemeToggle
+    lessons/                      WIEDERVERWENDBAR: DepthBox, QuelleBox, Aufgabe, KiReview, CodeBlock, LessonsSidebar, LessonsScope, ThemeToggle
     kurse/<thema>/                Lektions-Components pro Thema
     KommtNochListe.tsx            Landing-Sektion
     TopicGrid.tsx                 (alt, ungenutzt)
@@ -97,6 +97,22 @@ Verbesserungs-Hebel" endet.`} />
 ```
 
 Schwierigkeit: `leicht | mittel | schwer`. Mini-Aufgaben (ohne KiReview) auch in normale Lektionen einbaubar.
+
+### CodeBlock — Code mit Syntax-Highlighting + Copy-Button
+
+```tsx
+import { CodeBlock } from "@/components/lessons/CodeBlock";
+
+<CodeBlock
+  lang="python"   // python | bash | html | css | js | ts | tsx | json | text
+  title="pipeline.py"
+  code={`from sklearn.pipeline import Pipeline`}
+/>
+```
+
+`code` immer als String (Template-Literal), nie als JSX — sonst frisst JSX die
+Klammern. Highlighting via Prism (oneDark), dunkler Editor-Look in beiden
+Themes. Kein kurs-eigener CodeBlock mehr — immer diesen verwenden.
 
 ---
 

@@ -1,0 +1,121 @@
+/* Geteilter Code-Block (components/lessons/CodeBlock.tsx).
+   Dunkler Editor-Look in beiden Themes — bewusst NICHT ans Theme gekoppelt. */
+
+.cblk {
+  margin: 16px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.cblk-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #0b1120;
+  border-bottom: 1px solid #1e293b;
+}
+
+.cblk-lang {
+  font-family: ui-monospace, "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.cblk-lang.python {
+  color: #93c5fd;
+  background: rgba(96, 165, 250, 0.14);
+}
+.cblk-lang.bash {
+  color: #86efac;
+  background: rgba(74, 222, 128, 0.14);
+}
+.cblk-lang.html {
+  color: #fdba74;
+  background: rgba(251, 146, 60, 0.14);
+}
+.cblk-lang.css {
+  color: #c4b5fd;
+  background: rgba(167, 139, 250, 0.14);
+}
+.cblk-lang.js,
+.cblk-lang.json {
+  color: #fde047;
+  background: rgba(250, 204, 21, 0.12);
+}
+.cblk-lang.ts,
+.cblk-lang.tsx {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+}
+.cblk-lang.text {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.cblk-title {
+  font-size: 0.76rem;
+  color: #94a3b8;
+}
+
+.cblk-copy {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-family: ui-monospace, monospace;
+  color: #cbd5e1;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.cblk-copy:hover {
+  background: #1e293b;
+  border-color: #475569;
+}
+.cblk-copy.kopiert {
+  color: #34d399;
+  border-color: #34d399;
+}
+
+.cblk-pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: ui-monospace, "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: pre;
+  tab-size: 2;
+}
+.cblk-pre code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Manuelle Hervorhebung einer Zeile (children-Pfad, ohne Highlighting) */
+.cblk-pre .bad {
+  display: inline-block;
+  width: 100%;
+  background: rgba(248, 113, 113, 0.18);
+  border-left: 3px solid #f87171;
+  margin-left: -16px;
+  padding-left: 13px;
+}
+.cblk-pre .good {
+  display: inline-block;
+  width: 100%;
+  background: rgba(52, 211, 153, 0.16);
+  border-left: 3px solid #34d399;
+  margin-left: -16px;
+  padding-left: 13px;
+}

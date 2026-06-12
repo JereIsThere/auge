@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function Pipeline() {
@@ -88,7 +88,7 @@ export default function Pipeline() {
         Für die klassischen Verfahren sammeln wir erst Pfade und Labels,
         gesplittet wird <em>bevor</em> irgendetwas berechnet wird:
       </p>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="split.py"
         code={`from pathlib import Path
 from sklearn.model_selection import train_test_split

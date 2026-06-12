@@ -1,6 +1,6 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
 import { MlQuelle } from "./MlQuelle";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function Einleitung() {
