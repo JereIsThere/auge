@@ -32,5 +32,7 @@
 - [x] Featured-Grid nach Kategorie gruppieren (Sektions-Header in Kategorie-Farbe, analog KommtNochListe)
 - [x] Themen innerhalb der Kategorie nach spielbaren Lektionen sortieren
 - [x] ci: kaputtes deploy.yml repariert (0s-Failures auf jedem Push)
-- [ ] Featured-Karten entlüften: Pfade-Links pro Karte auf 2-3 begrenzen ("+n weitere")
+- [x] Featured-Karten entlüften: Pfade-Pills entfernt (Pfade-Anzahl bleibt in der Zahlen-Zeile)
+- [x] Kompakt-Karten: 3 Spalten statt 2, Pitch auf 2 Zeilen geclampt
+- [x] ThemenPie: Donut-Chart der Lektions-Verteilung, Slices + Legende verlinken per Anker auf die Karten
 - [ ] Optional: Hero-Reihe — cta1/cta2 als große Karten, Rest kompakt (Variante B)
