@@ -230,6 +230,10 @@ export interface BlogPost {
   autor: string;
   kurztext: string;
   icon?: string;
+  /** Artikel-Component, analog zum Lektions-Loader. */
+  loader?: () => Promise<{ default: ComponentType }>;
+  /** Slug eines passenden Themas — wird unterm Artikel verlinkt. */
+  themaSlug?: string;
 }
 
 /** Kurzform „Autor et al. Jahr" für Marker im Fließtext. */

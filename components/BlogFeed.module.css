@@ -97,6 +97,7 @@
   display: block;
   width: 100%;
   padding: 10px;
+  text-decoration: none;
   background: transparent;
   border: 1px dashed rgba(200, 192, 216, 0.2);
   color: rgba(200, 192, 216, 0.6);
@@ -112,4 +113,5 @@
   border-color: rgba(0, 212, 200, 0.5);
   color: #00d4c8;
   background: rgba(0, 212, 200, 0.05);
+  text-decoration: none;
 }
