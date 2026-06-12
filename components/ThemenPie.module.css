@@ -1,0 +1,110 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(20, 14, 35, 0.92), rgba(28, 18, 48, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin-bottom: 22px;
+}
+
+.pie {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+}
+
+.sektor {
+  stroke: rgba(6, 0, 14, 0.9);
+  stroke-width: 1;
+  transition: opacity 0.15s, transform 0.15s;
+  transform-origin: 80px 80px;
+  cursor: pointer;
+}
+
+.sektor:hover {
+  opacity: 0.85;
+  transform: scale(1.03);
+}
+
+.loch {
+  fill: rgba(13, 8, 24, 0.96);
+  pointer-events: none;
+}
+
+.lochZahl {
+  font-family: 'Courier New', monospace;
+  font-size: 26px;
+  font-weight: 700;
+  fill: #f4eeff;
+}
+
+.lochLabel {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: rgba(200, 192, 216, 0.55);
+}
+
+.legende {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.legendeLink {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.74rem;
+  color: rgba(200, 192, 216, 0.78);
+  text-decoration: none;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.legendeLink:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f4eeff;
+  text-decoration: none;
+}
+
+.punkt {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.legendeTitel {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.legendeZahl {
+  color: rgba(200, 192, 216, 0.45);
+  font-size: 0.66rem;
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .legende {
+    width: 100%;
+  }
+}

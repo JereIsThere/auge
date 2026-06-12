@@ -6,6 +6,7 @@ import { KATEGORIE_FARBEN, KATEGORIE_LABELS, lektionenFlach } from '@/types';
 import type { Kategorie, Thema } from '@/types';
 import { getActiveThemaEdits } from '@/lib/active-prs';
 import CyrillicCanvas from '@/components/CyrillicCanvas';
+import ThemenPie from '@/components/ThemenPie';
 import KommtNochListe from '@/components/KommtNochListe';
 import BlogFeed from '@/components/BlogFeed';
 import styles from './page.module.css';
@@ -102,6 +103,8 @@ export default async function Home() {
                 </span>
               </div>
 
+              <ThemenPie themen={kategorieGruppen.flatMap((g) => g.themen)} />
+
               <div className={styles.kategorieGruppen}>
                 {kategorieGruppen.map(({ kategorie, themen: gruppenThemen }) => (
                   <div
@@ -130,6 +133,7 @@ export default async function Home() {
                         return (
                           <article
                             key={thema.slug}
+                            id={`thema-${thema.slug}`}
                             className={styles.featuredKarte}
                             style={{ '--farbe': farbe } as React.CSSProperties}
                             data-live={liveEdit ? 'true' : undefined}
@@ -176,21 +180,6 @@ export default async function Home() {
                                 </span>
                               )}
                             </div>
-
-                            {thema.pfade && thema.pfade.length > 0 && (
-                              <nav className={styles.featuredPfade} aria-label="Lernpfade">
-                                {thema.pfade.map((p) => (
-                                  <Link
-                                    key={p.slug}
-                                    href={`/thema/${thema.slug}/lektionen/${p.lektionenSlugs[0]}`}
-                                    className={styles.featuredPfad}
-                                  >
-                                    {p.icon && <span aria-hidden>{p.icon}</span>}
-                                    {p.titel}
-                                  </Link>
-                                ))}
-                              </nav>
-                            )}
                           </article>
                         );
                       })}
