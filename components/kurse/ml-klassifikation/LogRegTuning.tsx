@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./ml.css";
 
@@ -50,7 +50,7 @@ export default function LogRegTuning() {
         </tbody>
       </table>
 
-      <CodeBlock
+      <CodeBlock lang="python"
         title="tuning.py — Grid Search über C"
         code={`from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline

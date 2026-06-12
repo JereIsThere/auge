@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./ml.css";
 
@@ -21,7 +21,7 @@ export default function RfPraxis() {
       </div>
 
       <h3>Training + Evaluation</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="rf_plantvillage.py"
         code={`from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
@@ -49,7 +49,7 @@ print(classification_report(y_test, wald.predict(X_test), digits=3))`}
       </p>
 
       <h3>Feature Importance: Was hat der Wald gelernt?</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="importance.py"
         code={`import numpy as np
 

@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function Features() {
@@ -36,7 +36,7 @@ export default function Features() {
         welchen Farbbereich fallen — egal <em>wo</em> im Bild sie liegen.
         Damit ist es robust gegen Verschiebung und Rotation.
       </p>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="features.py — HSV-Histogramm pro Bild"
         code={`import cv2
 import numpy as np

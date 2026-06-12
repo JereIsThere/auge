@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./ml.css";
 
@@ -91,7 +91,7 @@ export default function RfTuning() {
         Ensemble-Lektion) — für die Parametersuche reicht oft eine simple
         Schleife ohne Cross-Validation:
       </p>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="rf_tuning.py"
         code={`from sklearn.ensemble import RandomForestClassifier
 

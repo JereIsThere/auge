@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./ml.css";
 
@@ -140,7 +140,7 @@ export default function Metriken() {
       </ol>
 
       <h3>In Python: classification_report</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="evaluation.py"
         code={`from sklearn.metrics import classification_report, confusion_matrix
 

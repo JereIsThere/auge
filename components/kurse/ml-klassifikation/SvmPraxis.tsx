@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./ml.css";
 
@@ -22,7 +22,7 @@ export default function SvmPraxis() {
       </div>
 
       <h3>Variante 1: LinearSVC — der Arbeitsgaul</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="svm_linear.py"
         code={`from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -46,7 +46,7 @@ print(classification_report(y_test, pipe.predict(X_test), digits=3))`}
       </p>
 
       <h3>Variante 2: SVC mit RBF — teuer, aber gekrümmt</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="svm_rbf.py"
         code={`from sklearn.svm import SVC
 import numpy as np

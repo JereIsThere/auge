@@ -1,5 +1,5 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function CnnTraining() {
@@ -20,7 +20,7 @@ export default function CnnTraining() {
       </div>
 
       <h3>1. Daten laden — die Ordnerstruktur zahlt sich aus</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="cnn_daten.py"
         code={`import tensorflow as tf
 from tensorflow import keras
@@ -45,7 +45,7 @@ val_ds = val_ds.prefetch(tf.data.AUTOTUNE)`}
       />
 
       <h3>2. Modell — Augmentation eingebaut</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="cnn_modell.py"
         code={`from tensorflow.keras import layers
 
@@ -80,7 +80,7 @@ modell.summary()   # IMMER ansehen: stimmen Shapes + Parameterzahl?`}
       />
 
       <h3>3. Training mit Notbremse</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="cnn_training.py"
         code={`stop = keras.callbacks.EarlyStopping(
     monitor="val_loss",

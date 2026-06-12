@@ -1,6 +1,6 @@
 import { Aufgabe, AufgabeCheckliste } from "@/components/lessons/Aufgabe";
 import { KiReview } from "@/components/lessons/KiReview";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 import "./html-css.css";
 

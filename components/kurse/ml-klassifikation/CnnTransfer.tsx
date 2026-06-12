@@ -1,6 +1,6 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
 import { MlQuelle } from "./MlQuelle";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function CnnTransfer() {
@@ -22,7 +22,7 @@ export default function CnnTransfer() {
       </div>
 
       <h3>MobileNetV2 als gefrorene Basis</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="transfer.py"
         code={`from tensorflow import keras
 from tensorflow.keras import layers
@@ -55,7 +55,7 @@ modell.fit(train_ds, validation_data=val_ds, epochs=10)`}
       />
 
       <h3>Phase 2: Fine-Tuning (optional, vorsichtig)</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="finetuning.py"
         code={`basis.trainable = True
 for layer in basis.layers[:-30]:    # nur die obersten ~30 Schichten auftauen

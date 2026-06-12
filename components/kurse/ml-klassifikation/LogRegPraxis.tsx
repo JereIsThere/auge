@@ -1,6 +1,6 @@
 import { DepthBox } from "@/components/lessons/DepthBox";
 import { MlQuelle } from "./MlQuelle";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "@/components/lessons/CodeBlock";
 import "@/components/lessons/lesson.css";
 
 export default function LogRegPraxis() {
@@ -21,7 +21,7 @@ export default function LogRegPraxis() {
       </div>
 
       <h3>Das komplette Skript</h3>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="logreg_plantvillage.py"
         code={`import numpy as np
 from pathlib import Path
@@ -84,7 +84,7 @@ print(classification_report(y_test, y_pred, digits=3))`}
         Gewichte zeigen, welche Histogramm-Bins (= Farbbereiche) für eine
         Klasse sprechen:
       </p>
-      <CodeBlock
+      <CodeBlock lang="python"
         title="interpretation.py"
         code={`klassen = modell.classes_
 idx = list(klassen).index("Tomato___Late_blight")
