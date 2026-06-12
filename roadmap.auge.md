@@ -35,4 +35,6 @@
 - [x] Featured-Karten entlüften: Pfade-Pills entfernt (Pfade-Anzahl bleibt in der Zahlen-Zeile)
 - [x] Kompakt-Karten: 3 Spalten statt 2, Pitch auf 2 Zeilen geclampt
 - [x] ThemenPie: Donut-Chart der Lektions-Verteilung, Slices + Legende verlinken per Anker auf die Karten
+- [x] KI-Blog klickbar: /blog-Index + /blog/[slug]-Artikel (Loader-Pattern), BlogFeed-Karten + CTA verlinkt
 - [ ] Optional: Hero-Reihe — cta1/cta2 als große Karten, Rest kompakt (Variante B)
+- [ ] Weitere KI-Blogger-Posts (je einer pro neuem Thema?)

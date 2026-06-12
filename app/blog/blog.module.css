@@ -1,0 +1,279 @@
+/* Geteilte Styles für Blog-Index und Artikel-Seiten (Auge-Frame, dunkel). */
+
+.seite {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.74rem;
+  color: rgba(200, 192, 216, 0.45);
+  margin-bottom: 2.2rem;
+}
+
+.breadcrumb a {
+  color: rgba(200, 192, 216, 0.65);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: #00d4c8;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  box-shadow: 0 0 8px #ff3b3b;
+  flex-shrink: 0;
+}
+
+/* ── Artikel-Header ───────────────────────────────────────────── */
+.kopf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.titelZeile {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.titel {
+  font-family: Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 700;
+  color: #f4eeff;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.meta {
+  font-family: 'Courier New', monospace;
+  font-size: 0.74rem;
+  color: rgba(200, 192, 216, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kiBadge {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(107, 0, 204, 0.12);
+  color: #b370f0;
+  border: 1px solid rgba(107, 0, 204, 0.35);
+}
+
+/* ── Artikel-Typografie (scoped auf .inhalt) ──────────────────── */
+.inhalt {
+  color: rgba(200, 192, 216, 0.82);
+  font-size: 1rem;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inhalt h2 {
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e0d8f0;
+  margin: 1.2rem 0 0;
+}
+
+.inhalt p {
+  margin: 0;
+}
+
+.inhalt ul,
+.inhalt ol {
+  margin: 0;
+  padding-left: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inhalt li::marker {
+  color: rgba(0, 212, 200, 0.6);
+}
+
+.inhalt strong {
+  color: #f4eeff;
+}
+
+.inhalt code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.86em;
+  background: rgba(0, 212, 200, 0.08);
+  color: #7fe8e0;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.inhalt pre {
+  background: rgba(13, 8, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0.25rem 0;
+}
+
+.inhalt pre code {
+  background: none;
+  color: rgba(200, 192, 216, 0.9);
+  padding: 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.inhalt kbd {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78em;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: #f4eeff;
+  white-space: nowrap;
+}
+
+/* ── Footer / Thema-Verweis ───────────────────────────────────── */
+.fussBereich {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.themaVerweis {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(20, 14, 35, 0.7);
+  border: 1px solid rgba(0, 212, 200, 0.25);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.themaVerweis:hover {
+  border-color: #00d4c8;
+  background: rgba(28, 18, 48, 0.85);
+  text-decoration: none;
+}
+
+.themaVerweisLabel {
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(200, 192, 216, 0.5);
+  display: block;
+}
+
+.themaVerweisTitel {
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00d4c8;
+}
+
+.backLink {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: rgba(200, 192, 216, 0.6);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: #00d4c8;
+}
+
+/* ── Index-Liste ──────────────────────────────────────────────── */
+.intro {
+  color: rgba(200, 192, 216, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+  max-width: 560px;
+}
+
+.postListe {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.postKarte {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  background: rgba(20, 14, 35, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.postKarte:hover {
+  border-color: rgba(0, 212, 200, 0.4);
+  background: rgba(28, 18, 48, 0.85);
+  transform: translateX(4px);
+  text-decoration: none;
+}
+
+.postKarteTitel {
+  font-family: Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f4eeff;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.postKarteText {
+  color: rgba(200, 192, 216, 0.65);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .seite {
+    padding: 2rem 1rem 4rem;
+  }
+}
