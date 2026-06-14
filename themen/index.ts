@@ -11,6 +11,7 @@ import windows from './windows/meta';
 import htmlCss from './html-css/meta';
 import mlKlassifikation from './ml-klassifikation/meta';
 import openscad from './openscad/meta';
+import englischSatzbau from './englisch-satzbau/meta';
 
 // Registry aller Themen.
 //
@@ -31,6 +32,7 @@ export const THEMEN: Thema[] = [
   htmlCss,
   mlKlassifikation,
   openscad,
+  englischSatzbau,
   ...PLATZHALTER_THEMEN,
 ];
 

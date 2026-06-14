@@ -31,6 +31,7 @@ const THEMA_ICON: Record<string, string> = {
   'html-css': '🌐',
   'ml-klassifikation': '🤖',
   openscad: '🧊',
+  'englisch-satzbau': '🗣️',
 };
 
 export default async function Home() {
