@@ -1,69 +1,93 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { DepthBox } from "@/components/lessons/DepthBox";
 import "@/components/lessons/lesson.css";
 
-// Ein Puzzle: deutsche Bedeutung + die richtige englische Reihenfolge.
-// Der „deutsche Reflex" zeigt, wie man es aus dem Deutschen heraus falsch baut.
+// Ein Puzzle: deutsche Bedeutung, der Wort-Vorrat (Chips) und ALLE akzeptierten
+// Reihenfolgen. Vergleich läuft case-insensitiv über die Wörter, damit z.B.
+// „tonight" vorn wie hinten passt.
 type Puzzle = {
   id: string;
   bedeutung: string;
-  richtig: string[];
-  deutscherReflex: string;
+  woerter: string[];
+  loesungen: string[][];
   warum: string;
 };
 
 const PUZZLES: Puzzle[] = [
   {
-    id: "yesterday",
-    bedeutung: "Ich bin gestern ins Kino gegangen.",
-    richtig: ["I", "went", "to", "the", "cinema", "yesterday"],
-    deutscherReflex: "Yesterday I went to the cinema  …oder…  I have yesterday gone",
-    warum:
-      "Im Deutschen kann die Zeitangabe nach vorn (Gestern bin ich…). " +
-      "Englisch mag Zeit am liebsten ans Ende: …yesterday.",
-  },
-  {
     id: "homework",
     bedeutung: "Ich muss heute Abend meine Hausaufgaben machen.",
-    richtig: ["I", "have", "to", "do", "my", "homework", "tonight"],
-    deutscherReflex: "I must tonight my homework do",
+    woerter: ["I", "have", "to", "do", "my", "homework", "tonight"],
+    loesungen: [
+      ["I", "have", "to", "do", "my", "homework", "tonight"],
+      ["tonight", "I", "have", "to", "do", "my", "homework"],
+    ],
     warum:
-      "Im Deutschen wandert das Verb (machen) ans Ende. Englisch hält " +
-      "Verb + Objekt zusammen: do my homework — und die Zeit kommt hinten dran.",
+      "Verb + Objekt bleiben zusammen (do my homework). Die Zeit (tonight) darf " +
+      "ans Ende ODER ganz nach vorn — nur nicht in die Mitte, und das Verb nicht ans Satzende.",
+  },
+  {
+    id: "cinema",
+    bedeutung: "Ich bin gestern ins Kino gegangen.",
+    woerter: ["I", "went", "to", "the", "cinema", "yesterday"],
+    loesungen: [
+      ["I", "went", "to", "the", "cinema", "yesterday"],
+      ["yesterday", "I", "went", "to", "the", "cinema"],
+    ],
+    warum:
+      "Zeit am Ende ist der Normalfall, vorn geht auch (zur Betonung). Was nicht geht: " +
+      "yesterday mitten rein oder das Verb ans Satzende schieben.",
   },
   {
     id: "coffee",
     bedeutung: "Sie trinkt jeden Morgen Kaffee.",
-    richtig: ["She", "drinks", "coffee", "every", "morning"],
-    deutscherReflex: "She drinks every morning coffee",
+    woerter: ["She", "drinks", "coffee", "every", "morning"],
+    loesungen: [
+      ["She", "drinks", "coffee", "every", "morning"],
+      ["every", "morning", "she", "drinks", "coffee"],
+    ],
     warum:
-      "Objekt zuerst (coffee), dann die Zeit (every morning). " +
-      "Die deutsche Reihenfolge schiebt die Zeit zu früh rein.",
+      "Objekt direkt hinters Verb (drinks coffee). Die Zeit (every morning) ans Ende " +
+      "oder nach vorn — aber nicht zwischen drinks und coffee.",
   },
 ];
 
 type Status = "offen" | "richtig" | "falsch";
 
+// Fisher-Yates — nur clientseitig (in useEffect) aufgerufen.
+function shuffle(arr: number[]): number[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function capitalize(w: string): string {
+  return w.charAt(0).toUpperCase() + w.slice(1);
+}
+
 export default function SatzZug() {
   const [puzzleIdx, setPuzzleIdx] = useState(0);
   const [gebaut, setGebaut] = useState<number[]>([]); // indizes der platzierten Wörter
   const [status, setStatus] = useState<Status>("offen");
+  // Reihenfolge der Chips im Pool. Initial deterministisch (umgekehrt) für SSR,
+  // wird nach dem Mount per useEffect echt zufällig gemischt → kein Hydration-Mismatch.
+  const [pool, setPool] = useState<number[]>(() =>
+    PUZZLES[0].woerter.map((_, i) => i).reverse()
+  );
 
   const puzzle = PUZZLES[puzzleIdx];
 
-  // Gemischte Wörter (deterministisch pro Puzzle, damit kein Hydration-Mismatch).
-  const pool = useMemo(() => {
-    const indizes = puzzle.richtig.map((_, i) => i);
-    // einfacher, stabiler Shuffle anhand der Puzzle-Position
-    const gemischt = [...indizes].sort(
-      (a, b) =>
-        ((a * 7 + puzzleIdx * 13) % puzzle.richtig.length) -
-        ((b * 7 + puzzleIdx * 13) % puzzle.richtig.length)
-    );
-    return gemischt;
-  }, [puzzle, puzzleIdx]);
+  // Bei jedem Puzzle-Wechsel (und beim ersten Mount) frisch zufällig mischen.
+  useEffect(() => {
+    setPool(shuffle(PUZZLES[puzzleIdx].woerter.map((_, i) => i)));
+    setGebaut([]);
+    setStatus("offen");
+  }, [puzzleIdx]);
 
   const verfuegbar = pool.filter((i) => !gebaut.includes(i));
 
@@ -80,21 +104,25 @@ export default function SatzZug() {
   }
 
   function pruefen() {
-    const richtig =
-      gebaut.length === puzzle.richtig.length &&
-      gebaut.every((wortIdx, pos) => wortIdx === pos);
-    setStatus(richtig ? "richtig" : "falsch");
+    const built = gebaut.map((i) => puzzle.woerter[i].toLowerCase());
+    const ok =
+      built.length === puzzle.woerter.length &&
+      puzzle.loesungen.some(
+        (sol) =>
+          sol.length === built.length &&
+          sol.every((w, k) => w.toLowerCase() === built[k])
+      );
+    setStatus(ok ? "richtig" : "falsch");
   }
 
   function zuruecksetzen() {
+    setPool(shuffle(puzzle.woerter.map((_, i) => i)));
     setGebaut([]);
     setStatus("offen");
   }
 
   function naechstes() {
     setPuzzleIdx((p) => (p + 1) % PUZZLES.length);
-    setGebaut([]);
-    setStatus("offen");
   }
 
   const wackelt = status === "falsch";
@@ -121,10 +149,11 @@ export default function SatzZug() {
       <h2>Der Satz-Zug</h2>
       <p className="lesson-description">
         Englische Sätze sind ein Zug mit fester Waggon-Reihenfolge:
-        <strong> Wer → tut was → wem/was → wo → wann.</strong> Du kannst die
-        Waggons nicht umkoppeln. Bau den Satz zusammen — wenn die Reihenfolge
-        stimmt, rastet der Zug ein. Wenn die deutsche Reihenfolge reinrutscht,
-        wackelt er.
+        <strong> Wer → tut was → wem/was → wo → wann.</strong> Verb und Objekt
+        bleiben dabei zusammen. Bau den Satz zusammen — wenn die Reihenfolge
+        stimmt, rastet der Zug ein. Rutscht die deutsche Reihenfolge rein
+        (Verb ans Ende, Zeit in die Mitte), wackelt er. Manche Sätze haben mehr
+        als eine richtige Lösung.
       </p>
 
       <div className="info-box">
@@ -173,12 +202,12 @@ export default function SatzZug() {
             }}
             title={eingerastet ? "" : "Klick zum Zurücklegen"}
           >
-            {puzzle.richtig[wortIdx]}
+            {pos === 0 ? capitalize(puzzle.woerter[wortIdx]) : puzzle.woerter[wortIdx]}
           </button>
         ))}
       </div>
 
-      {/* Wort-Pool */}
+      {/* Wort-Pool (zufällig gemischt) */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "6px 0 14px" }}>
         {verfuegbar.map((i) => (
           <button
@@ -194,7 +223,7 @@ export default function SatzZug() {
               color: "#3730a3",
             }}
           >
-            {puzzle.richtig[i]}
+            {puzzle.woerter[i]}
           </button>
         ))}
         {verfuegbar.length === 0 && status !== "richtig" && (
@@ -209,7 +238,7 @@ export default function SatzZug() {
         <button
           type="button"
           onClick={pruefen}
-          disabled={gebaut.length !== puzzle.richtig.length || eingerastet}
+          disabled={gebaut.length !== puzzle.woerter.length || eingerastet}
           className="toggle-code"
           style={{
             background: eingerastet ? "#d1fae5" : "#10b981",
@@ -217,13 +246,13 @@ export default function SatzZug() {
             color: eingerastet ? "#047857" : "#ffffff",
             fontWeight: 700,
             opacity:
-              gebaut.length !== puzzle.richtig.length && !eingerastet ? 0.5 : 1,
+              gebaut.length !== puzzle.woerter.length && !eingerastet ? 0.5 : 1,
           }}
         >
           ✓ Prüfen
         </button>
         <button type="button" onClick={zuruecksetzen} className="toggle-code">
-          ↺ Neu
+          ↺ Neu mischen
         </button>
         {eingerastet && (
           <button
@@ -246,8 +275,8 @@ export default function SatzZug() {
       {wackelt && (
         <div className="info-box" style={{ marginTop: 14, background: "#fef2f2", borderColor: "#ef4444" }}>
           🔴 Wackelt noch. Tipp: Verb + Objekt bleiben zusammen, die Zeitangabe
-          (yesterday, tonight, every morning) wandert ans Ende — nicht nach vorn
-          wie im Deutschen.
+          (yesterday, tonight, every morning) wandert ans Ende oder ganz nach
+          vorn — nie in die Mitte, und das Verb bleibt vorn.
         </div>
       )}
 
@@ -255,15 +284,15 @@ export default function SatzZug() {
         Deutsch ist eine <em>V2-Sprache</em> mit verschiebbaren Feldern: „Gestern
         bin ich ins Kino gegangen" stellt die Zeit nach vorn und schiebt das
         Partizip (gegangen) ans Satzende. Englisch ist viel starrer: Subjekt →
-        Verb → Objekt, und Zusätze wie Ort und Zeit hängen hinten dran. Wer die
+        Verb → Objekt, und Zusätze wie Ort und Zeit hängen an den Rändern. Wer die
         deutsche Beweglichkeit mitnimmt, baut Sätze, die „wackeln".
       </DepthBox>
 
-      <DepthBox variant="mistake" title="Die Zeitangabe nach vorn ziehen">
-        „Yesterday I have to the cinema gone" ist gleich doppelt deutsch: Zeit
-        vorn <em>und</em> Verb hinten. Beides geht im Englischen nicht im selben
-        Atemzug. Faustregel fürs Sprechen: <strong>erst wer + was passiert,
-        dann wo, dann wann.</strong>
+      <DepthBox variant="mistake" title="Verb ans Ende oder Zeit in die Mitte">
+        Zwei deutsche Reflexe auf einmal: „I must tonight my homework do" schiebt
+        die Zeit in die Mitte <em>und</em> das Verb ans Ende. Beides geht im
+        Englischen nicht. Faustregel fürs Sprechen: <strong>erst wer + was
+        passiert, dann das Objekt direkt dahinter, Zeit an den Rand.</strong>
       </DepthBox>
 
       <DepthBox variant="related" title="Hängt zusammen mit…">
