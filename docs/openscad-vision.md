@@ -87,9 +87,11 @@ Daumenmulde zum Herausnehmen. Gewählt, weil:
    Box passt sich an.
 
 ### Gruppe 2 — Fertig & drucken
-5. **Feinschliff: runde Ecken + Daumenmulde** — `hull()`/`$fn` für gerundete
-   Ecken, ein Ausschnitt zum Greifen der Karten.
-6. **Vom Modell zum Druck** — Preview vs Render (F5/F6), Mannigfaltigkeit,
+5. **Die Greifmulde: Karten greifen** — neuer Grundkörper `cylinder` + `rotate`,
+   als weiteres Negativ ins `difference` gehängt; zeigt „Feature dazu = Körper
+   abziehen" und parametrische Positionierung (`aussen_b/2`).
+6. **Runde Ecken mit hull & $fn** — gerundete Box-Ecken + Auflösung.
+7. **Vom Modell zum Druck** — Preview vs Render (F5/F6), Mannigfaltigkeit,
    STL-Export. → fertige, druckbare Box.
 
 ### Übung
@@ -140,8 +142,9 @@ Bilder committen unter `public/openscad/<lektion>/<step>.png` (o.ä.).
   Status `in-arbeit`, Pfad „Die Box").
 - Komponenten: `iso.tsx`, `ScadStep.tsx`, `openscad.css`.
 - Voll: L1 Einstieg · L2 Maße & Positionieren · L3 difference · L4 Variablen &
-  Toleranz · Wegweiser „Das ist hier noch nicht erklärt".
-- Stubs (`kommtNoch: true`): L5 Feinschliff · L6 Export · L7 Übung.
+  Toleranz · L5 Greifmulde (`cylinder`/`rotate`, Querschnitt-SVG) · Wegweiser
+  „Das ist hier noch nicht erklärt".
+- Stubs (`kommtNoch: true`): L6 Runde Ecken · L7 Export · L8 Übung.
 - Registriert in `themen/index.ts` + `app/page.tsx` (THEMA_ICON).
 
 **Offen / nächste Schritte:**

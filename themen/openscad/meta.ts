@@ -26,7 +26,8 @@ const thema: Thema = {
         'masse-positionieren',
         'aushoehlen',
         'variablen-toleranz',
-        'feinschliff',
+        'greifmulde',
+        'runde-ecken',
         'export-druck',
       ],
       akzent: 'from-teal-400 to-cyan-600',
@@ -76,11 +77,19 @@ const thema: Thema = {
       untertitel: 'Feinschliff und der Weg zur STL.',
       lektionen: [
         {
-          slug: 'feinschliff',
-          titel: 'Feinschliff: runde Ecken & Daumenmulde',
+          slug: 'greifmulde',
+          titel: 'Die Greifmulde: Karten greifen',
+          icon: '🤏',
+          kurzbeschreibung:
+            'Einen Zylinder aus der Vorderwand schneiden — Feature dazu = Körper abziehen.',
+          loader: () => import('@/components/kurse/openscad/Greifmulde'),
+        },
+        {
+          slug: 'runde-ecken',
+          titel: 'Runde Ecken mit hull & $fn',
           icon: '🪄',
           kurzbeschreibung:
-            'Abgerundete Ecken mit hull/$fn und ein Ausschnitt zum Greifen der Karten.',
+            'Abgerundete Box-Ecken — und was $fn mit der Glätte zu tun hat.',
           kommtNoch: true,
         },
         {
