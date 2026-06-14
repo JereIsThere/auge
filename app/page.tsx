@@ -30,6 +30,7 @@ const THEMA_ICON: Record<string, string> = {
   windows: '🪟',
   'html-css': '🌐',
   'ml-klassifikation': '🤖',
+  openscad: '🧊',
 };
 
 export default async function Home() {

@@ -1,0 +1,233 @@
+/* ── OpenSCAD-Kurs: Code-Step + isometrische Skizze ──────────────────── */
+
+.scad-step {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .scad-step {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Code-Block — dunkler Editor-Look in beiden Themes */
+.scad-code {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+}
+
+.scad-code-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.scad-lang {
+  font-family: ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+  background: #422006;
+  border: 1px solid #92400e;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.scad-code-title {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.scad-copy {
+  margin-left: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  background: transparent;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.scad-copy:hover {
+  border-color: #94a3b8;
+  color: #f1f5f9;
+}
+
+.scad-copy.kopiert {
+  border-color: #059669;
+  color: #6ee7b7;
+}
+
+.scad-pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  flex: 1;
+}
+
+.scad-pre code {
+  white-space: pre;
+}
+
+/* ── Isometrische Skizze ─────────────────────────────────────────────── */
+
+.iso {
+  /* Flächen-Palette (Light) */
+  --iso-top: #e2e8f0;
+  --iso-right: #94a3b8;
+  --iso-front: #64748b;
+  --iso-wall: #475569;
+  --iso-floor: #334155;
+  --iso-card: #fcd34d;
+  --iso-edge: #1e293b;
+  --iso-anno: #475569;
+  --iso-anno-strong: #2563eb;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.dark .iso {
+  --iso-top: #475569;
+  --iso-right: #334155;
+  --iso-front: #1e293b;
+  --iso-wall: #0f172a;
+  --iso-floor: #020617;
+  --iso-card: #f59e0b;
+  --iso-edge: #94a3b8;
+  --iso-anno: #94a3b8;
+  --iso-anno-strong: #60a5fa;
+
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+.iso-svg {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  overflow: visible;
+}
+
+.iso-caption {
+  font-size: 0.78rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+.dark .iso-caption {
+  color: #94a3b8;
+}
+
+.iso-label {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--iso-anno);
+}
+
+.iso-label.strong {
+  fill: var(--iso-anno-strong);
+}
+
+.iso-dim {
+  stroke: var(--iso-anno);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  fill: none;
+}
+
+/* ── Wegweiser-Seite („noch nicht erklärt") ──────────────────────────── */
+
+.wegweiser {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wegweiser-item {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #14b8a6;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.wegweiser-name {
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #0f766e;
+}
+
+.wegweiser-was {
+  font-size: 0.9rem;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+.wegweiser-wofuer {
+  grid-column: 2;
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.wegweiser-wofuer::before {
+  content: "→ ";
+  color: #14b8a6;
+  font-weight: 700;
+}
+
+.dark .wegweiser-item {
+  background: #0f172a;
+  border-color: #1e293b;
+  border-left-color: #2dd4bf;
+}
+
+.dark .wegweiser-name {
+  color: #5eead4;
+}
+
+.dark .wegweiser-was {
+  color: #e2e8f0;
+}
+
+.dark .wegweiser-wofuer {
+  color: #94a3b8;
+}
+
+.dark .wegweiser-wofuer::before {
+  color: #2dd4bf;
+}
