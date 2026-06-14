@@ -50,7 +50,7 @@ export const NODES: EcoNode[] = [
       'Next.js 15, App Router, statisch-nah deploybar',
       'Themen-System mit Lektionen, Gruppen, Pfaden',
       'Blog-Feed, KommtNoch-Liste',
-      'Live: auge2.jeremias-groehl.de',
+      'Live: auge.jeremias-groehl.de (auch jere.horse → auge.jere.horse)',
     ],
     deps: [],
     adrs: ['0001'],
