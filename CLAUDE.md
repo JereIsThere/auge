@@ -10,7 +10,7 @@ Handkuratiertes Lernportal. Themen → Gruppen → Lektionen, alles in TypeScrip
 
 **Tech:** Next.js 15.5 (App Router, standalone build, typedRoutes), React 19, Tailwind v4 (für Lektionen) + CSS-Modules (für Auge-Frame), TypeScript strict, Node ≥18.
 
-**Live:** [auge2.jeremias-groehl.de](https://auge2.jeremias-groehl.de) — Deploy via GitHub Action bei push auf main (kein Pfad-Filter). Manuell triggern: `gh workflow run "Deploy Auge" --ref main`.
+**Live:** [auge.jeremias-groehl.de](https://auge.jeremias-groehl.de) — offizielle Domains: `auge.jeremias-groehl.de` und [jere.horse](https://jere.horse) (leitet auf `auge.jere.horse` weiter). Deploy via GitHub Action bei push auf main (kein Pfad-Filter). Manuell triggern: `gh workflow run "Deploy Auge" --ref main`.
 
 **Klammer-Repo:** Dieses Repo ist ein Submodule von [JereIsThere/auge-framework](https://github.com/JereIsThere/auge-framework), dem Umbrella-Repo (OrientDB + n8n + hand + ADRs). Submission-Pipeline-Details dort.
 
