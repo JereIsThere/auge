@@ -10,6 +10,7 @@ import nextAuthBeta from './next-auth-beta/meta';
 import windows from './windows/meta';
 import htmlCss from './html-css/meta';
 import mlKlassifikation from './ml-klassifikation/meta';
+import openscad from './openscad/meta';
 
 // Registry aller Themen.
 //
@@ -29,6 +30,7 @@ export const THEMEN: Thema[] = [
   windows,
   htmlCss,
   mlKlassifikation,
+  openscad,
   ...PLATZHALTER_THEMEN,
 ];
 
