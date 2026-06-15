@@ -200,9 +200,12 @@ export default function Signaturen() {
             demonstrierte das auf der CCC-Konferenz.
           </li>
           <li>
-            <strong>Bleichenbacher-Angriff (1998, 2017 neu):</strong> RSA-Signaturen
-            ohne ordentliches Padding ließen sich fälschen — Angreifer konnten
-            beliebige Werte als „signiert" durchgehen lassen.
+            <strong>Bleichenbacher-Signaturfälschung (2006):</strong> Bei RSA mit
+            kleinem Exponenten (e = 3) und lückenhafter Padding-Prüfung beim
+            Verifizieren ließen sich Signaturen fälschen — Angreifer konnten
+            beliebige Werte als „signiert" durchgehen lassen. (Nicht zu
+            verwechseln mit Bleichenbachers <em>Entschlüsselungs</em>-Orakel von
+            1998, 2017 als ROBOT wiederbelebt.)
           </li>
           <li>
             <strong>SHA-1-Kollisionen (SHAttered 2017):</strong> Mit dem ersten

@@ -100,8 +100,9 @@ export default function PasswortHashing() {
             <div className="hash-output">{out.hex}</div>
           </div>
           <div className={out.ms > 100 ? "success-box" : "info-box"}>
-            Berechnung dauerte <strong>{out.ms.toFixed(0)} ms</strong>. Auf
-            deinem Gerät — auf einer Angreifer-GPU eher{" "}
+            Berechnung dauerte <strong>{out.ms.toFixed(0)} ms</strong> auf
+            deinem Gerät. Eine spezialisierte Angreifer-GPU ist grob{" "}
+            <strong>~10<sup>6</sup>× schneller</strong> — also rund{" "}
             <strong>{(out.ms / 1000).toFixed(2)} µs</strong> pro Versuch. Reale
             Empfehlung: Hash sollte mindestens 100–500 ms auf einem Server
             kosten (Kostenfaktor entsprechend hoch).

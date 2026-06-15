@@ -55,8 +55,8 @@ export default function Ecc() {
         <p>
           RSAs Sicherheit beruht auf dem Faktorisieren großer Zahlen. Dafür gibt
           es subexponentiale Algorithmen (Number Field Sieve) — also schneller
-          als reines Raten, langsamer als polynomiell. Deshalb muss RSA mit
-          Quanten der Schlüssel-Länge ausgleichen.
+          als reines Raten, langsamer als polynomiell. Deshalb muss RSA das mit
+          der Schlüssel-Länge ausgleichen.
         </p>
         <p>
           ECC beruht auf dem <em>diskreten Logarithmus auf elliptischen Kurven</em>.
