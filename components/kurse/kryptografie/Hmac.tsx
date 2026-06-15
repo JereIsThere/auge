@@ -138,7 +138,7 @@ export default function Hmac() {
         id="rfc-2104"
         kernaussagen={[
           "RFC 2104 definiert HMAC als doppelte Hash-Konstruktion: H((K ⊕ opad) ‖ H((K ⊕ ipad) ‖ m)) — schützt damit vor Length-Extension-Angriffen auf nackte Hashes.",
-          "HMAC ist sicher, solange die zugrundeliegende Hash-Funktion kollisionsresistent ist — also auch HMAC-SHA-256 und HMAC-SHA-3.",
+          "HMAC braucht nicht einmal Kollisionsresistenz der Hash-Funktion — es genügt, dass deren Kompressionsfunktion ein PRF ist. Deshalb gilt selbst HMAC-MD5 als MAC weiterhin als sicher, obwohl MD5 kollisionsgebrochen ist.",
           "Krawczyk et al. bewiesen die Sicherheit von HMAC formal — eine seltene Eigenschaft für praktisch weit verbreitete Konstruktionen.",
         ]}
       />

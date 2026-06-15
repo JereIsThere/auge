@@ -52,7 +52,7 @@ const steps: Step[] = [
     title: "Google antwortet mit Access Token (+ Refresh Token)",
     from: "🔐 Google",
     to: "🌐 App",
-    desc: "Access Token ist meist ein JWT, gültig z. B. 1 Stunde. Refresh Token kann später ein neues Access Token holen, ohne dass der Nutzer wieder klicken muss.",
+    desc: "Access Token ist kurzlebig (z. B. 1 Stunde) — oft ein JWT, bei manchen Anbietern (z. B. Google) aber ein opaker Zufalls-String. Das Refresh Token holt später ein neues Access Token, ohne dass der Nutzer wieder klicken muss.",
     payload:
       '{\n  "access_token": "ya29.a0Af...",\n  "expires_in": 3600,\n  "refresh_token": "1//0g...",\n  "token_type": "Bearer"\n}',
   },

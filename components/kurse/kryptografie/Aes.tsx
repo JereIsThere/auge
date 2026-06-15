@@ -79,6 +79,10 @@ export default function Aes() {
         sich komplett. Drücke nochmal Enter im Passwort-Feld — auch ohne
         Klartext-Änderung sieht der Geheimtext anders aus, weil der{" "}
         <strong>IV</strong> jedes Mal frisch zufällig ist.
+        <br />
+        <em>Hinweis:</em> Diese Demo nutzt das Passwort vereinfacht direkt als
+        Schlüssel. In echt leitet man den Schlüssel nie roh aus dem Passwort ab,
+        sondern über eine KDF wie PBKDF2, HKDF oder Argon2.
       </div>
 
       <DepthBox variant="why" title="Warum hat AES sich durchgesetzt?">
@@ -155,8 +159,9 @@ export default function Aes() {
       <DepthBox variant="history" title="Vorher: DES und 3DES">
         <p>
           Davor regierte <strong>DES</strong> (1977) mit nur 56 Bit Schlüssel.
-          In den 90ern wurde DES per Brute-Force in Tagen geknackt — eine
-          dedizierte Maschine namens <em>Deep Crack</em> brauchte 1998 nur
+          In den 90ern wurde DES per Brute-Force in Tagen geknackt — die
+          dedizierte EFF-Maschine <em>Deep Crack</em> brauchte 1998 rund
+          56 Stunden, zusammen mit dem distributed.net-Netz 1999 nur noch
           22 Stunden. <strong>3DES</strong> (DES dreifach hintereinander) war
           eine Notlösung, bis AES kam. 3DES ist seit 2023 offiziell verboten
           für neue Anwendungen.
