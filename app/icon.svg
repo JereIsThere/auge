@@ -1,0 +1,50 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="squircle">
+      <rect x="2" y="2" width="60" height="60" rx="15" />
+    </clipPath>
+    <radialGradient id="glowYellow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD24A" />
+      <stop offset="100%" stop-color="#FFD24A" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowGreen" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#74D08C" />
+      <stop offset="100%" stop-color="#74D08C" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowBlue" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5AA0F0" />
+      <stop offset="100%" stop-color="#5AA0F0" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowPink" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F2789B" />
+      <stop offset="100%" stop-color="#F2789B" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="iris" cx="50%" cy="40%" r="62%">
+      <stop offset="0%" stop-color="#9A6645" />
+      <stop offset="52%" stop-color="#6E4128" />
+      <stop offset="100%" stop-color="#3C2114" />
+    </radialGradient>
+  </defs>
+
+  <g clip-path="url(#squircle)">
+    <rect x="2" y="2" width="60" height="60" rx="15" fill="#FBFCFE" />
+    <!-- bunter Glow-Ring: vier weiche Farbflecken am Rand -->
+    <circle cx="32" cy="5" r="23" fill="url(#glowYellow)" />
+    <circle cx="6" cy="30" r="23" fill="url(#glowGreen)" />
+    <circle cx="14" cy="59" r="24" fill="url(#glowBlue)" />
+    <circle cx="59" cy="30" r="25" fill="url(#glowPink)" />
+    <!-- Mitte aufhellen, damit ein Ring entsteht -->
+    <circle cx="32" cy="32" r="19" fill="#FBFCFE" />
+
+    <!-- Auge -->
+    <ellipse cx="32" cy="33" rx="17.5" ry="11.5" fill="#FCF8F4" />
+    <circle cx="32" cy="33" r="11" fill="url(#iris)" />
+    <circle cx="32" cy="33" r="4.8" fill="#221007" />
+    <circle cx="28" cy="29" r="2.6" fill="#FFFFFF" fill-opacity="0.92" />
+    <!-- oberes Lid: zarter Schatten -->
+    <path d="M14.8 33 A17.5 11.5 0 0 1 49.2 33 A20 9 0 0 0 14.8 33 Z" fill="#000000" fill-opacity="0.06" />
+  </g>
+
+  <!-- feine Kante -->
+  <rect x="2.5" y="2.5" width="59" height="59" rx="14.5" fill="none" stroke="#0F172A" stroke-opacity="0.08" />
+</svg>
