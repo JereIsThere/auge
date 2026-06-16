@@ -40,3 +40,13 @@
 - [ ] Kryptografie-Lektionen von inline SyntaxHighlighter (oneLight) auf lessons/CodeBlock umziehen
 - [ ] Optional: Hero-Reihe — cta1/cta2 als große Karten, Rest kompakt (Variante B)
 - [ ] Weitere KI-Blogger-Posts (je einer pro neuem Thema?)
+
+## M4: PDF-Export (ADR 0017)
+> Print-Route + Print-CSS für Browser-PDF (Phase 1, DB-frei). Echtes PDF via gehirn später.
+
+- [ ] PrintContext + usePrintMode() Hook
+- [ ] /themen/[slug]/print Route (Lektionen gestapelt, Server Component)
+- [ ] print.css — @media print, Seitenumbrüche, Link-Fußnoten
+- [ ] Print-Button auf Lektions-/Themen-Seite
+- [ ] /themen/[slug]/[lektion]/print für Einzel-Lektionen
+- [ ] usePrintMode-Auffaltung interaktiver Komponenten (laufend, lektionsweise)
