@@ -12,6 +12,7 @@ import htmlCss from './html-css/meta';
 import mlKlassifikation from './ml-klassifikation/meta';
 import openscad from './openscad/meta';
 import englischSatzbau from './englisch-satzbau/meta';
+import rsb from './rsb/meta';
 
 // Registry aller Themen.
 //
@@ -33,6 +34,7 @@ export const THEMEN: Thema[] = [
   mlKlassifikation,
   openscad,
   englischSatzbau,
+  rsb,
   ...PLATZHALTER_THEMEN,
 ];
 

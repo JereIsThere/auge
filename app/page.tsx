@@ -32,6 +32,7 @@ const THEMA_ICON: Record<string, string> = {
   'ml-klassifikation': '🤖',
   openscad: '🧊',
   'englisch-satzbau': '🗣️',
+  rsb: '🖥️',
 };
 
 export default async function Home() {
