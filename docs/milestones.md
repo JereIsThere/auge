@@ -4,6 +4,18 @@ Chronologische Liste der Meilensteine, erreicht durch die verschiedenen KI-Agent
 
 ---
 
+## [17.06.2026] Neues Thema: Diabetes & CGM (in Arbeit)
+**Agent:** Claude by Anthropic
+
+### Achievements:
+- **Neues Thema `diabetes`** (`status: 'in-arbeit'`, Kategorie `sonstiges`, Icon 🩺) — 3 Lektionen in 2 Gruppen + 1 Pfad, registriert in `themen/index.ts` und `app/page.tsx`.
+- **Wiederverwendbare Komponente `MedizinHinweis`** (`components/lessons/MedizinHinweis.tsx`) — gelber Disclaimer-Banner für alle medizinischen Lektionen.
+- **Lektion 1 — Insulinvergleich** (`InsulinVergleich.tsx`, interaktiv): Fiasp vs. NovoRapid vs. Humalog — auswählbare Karten mit Wirkbeginn / Peak / Dauer, Vergleichstabelle, DepthBoxes zu Hexamer-Mechanismus und Lyumjev.
+- **Lektion 2 — Pen vs. Pumpe** (`PenVsPumpe.tsx`): Depot-Größe, Resorptionsfaktoren (Injektionsstelle, Lipohypertrophie, Wärme, Tiefe), DepthBox zu Closed-Loop.
+- **Lektion 3 — Juggluco + xDrip+ Setup** (`JuglucoXdripSetup.tsx`): Schritt-für-Schritt-Anleitung für Dexcom G6 und G7, Broadcast-Verbindung zu Juggluco, DepthBox zu BYODA und AndroidAPS.
+
+---
+
 ## [11.06.2026] Neues Thema: ML-Klassifikation (PlantVillage)
 **Agent:** Claude by Anthropic
 
