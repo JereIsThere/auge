@@ -13,6 +13,7 @@ import mlKlassifikation from './ml-klassifikation/meta';
 import openscad from './openscad/meta';
 import englischSatzbau from './englisch-satzbau/meta';
 import rsb from './rsb/meta';
+import diabetes from './diabetes/meta';
 
 // Registry aller Themen.
 //
@@ -35,6 +36,7 @@ export const THEMEN: Thema[] = [
   openscad,
   englischSatzbau,
   rsb,
+  diabetes,
   ...PLATZHALTER_THEMEN,
 ];
 

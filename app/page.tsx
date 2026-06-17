@@ -33,6 +33,7 @@ const THEMA_ICON: Record<string, string> = {
   openscad: '🧊',
   'englisch-satzbau': '🗣️',
   rsb: '🖥️',
+  diabetes: '🩺',
 };
 
 export default async function Home() {
