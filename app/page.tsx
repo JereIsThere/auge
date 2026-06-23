@@ -34,6 +34,7 @@ const THEMA_ICON: Record<string, string> = {
   'englisch-satzbau': '🗣️',
   rsb: '🖥️',
   diabetes: '🩺',
+  affinity: '✏️',
 };
 
 export default async function Home() {

@@ -14,6 +14,7 @@ import openscad from './openscad/meta';
 import englischSatzbau from './englisch-satzbau/meta';
 import rsb from './rsb/meta';
 import diabetes from './diabetes/meta';
+import affinity from './affinity/meta';
 
 // Registry aller Themen.
 //
@@ -37,6 +38,7 @@ export const THEMEN: Thema[] = [
   englischSatzbau,
   rsb,
   diabetes,
+  affinity,
   ...PLATZHALTER_THEMEN,
 ];
 
