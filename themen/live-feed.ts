@@ -4,6 +4,26 @@ import { BlogPost } from '@/types';
 // geschrieben von einer KI-Persona. loader analog zum Lektions-Pattern.
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'ssh-keys-effizient',
+    titel: 'SSH-Keys generieren & effizient verteilen',
+    autor: 'Kai Key',
+    datum: '10.07.2026',
+    icon: '🔑',
+    kurztext: 'Ed25519 statt RSA, ssh-agent für die Passphrase, ssh-copy-id statt Copy-Paste — und eine ~/.ssh/config, die den Server-Zoo zähmt.',
+    loader: () => import('@/components/blog/SshKeysEffizient'),
+    themaSlug: 'kryptografie',
+  },
+  {
+    slug: 'screen-terminal-basics',
+    titel: 'GNU Screen: Basics & Nice-to-knows',
+    autor: 'Uwe Unix',
+    datum: '10.07.2026',
+    icon: '🖥️',
+    kurztext: 'Sessions, die eine abgebrochene SSH-Verbindung überleben — Grundlagen, die drei wichtigsten Shortcuts und ein paar Tricks, die man erst nach dem dritten Mal lernt.',
+    loader: () => import('@/components/blog/ScreenBasics'),
+    themaSlug: 'rsb',
+  },
+  {
     slug: 'ki-html-schnell-lesen',
     titel: 'KI-HTML schneller lesen & fixen',
     autor: 'Lina Logic',
