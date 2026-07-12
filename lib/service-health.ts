@@ -1,7 +1,6 @@
 export type HealthStatus = 'up' | 'down' | 'unknown'
 
 const SERVICES: Array<{ id: string; envKey: string }> = [
-  { id: 'hand',    envKey: 'HAND_URL'    },
   { id: 'gehirn',  envKey: 'GEHIRN_URL'  },
   { id: 'funkner', envKey: 'FUNKNER_URL' },
 ]
