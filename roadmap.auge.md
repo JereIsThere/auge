@@ -6,6 +6,7 @@
 - [ ] /karte: Klick auf ADR-Chip öffnet ADR-Detail in Popup (statt externem Link)
 - [ ] auge-Profil im docker-compose (für reine Lokal-Dev)
 - [ ] casual-User Submissions-Formular (Thema einreichen)
+- [ ] deploy/ von `auge2` auf `auge` umbenennen — systemd-Unit `auge2.service`, nginx `server_name auge2.jeremias-groehl.de`, Pfad `/var/www/auge2`, SSH-Key `auge2_deploy` (deploy/setup.sh, nginx.conf, init.sh, init.ps1, auge2.service). ⚠️ Braucht koordinierte Server-Migration (Unit umbenennen, Pfad umziehen, certbot neu), sonst bricht der Deploy — daher nicht ad-hoc. Public-URL ist bereits `auge.jeremias-groehl.de`.
 
 ## M1: Karte + Infrastruktur
 > /karte, EcoNode-Interface, Health-Dots, ADR-Chips + Kontext-Panel, Docker + Auto-Deploy.
